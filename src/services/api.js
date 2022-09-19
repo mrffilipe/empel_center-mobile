@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-const ApiPath = "http://localhost:5000/api/";
+const ApiPath = "http://192.168.2.108:4000/";
 var TOKEN = "";
 
 (async()=>{//pegar token armazendo local
@@ -17,10 +17,12 @@ const request = async ({ //fazer requisição fetch
         'Content-Type': 'application/json; charset=UTF-8',
         "authorization":"Bearer "+TOKEN
     },
-    method = 'POST'
+    method = 'POST',
+    formData = false,
 })=>{
-    headers = headers
-    body = JSON.stringify(body);
+    
+    if(!formData)
+        body = JSON.stringify(body);
 
     try{
         const URL = await fetch(ApiPath+route,{
@@ -28,13 +30,18 @@ const request = async ({ //fazer requisição fetch
             body: body,
             headers:headers
         });
-        const responseJson = await URL.json();
-        var response = await responseJson;
-       
-        return response;
 
+        if(URL.status < 400){
+            const responseJson = await URL.json();
+            var response = await responseJson;
+            
+            return response;
+        }
+
+        return {error: URL.status};
     }catch(err){
-        return {error: "Dessa vez foram os servidores. tente mais tarde"};
+        return {error: err.message};
+        // "Network request failed"
     }
 }
 
@@ -44,7 +51,7 @@ let authProps = {
     email: String,
     password: String,
 }
-export const Auth = async(obj = authProps)=>{
+const Auth = async(obj = authProps)=>{
     return new Promise(async(resolve)=>{
         let res = await request({
             route:"auth",
@@ -55,4 +62,57 @@ export const Auth = async(obj = authProps)=>{
             
         resolve(res);
     })
+}
+
+
+const PVFormProps = {
+    name:String,
+    cpf_cnpj:String,
+    phone:String,
+    email:String,
+}
+
+const PVFormRegister = async(obj = PVFormProps)=>{
+    return new Promise(async(resolve)=>{
+            let res = await request({
+                route:"auth",
+                body:obj,
+            });
+            if(!res.error)
+                TOKEN = res.token;
+
+            setTimeout(()=>{
+                resolve(res)
+            },2000);
+
+       
+    })
+}
+
+const PropsFile = {
+    uri:String,///caminho do arquivo
+    type: String,///'image/jpeg'
+    name:String,///image.jpg
+}
+
+const uploadTest = async(file = PropsFile)=>{
+    return new Promise(async(resolve)=>{
+        let res = await request({
+            route:"newProduct",
+            body:file,
+            headers:{},
+            formData:true
+        });
+        if(!res.error)
+            TOKEN = res.token;
+
+        resolve(false)
+    })
+}
+
+
+module.exports = {
+    PVFormRegister,
+    Auth,
+    uploadTest
 }

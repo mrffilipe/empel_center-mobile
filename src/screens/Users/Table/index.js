@@ -1,7 +1,7 @@
 import styles from "./styles";
 import Select from "../../../components/Form/Select";
 import React, {useState} from "react";
-import {View, Text, Pressable, Linking} from "react-native";
+import {View, Text, Pressable, Linking, Alert} from "react-native";
 import AllClear from "../../../components/AllClear";
 import VMasker from "vanilla-masker";
 const props = {
@@ -16,7 +16,6 @@ const props = {
     setData:Function
 }
 export default function Table({data, permission, setData} = props) {
-    const [userSelected, setUserSelected] = useState(null);
     const [isOpenConfirm, setIsOpenConfirm] = useState(null);
     const changePermision = (val,key)=>{
         if(!data)
@@ -44,31 +43,70 @@ export default function Table({data, permission, setData} = props) {
       };
 
     const desableAcess = (name,id)=>{
-        const confirmed = ()=>{
-            //desabilitar conta
-        }
 
-        setIsOpenConfirm({message:`Desativar acesso do ${name}?`,next:confirmed})
+        Alert.alert(
+            "Confirmar",
+            "Desativar acesso do usuário "+name,
+            [
+                {
+                    text:"Não",
+                    onPress:()=> cancel(),
+                    type:"default"
+                },
+                {
+                    text:"Sim",
+                    onPress:()=> confirmedDesable(id)
+                }
+            ],
+            {
+                cancelable: true,
+                onDismiss:()=> cancel()
+            }
+        )
     }
 
     const activateAcess = (name,id)=>{
-        const confirmed = ()=>{
-            //abilitar conta
-        }
+        Alert.alert(
+            "Confirmar",
+            "Ativar acesso do usuário "+name,
+            [
+                {
+                    text:"Não",
+                    onPress:()=> cancel(),
+                    type:"default"
+                },
+                {
+                    text:"Sim",
+                    onPress:()=> confirmedActive(id)
+                }
+            ],
+            {
+                cancelable: true,
+                onDismiss:()=> cancel()
+            }
+        )
+    }
 
-        setIsOpenConfirm({message:`Ativar acesso do ${name}?`,next:confirmed})
+    const confirmedDesable = (id)=>{
+        //desabilitar conta
+    }
+
+    const confirmedActive = (id)=>{
+        //abilitar conta
+    }
+
+    const cancel = ()=>{
+
     }
 
     const link = ({url})=> {
         Linking.canOpenURL(url).then((supported) => {
-            console.log(supported)
           return Linking.openURL(url);
         });
     }
 
     return (
         <View style={[styles.container]}>
-            {/* <Text style={styles.title}>{title}</Text> */}
 
             <View style={[styles.list]}>
                 {data.length ?

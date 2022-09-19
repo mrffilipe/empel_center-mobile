@@ -14,6 +14,30 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		7699B88040F8A987B510C191 /* libPods-empel_center_mobile-empel_center_mobileTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19F6CBCC0A4E27FBF8BF4A61 /* libPods-empel_center_mobile-empel_center_mobileTests.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		C472D63F4F1841878BDFF552 /* .gitkeep in Resources */ = {isa = PBXBuildFile; fileRef = A762C0022FF742E19E0859FE /* .gitkeep */; };
+		7EE744D7F4234D75B78CCBD7 /* arrowDown.js in Resources */ = {isa = PBXBuildFile; fileRef = D8D92D9C8FFA4BBBB7973FAD /* arrowDown.js */; };
+		DEE7D5A06D0146F8B2D8AE9B /* calendar.js in Resources */ = {isa = PBXBuildFile; fileRef = 2BC47D7875754F20BD9FF667 /* calendar.js */; };
+		C2FBE74C5F664D2FA2E94D14 /* camera.js in Resources */ = {isa = PBXBuildFile; fileRef = 48FC15DF2FC2480A88C12BB2 /* camera.js */; };
+		067014BB5447450C884C5D47 /* check.js in Resources */ = {isa = PBXBuildFile; fileRef = 3B417A543B104F59A6D1E68F /* check.js */; };
+		A80CC76751EE4DBAB5C7EA61 /* checkList.js in Resources */ = {isa = PBXBuildFile; fileRef = E20A58B5845C41BBB7105D2C /* checkList.js */; };
+		87E98B00F9BE4B96900DE3B1 /* cloudUpload.js in Resources */ = {isa = PBXBuildFile; fileRef = CC31B3C6BA7C41AC8BA1D248 /* cloudUpload.js */; };
+		C1BDBEF1E2C44AFDB406F921 /* details.js in Resources */ = {isa = PBXBuildFile; fileRef = 01172B21B17D41C892AEDABD /* details.js */; };
+		F0597607DB434EFE95443CAE /* detailsList.js in Resources */ = {isa = PBXBuildFile; fileRef = 1D6126DA2F014FA591584462 /* detailsList.js */; };
+		D4ACE8E189824389BE90A1DE /* dotts.js in Resources */ = {isa = PBXBuildFile; fileRef = D3B916FE771B41DD90D113B8 /* dotts.js */; };
+		AD935A3686DD46D08067893B /* filter.js in Resources */ = {isa = PBXBuildFile; fileRef = 594C17503D1C4AB9BA13F60C /* filter.js */; };
+		36FC37B7D08C4326A965630A /* imagePlus.js in Resources */ = {isa = PBXBuildFile; fileRef = 952B89A97E02486C9BCB2E8B /* imagePlus.js */; };
+		6C9D5982721A48B4A97F4CF6 /* less.js in Resources */ = {isa = PBXBuildFile; fileRef = 3E1180FDA18543E6B58A7A5F /* less.js */; };
+		9A7FF0A1193E42DBAAA29D8E /* mapMark.js in Resources */ = {isa = PBXBuildFile; fileRef = 30048AEEC45040C989BA31DF /* mapMark.js */; };
+		5AA413A9C60D412AAE640A80 /* message.js in Resources */ = {isa = PBXBuildFile; fileRef = 88556A130AFE4F1196D47FBB /* message.js */; };
+		780B769708C146DB886B55DE /* pen.js in Resources */ = {isa = PBXBuildFile; fileRef = 3A2FB3764A3348B4AD9A92DA /* pen.js */; };
+		3FEE1F24DDD941E089A0599B /* plus.js in Resources */ = {isa = PBXBuildFile; fileRef = 1223DAA4669A4E6496048E7B /* plus.js */; };
+		8DF36937803744FA8A779E38 /* plusList.js in Resources */ = {isa = PBXBuildFile; fileRef = D334F3202DF44A9B9C207108 /* plusList.js */; };
+		F331FEAD87144CCC83910F16 /* refresh.js in Resources */ = {isa = PBXBuildFile; fileRef = 8A38A402BD934C60BFE8F80D /* refresh.js */; };
+		D7F485C6700040A0B2CFF5A8 /* reorder.js in Resources */ = {isa = PBXBuildFile; fileRef = 0892B63F6F354505A351EE22 /* reorder.js */; };
+		33C115ABA9974624A2AB4EEA /* sun.js in Resources */ = {isa = PBXBuildFile; fileRef = A735E8B5793E4B4897EA2A60 /* sun.js */; };
+		C3C40DFEB9EC48739FFDE737 /* trash.js in Resources */ = {isa = PBXBuildFile; fileRef = A7F5F8CE739D4AB785DDBDE1 /* trash.js */; };
+		64B28567BAEB4DCEADD3EBCE /* user.js in Resources */ = {isa = PBXBuildFile; fileRef = FC32FF826AAB4ABA8253AA0D /* user.js */; };
+		C68F3F20E90043A989AC39E0 /* logoempel.png in Resources */ = {isa = PBXBuildFile; fileRef = C4DCE777C5F04F12BDE3B3A6 /* logoempel.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -44,6 +68,30 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = empel_center_mobile/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		89C6BE57DB24E9ADA2F236DE /* Pods-empel_center_mobile-empel_center_mobileTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-empel_center_mobile-empel_center_mobileTests.release.xcconfig"; path = "Target Support Files/Pods-empel_center_mobile-empel_center_mobileTests/Pods-empel_center_mobile-empel_center_mobileTests.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		A762C0022FF742E19E0859FE /* .gitkeep */ = {isa = PBXFileReference; name = ".gitkeep"; path = "../src/assets/.gitkeep"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D8D92D9C8FFA4BBBB7973FAD /* arrowDown.js */ = {isa = PBXFileReference; name = "arrowDown.js"; path = "../src/assets/icons/arrowDown.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		2BC47D7875754F20BD9FF667 /* calendar.js */ = {isa = PBXFileReference; name = "calendar.js"; path = "../src/assets/icons/calendar.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		48FC15DF2FC2480A88C12BB2 /* camera.js */ = {isa = PBXFileReference; name = "camera.js"; path = "../src/assets/icons/camera.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3B417A543B104F59A6D1E68F /* check.js */ = {isa = PBXFileReference; name = "check.js"; path = "../src/assets/icons/check.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		E20A58B5845C41BBB7105D2C /* checkList.js */ = {isa = PBXFileReference; name = "checkList.js"; path = "../src/assets/icons/checkList.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		CC31B3C6BA7C41AC8BA1D248 /* cloudUpload.js */ = {isa = PBXFileReference; name = "cloudUpload.js"; path = "../src/assets/icons/cloudUpload.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		01172B21B17D41C892AEDABD /* details.js */ = {isa = PBXFileReference; name = "details.js"; path = "../src/assets/icons/details.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1D6126DA2F014FA591584462 /* detailsList.js */ = {isa = PBXFileReference; name = "detailsList.js"; path = "../src/assets/icons/detailsList.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D3B916FE771B41DD90D113B8 /* dotts.js */ = {isa = PBXFileReference; name = "dotts.js"; path = "../src/assets/icons/dotts.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		594C17503D1C4AB9BA13F60C /* filter.js */ = {isa = PBXFileReference; name = "filter.js"; path = "../src/assets/icons/filter.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		952B89A97E02486C9BCB2E8B /* imagePlus.js */ = {isa = PBXFileReference; name = "imagePlus.js"; path = "../src/assets/icons/imagePlus.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3E1180FDA18543E6B58A7A5F /* less.js */ = {isa = PBXFileReference; name = "less.js"; path = "../src/assets/icons/less.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		30048AEEC45040C989BA31DF /* mapMark.js */ = {isa = PBXFileReference; name = "mapMark.js"; path = "../src/assets/icons/mapMark.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		88556A130AFE4F1196D47FBB /* message.js */ = {isa = PBXFileReference; name = "message.js"; path = "../src/assets/icons/message.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		3A2FB3764A3348B4AD9A92DA /* pen.js */ = {isa = PBXFileReference; name = "pen.js"; path = "../src/assets/icons/pen.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		1223DAA4669A4E6496048E7B /* plus.js */ = {isa = PBXFileReference; name = "plus.js"; path = "../src/assets/icons/plus.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		D334F3202DF44A9B9C207108 /* plusList.js */ = {isa = PBXFileReference; name = "plusList.js"; path = "../src/assets/icons/plusList.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		8A38A402BD934C60BFE8F80D /* refresh.js */ = {isa = PBXFileReference; name = "refresh.js"; path = "../src/assets/icons/refresh.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		0892B63F6F354505A351EE22 /* reorder.js */ = {isa = PBXFileReference; name = "reorder.js"; path = "../src/assets/icons/reorder.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A735E8B5793E4B4897EA2A60 /* sun.js */ = {isa = PBXFileReference; name = "sun.js"; path = "../src/assets/icons/sun.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		A7F5F8CE739D4AB785DDBDE1 /* trash.js */ = {isa = PBXFileReference; name = "trash.js"; path = "../src/assets/icons/trash.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		FC32FF826AAB4ABA8253AA0D /* user.js */ = {isa = PBXFileReference; name = "user.js"; path = "../src/assets/icons/user.js"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		C4DCE777C5F04F12BDE3B3A6 /* logoempel.png */ = {isa = PBXFileReference; name = "logoempel.png"; path = "../src/assets/images/logoempel.png"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +170,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				6ADEC156DC95485E8663C04A /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -147,6 +196,38 @@
 			);
 			path = Pods;
 			sourceTree = "<group>";
+		};
+		6ADEC156DC95485E8663C04A /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				A762C0022FF742E19E0859FE /* .gitkeep */,
+				D8D92D9C8FFA4BBBB7973FAD /* arrowDown.js */,
+				2BC47D7875754F20BD9FF667 /* calendar.js */,
+				48FC15DF2FC2480A88C12BB2 /* camera.js */,
+				3B417A543B104F59A6D1E68F /* check.js */,
+				E20A58B5845C41BBB7105D2C /* checkList.js */,
+				CC31B3C6BA7C41AC8BA1D248 /* cloudUpload.js */,
+				01172B21B17D41C892AEDABD /* details.js */,
+				1D6126DA2F014FA591584462 /* detailsList.js */,
+				D3B916FE771B41DD90D113B8 /* dotts.js */,
+				594C17503D1C4AB9BA13F60C /* filter.js */,
+				952B89A97E02486C9BCB2E8B /* imagePlus.js */,
+				3E1180FDA18543E6B58A7A5F /* less.js */,
+				30048AEEC45040C989BA31DF /* mapMark.js */,
+				88556A130AFE4F1196D47FBB /* message.js */,
+				3A2FB3764A3348B4AD9A92DA /* pen.js */,
+				1223DAA4669A4E6496048E7B /* plus.js */,
+				D334F3202DF44A9B9C207108 /* plusList.js */,
+				8A38A402BD934C60BFE8F80D /* refresh.js */,
+				0892B63F6F354505A351EE22 /* reorder.js */,
+				A735E8B5793E4B4897EA2A60 /* sun.js */,
+				A7F5F8CE739D4AB785DDBDE1 /* trash.js */,
+				FC32FF826AAB4ABA8253AA0D /* user.js */,
+				C4DCE777C5F04F12BDE3B3A6 /* logoempel.png */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -244,6 +325,30 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				C472D63F4F1841878BDFF552 /* .gitkeep in Resources */,
+				7EE744D7F4234D75B78CCBD7 /* arrowDown.js in Resources */,
+				DEE7D5A06D0146F8B2D8AE9B /* calendar.js in Resources */,
+				C2FBE74C5F664D2FA2E94D14 /* camera.js in Resources */,
+				067014BB5447450C884C5D47 /* check.js in Resources */,
+				A80CC76751EE4DBAB5C7EA61 /* checkList.js in Resources */,
+				87E98B00F9BE4B96900DE3B1 /* cloudUpload.js in Resources */,
+				C1BDBEF1E2C44AFDB406F921 /* details.js in Resources */,
+				F0597607DB434EFE95443CAE /* detailsList.js in Resources */,
+				D4ACE8E189824389BE90A1DE /* dotts.js in Resources */,
+				AD935A3686DD46D08067893B /* filter.js in Resources */,
+				36FC37B7D08C4326A965630A /* imagePlus.js in Resources */,
+				6C9D5982721A48B4A97F4CF6 /* less.js in Resources */,
+				9A7FF0A1193E42DBAAA29D8E /* mapMark.js in Resources */,
+				5AA413A9C60D412AAE640A80 /* message.js in Resources */,
+				780B769708C146DB886B55DE /* pen.js in Resources */,
+				3FEE1F24DDD941E089A0599B /* plus.js in Resources */,
+				8DF36937803744FA8A779E38 /* plusList.js in Resources */,
+				F331FEAD87144CCC83910F16 /* refresh.js in Resources */,
+				D7F485C6700040A0B2CFF5A8 /* reorder.js in Resources */,
+				33C115ABA9974624A2AB4EEA /* sun.js in Resources */,
+				C3C40DFEB9EC48739FFDE737 /* trash.js in Resources */,
+				64B28567BAEB4DCEADD3EBCE /* user.js in Resources */,
+				C68F3F20E90043A989AC39E0 /* logoempel.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -19,14 +19,14 @@ export default function Users() {
             name:"Felipe",
             email:"email@gmail.com",
             phone:99999999999,
-            permission:permission[2],
+            permission:p[2],
             active:false
         },{
             id:2,
             name:"Bruno",
             email:"email@gmail.com",
             phone:99999999999,
-            permission:permission[1],
+            permission:p[1],
             active:true
         }
     ]

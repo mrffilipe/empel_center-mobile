@@ -90,7 +90,7 @@ export default function Drgables({
                           });
                     }
                 },
-                useNativeDriver:false
+                useNativeDriver:true
             }),
             // adjusting delta value
             onPanResponderRelease           : (e, gesture) => {

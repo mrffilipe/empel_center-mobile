@@ -29,5 +29,6 @@ export default StyleSheet.create({
     headerTitleStyle:{
         color:colors.white,
         fontWeight:"bold",
+        fontSize: 21,
     },
 });

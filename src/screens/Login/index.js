@@ -40,7 +40,7 @@ export default function Login({navigation}) {
                         type="email"
                         value={email}
                         setValue={setEmail}
-                        invalid={email === invalid.input ? invalid.message : null}
+                        invalid={email === invalid?.input ? invalid?.message : null}
                     />
 
                     <InputText
@@ -48,7 +48,7 @@ export default function Login({navigation}) {
                         type="password"
                         value={password}
                         setValue={setPassword}
-                        invalid={password === invalid.input ? invalid.message : null}
+                        invalid={password === invalid?.input ? invalid?.message : null}
                     />
                     <View style={styles.btn_wrap}>
                         <ButtonSubmit value={"Entrar"} onPress={signIn} styles={styles.btn_submit}/>

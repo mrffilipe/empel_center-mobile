@@ -1,0 +1,101 @@
+{
+  "migIndex": 1,
+  "data": [
+    {
+      "path": "src/assets/.gitkeep",
+      "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+    },
+    {
+      "path": "src/assets/icons/arrowDown.js",
+      "sha1": "23b173389e378b64cc0e93c1759503857c938f14"
+    },
+    {
+      "path": "src/assets/icons/calendar.js",
+      "sha1": "7e34648c499ffb0cccccfe92ec070b4d7ecf51de"
+    },
+    {
+      "path": "src/assets/icons/camera.js",
+      "sha1": "9bd0de9677a10dea8c0ece983a8c5f07885a0ab5"
+    },
+    {
+      "path": "src/assets/icons/check.js",
+      "sha1": "74e165fec398380e5f7899d691f08faf9fd6221f"
+    },
+    {
+      "path": "src/assets/icons/checkList.js",
+      "sha1": "d92616680f5ec56520eaafe8b06c0457c7029a5b"
+    },
+    {
+      "path": "src/assets/icons/cloudUpload.js",
+      "sha1": "b2ba37a7a5154fd39c7c6b9d0240711679e8d18c"
+    },
+    {
+      "path": "src/assets/icons/details.js",
+      "sha1": "7843da018ff4d3f8e06645e3de5b9aa6a301b6db"
+    },
+    {
+      "path": "src/assets/icons/detailsList.js",
+      "sha1": "3f1eaa7eddeeecb40007667eea8ce66bbbb68933"
+    },
+    {
+      "path": "src/assets/icons/dotts.js",
+      "sha1": "420c2b1a602bb3250da3a6ff254488e01a4b003f"
+    },
+    {
+      "path": "src/assets/icons/filter.js",
+      "sha1": "17e4601f4a9d9ae3630e8a70109afc9749a05f7f"
+    },
+    {
+      "path": "src/assets/icons/imagePlus.js",
+      "sha1": "afcf14e98a47ba8c8eaf0f3f209de72994038b06"
+    },
+    {
+      "path": "src/assets/icons/less.js",
+      "sha1": "fa8cdcb10b24f6e191ad113eb1706b9206a943d0"
+    },
+    {
+      "path": "src/assets/icons/mapMark.js",
+      "sha1": "6141d9c0637eec2b05421b076705ce7f8b53c22c"
+    },
+    {
+      "path": "src/assets/icons/message.js",
+      "sha1": "04d13c8895a279971b939c3f44490665194f9088"
+    },
+    {
+      "path": "src/assets/icons/pen.js",
+      "sha1": "cbeef5c93b4a6dd575d91f979ead4abe2628c530"
+    },
+    {
+      "path": "src/assets/icons/plus.js",
+      "sha1": "c597fd5caa57d7e8ea34310a1c1182ef72ec7788"
+    },
+    {
+      "path": "src/assets/icons/plusList.js",
+      "sha1": "106f1c3d06e6a83c35603bc12bbf13b2c930a59d"
+    },
+    {
+      "path": "src/assets/icons/refresh.js",
+      "sha1": "c34b151a2061f780b1ee1ac9d579b32346d34a5b"
+    },
+    {
+      "path": "src/assets/icons/reorder.js",
+      "sha1": "d46a731e2fd26bc52dcda111935222138fd09f19"
+    },
+    {
+      "path": "src/assets/icons/sun.js",
+      "sha1": "133f9265bc68dcabdc204d7584dde70d956af3f0"
+    },
+    {
+      "path": "src/assets/icons/trash.js",
+      "sha1": "dfc65a39cddaa648eef8f71737b7402b6d413289"
+    },
+    {
+      "path": "src/assets/icons/user.js",
+      "sha1": "52e1b854621c344c5f726b34fdcada2d164fcd42"
+    },
+    {
+      "path": "src/assets/images/logoempel.png",
+      "sha1": "e8231f91d850cd67bd0e6f26db95fccac22f5196"
+    }
+  ]
+}

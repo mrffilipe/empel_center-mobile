@@ -8,10 +8,10 @@ export default StyleSheet.create({
         marginTop:20,
     },
     input:{
-        width:27,
-        height:26,
+        width:25,
+        height:25,
         position: 'absolute',
-        left:34,
+        left:36.5,
         backgroundColor:colors.green,
         borderRadius:13,
     },
@@ -32,15 +32,20 @@ export default StyleSheet.create({
         fontWeight:"bold",
         opacity:0.7,
         marginRight:20,
+        color:colors.black,
     },
     text:{
         fontSize:13,
+        color:colors.black,
+        marginBottom:2,
+        fontWeight:"bold",
+        opacity:0.7,
     },
     disabled:{
         alignItems: "flex-end",
     },
     disabled_input:{
-        left: 2,
+        left: 1.5,
         backgroundColor:"rgb(167, 167, 167)",
     },
     enabled:{

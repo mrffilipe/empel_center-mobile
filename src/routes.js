@@ -5,6 +5,7 @@ import styles from './styles/global';
 const Drawer = createDrawerNavigator();
 
 import HeaderTask from "./components/Headers/HeaderTask";
+import HeaderHome from "./components/Headers/HeaderHome";
 import MenuIcons from './components/MenuIcons';
 
 import HomeScreen from "./screens/Home";
@@ -104,7 +105,8 @@ const Routes = () => {
                     <>
                         <Drawer.Screen 
                             name="Inicio" 
-                            component={HomeStack} />
+                            component={HomeStack} 
+                            options={{ headerTitle: (props) => <HeaderHome {...props} title={"Inicio"} /> }} />
 
                         <Drawer.Screen 
                             name="Orçamentos" 

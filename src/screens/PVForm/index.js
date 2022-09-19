@@ -9,8 +9,12 @@ import Checkbox from "../../components/Form/Checkbox";
 import IPlus from "../../assets/icons/plus";
 import ILess from "../../assets/icons/less";
 import ITrash from "../../assets/icons/trash";
-import {validateEmail} from "../../services/tools";
+import {validateEmail, leftPad} from "../../services/tools";
+import {PVFormRegister} from "../../services/api";
+import {useMainContext} from "../../contexts/mainContext";
+import InputFile from "../../components/Form/InputFile";
 export default function PVForm() {
+    const {setDB, DB} = useMainContext();
     
     var costsModel ={
         name:"",
@@ -26,10 +30,12 @@ export default function PVForm() {
     const [generatorId, setGeneratorId] = useState("");
     const [address, setAddress] = useState("");
     const [distance, setDistance] = useState("");
+    const [file, setFile] = useState(null);
 
     const [invalid, setInvalid] = useState({});
 
-    const handleSubmit = ()=>{
+    const handleSubmit = async()=>{
+        setInvalid(null)
         let cpfCnpjUnmask = cpfCnpj.replace(/\./g,"").replace(/\//g,"").replace(/\-/g,""); 
         if(name === "" || cpfCnpj === "" || phoneNumber === "" || email === "" || distance === "" || generatorId === "" || address === "")
             return setInvalid({input:"",message:"Campo obrigatório!"});
@@ -41,6 +47,9 @@ export default function PVForm() {
             return setInvalid({input:phoneNumber, message:"Telefone invalido!"})
         if(!validateEmail(email))
             return setInvalid({input:email,message:"E-mail invalido!"});
+
+        if(!groups.length)
+            return alert("Adicione pelo menos uma unidade consumidora!");
         
         for(let {name, price} of costs ){
             if(!name || !price)
@@ -83,9 +92,33 @@ export default function PVForm() {
             }
         }
 
-
-        alert("Ok")
+        let params = {
+            name, 
+            cpf_cnpj:cpfCnpj,
+            phone:phoneNumber,
+            email,
+        }
         
+        try{
+            let register = await PVFormRegister(params).catch(err=> err);
+
+            if(register.error){////salvar informaçoes para nova tentativa
+                let date = new Date();
+                date =  `${leftPad(date.getDate(),2)}/${leftPad(date.getMonth(),2)} ${date.getHours()}:${leftPad(date.getMinutes(),2)}`;
+                let arr = [...DB];
+                arr.push({
+                    title:"Formulario fotovoltaico",
+                    function:"PVFormRegister",
+                    params,
+                    status:0,
+                    date,
+                })
+                return setDB(arr)
+            }
+
+
+            alert("register")
+        }catch(e){console.log(e)}
     }
 
     var groupModelA = {
@@ -411,6 +444,12 @@ export default function PVForm() {
                             setValue={setDistance}
                             keyboardType="number-pad"
                             invalid={invalid?.input === distance ? invalid?.message : null}
+                        />
+
+                        <InputFile
+                            value={file}
+                            setValue={setFile}
+                            title={"Documento"}
                         />
                     
                         <Text style={styles.subtitle}>Unidade geradora</Text>

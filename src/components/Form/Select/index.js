@@ -33,15 +33,6 @@ export default function Select({
         setModalVisible(false);
     }
 
-    useEffect(()=>{
-        if(!value){
-            if(name !== undefined)
-                setValue("",name)
-            else
-                setValue("");
-        }
-    },[value])
-
     return (
         <View style={labelTop?[styles.formSelect,styles.column, style2]:[styles.formSelect, style2]}>
             {label ?<Text style={styles.label}>{label}</Text>:<></>}
