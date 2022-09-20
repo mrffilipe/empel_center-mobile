@@ -11,7 +11,7 @@ export default StyleSheet.create({
         fontWeight:"bold",
         paddingBottom:0,
         color:colors.black,
-        paddingTop:30
+        paddingTop:40
     },
     group_title:{
         display:"flex",
@@ -32,7 +32,7 @@ export default StyleSheet.create({
         fontWeight:"bold",
         color:colors.black,
         opacity:0.8,
-        fontSize:13,
+        fontSize:14,
     },
     addUcs:{
         display:"flex",
@@ -97,5 +97,8 @@ export default StyleSheet.create({
         width:23,
         height:23,
         marginLeft:50
+    },
+    flex:{
+        display:"flex",
     }
 })

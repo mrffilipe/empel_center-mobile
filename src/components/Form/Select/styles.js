@@ -13,14 +13,14 @@ export default StyleSheet.create({
         fontSize:fontSize.label,
         fontWeight:"bold",
         opacity:0.7,
-        marginRight:10,
+        marginRight:8,
         marginBottom:5,
     },
     select:{
         flex:1,
         borderBottomWidth:1,
         paddingHorizontal:0,
-        minWidth:150,
+        minWidth:140,
         borderColor:colors.accent,
         display: "flex",
         flexDirection: "row",
@@ -75,7 +75,6 @@ export default StyleSheet.create({
         height:20,
         width:20,
         color:colors.accent,
-        marginRight:10,
     },
     input_invalid:{
         borderColor:colors.red

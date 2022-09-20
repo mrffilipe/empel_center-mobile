@@ -10,11 +10,11 @@ const mainContextData = {
     login:()=> new Promise,
     loggout:Function,
     DB:[{
-        title:String,
-        function:async ()=>{},
-        params:Object,
-        status:Number,
-        date:Date
+        title:String,//descrição da tarefa
+        function:String,//nome da função para requisição
+        params:Object, ///parametros para requisição
+        status:Number, //sincronizado(1) ou não (0)
+        date:Date //data formatada do armazenamento
     }],
     setDB:Function
 };

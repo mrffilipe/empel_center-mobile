@@ -1,0 +1,4 @@
+1: adicionar leads 
+2: salvar hostorico dos ultimos 7 dias com os cadastros no app
+feito 3: para cada unidade consumidora adicionar Local(cidade) e local de instalação terrio, telhado... .
+campo para saber se o local de instalação é rural ou urbana. se for rural adicionar campo Tansformador existente(kva): Number 

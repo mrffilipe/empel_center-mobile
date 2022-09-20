@@ -21,7 +21,7 @@ export default function ViewImage({image, isOpen, close, setImage}) {
         transparent={true}
         visible={isOpen}>
             <View style={styles.image_wrap}>
-                <Image source={{uri: image?.uri}} style={styles.image}/>
+                <Image source={{uri: image?.uri}} resizeMode="contain" autoSize style={styles.image}/>
 
                 <View style={styles.btn_wrap}>
                     <Pressable onPress={descart} style={[styles.btn, styles.btn_red]}>

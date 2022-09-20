@@ -3,6 +3,7 @@ import {View, ScrollView, Text, Pressable} from "react-native";
 import styles from "./styles";
 import InputText from "../../components/Form/InputText";
 import InputMask from "../../components/Form/InputMask";
+import InputRadio from "../../components/Form/InputRadio";
 import ButtonSubmit from "../../components/Form/ButtonSubmit";
 import Select from "../../components/Form/Select";
 import Checkbox from "../../components/Form/Checkbox";
@@ -29,15 +30,19 @@ export default function PVForm() {
     const [email, setEmail] = useState("");
     const [generatorId, setGeneratorId] = useState("");
     const [address, setAddress] = useState("");
+    const [addressType, setAddressType] = useState("Urbano");
+    const [installLocation,setInstallLocation] = useState("");
     const [distance, setDistance] = useState("");
     const [file, setFile] = useState(null);
+
+    const [transformer, setTransformer] = useState("");
 
     const [invalid, setInvalid] = useState({});
 
     const handleSubmit = async()=>{
         setInvalid(null)
         let cpfCnpjUnmask = cpfCnpj.replace(/\./g,"").replace(/\//g,"").replace(/\-/g,""); 
-        if(name === "" || cpfCnpj === "" || phoneNumber === "" || email === "" || distance === "" || generatorId === "" || address === "")
+        if(name === "" || cpfCnpj === "" || phoneNumber === "" || email === "" || distance === "" || generatorId === "" || address === "" || addressType === "" || installLocation === "")
             return setInvalid({input:"",message:"Campo obrigatório!"});
         if(name.split(" ").length < 2)
             return setInvalid({input:name, message:"Inserir nome e sobrenome!"});
@@ -56,41 +61,14 @@ export default function PVForm() {
                 return setInvalid({input:"",message:"Campo obrigatório!"});
         }
 
-        for(
-            let {
-            groupA,
-            pontaKWH,
-            pontaRS,
-            foraPontaKWH,
-            foraPontaRS,
-            horaKWH,
-            horaRS,
-            demandaKWH,
-            demandaRS,
-            medidaConsumo,
-            valorFinal,
-            Fornecimento,
-            local,
-            extra,
-        } of groups ){
-
-            if( groupA === "" ||
-            pontaKWH === "" ||
-            pontaRS === "" ||
-            foraPontaKWH === "" ||
-            foraPontaRS === "" ||
-            horaKWH === "" ||
-            horaRS === "" ||
-            demandaKWH === "" ||
-            demandaRS === "" ||
-            medidaConsumo === "" ||
-            valorFinal === "" ||
-            Fornecimento === "" ||
-            local === ""
-            ){
+        for(const i in groups){
+            for(const keys of Object.keys(groups[i])){
+              if(groups[i][keys] === "")
                 return setInvalid({input:"",message:"Campo obrigatório!"});
             }
         }
+
+
 
         let params = {
             name, 
@@ -101,7 +79,7 @@ export default function PVForm() {
         
         try{
             let register = await PVFormRegister(params).catch(err=> err);
-
+            
             if(register.error){////salvar informaçoes para nova tentativa
                 let date = new Date();
                 date =  `${leftPad(date.getDate(),2)}/${leftPad(date.getMonth(),2)} ${date.getHours()}:${leftPad(date.getMinutes(),2)}`;
@@ -139,7 +117,6 @@ export default function PVForm() {
         medidaConsumo:"",
         valorFinal:"",
         Fornecimento:"",
-        local:"",
         extra:0,
     }
 
@@ -176,6 +153,7 @@ export default function PVForm() {
 
         setCosts(arr);
     }
+    
 
     
     const UnitGroupA = (key) => {
@@ -323,15 +301,6 @@ export default function PVForm() {
                     name="Fornecimento"
                 />
 
-                <Select
-                    label="Local de instalação"
-                    invalid={invalid?.input === groups[key]["local"] ? invalid?.message : null}
-                    value={groups[key]["local"]}
-                    values={["Pires do Rio"]}
-                    setValue={insertValue}
-                    name="local"
-                />
-
                 <View>
                     <InputMask
                         label={`Produção extra ${groups[key]["extra"]
@@ -449,9 +418,9 @@ export default function PVForm() {
                         <InputFile
                             value={file}
                             setValue={setFile}
-                            title={"Documento"}
+                            label={"Adicionar Documento "}
                         />
-                    
+
                         <Text style={styles.subtitle}>Unidade geradora</Text>
 
                         <InputText
@@ -462,11 +431,38 @@ export default function PVForm() {
                         />
 
                         <Select
-                            label="Endereço"
+                            label="Endereço de instalação"
                             value={address}
                             values={["Pires do Rio","São José"]}
                             setValue={setAddress}
                             invalid={invalid?.input === address ? invalid?.message : null}
+                        />
+
+                        <InputRadio
+                            invalid={invalid?.input === addressType ? invalid?.message : null}
+                            value={addressType}
+                            values={["Rural","Urbano"]}
+                            setValue={setAddressType}
+                        />
+
+                        {addressType === "Rural"
+                            ?
+                            <InputMask
+                                label="Transformador existente(kVA)"
+                                value={transformer}
+                                setValue={setTransformer}
+                                keyboardType="number-pad"
+                                invalid={invalid?.input === transformer ? invalid?.message : null}
+                            />
+                            :<></>
+                        }
+
+                        <Select
+                            label="Local de instalação"
+                            invalid={invalid?.input === installLocation ? invalid?.message : null}
+                            value={installLocation}
+                            values={["Terrio","Telhado"]}
+                            setValue={setInstallLocation}
                         />
 
                         <View style={styles.ucs}>
@@ -508,7 +504,7 @@ export default function PVForm() {
 
                         <View style={styles.ucs}>
                             <Text style={styles.subtitle}>Custos</Text>
-                            {costs.length === 0 ? <Text>Adicione pelo menos um custo</Text> : <></>}
+                            {costs.length === 0 ? <Text  style={styles.small}>Adicione pelo menos um custo</Text> : <></>}
                             
                             {costs.map((cost, key) => (
                                 <View style={styles.costs_wrap} key={key}>{UnitCost(key)}</View>
