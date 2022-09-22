@@ -3,15 +3,20 @@ import styles from "./styles";
 import {View, Text, Pressable, Modal, ScrollView, Animated, Easing} from 'react-native';
 
 import ICloudUpload from "../../../assets/icons/cloudUpload";
+import IHistory from "../../../assets/icons/history";
 import IRefresh from "../../../assets/icons/refresh";
 import API from "../../../services/api";
 import NetInfo from "@react-native-community/netinfo";
 import {useMainContext} from "../../../contexts/mainContext";
+import {formatDate} from "../../../services/tools";
 export default function LogoTitle({tintColor,title}) {
     const {DB,setDB} = useMainContext([]);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
+
+    const [sincronized, setSincronized] = useState([]);
+    const [notSincronized, setNotSincronized] = useState([]);
 
     const unsubscribe = NetInfo.addEventListener(state => {
         if(state.isConnected !== isConnected) 
@@ -38,15 +43,17 @@ export default function LogoTitle({tintColor,title}) {
     )).current;
 
     const sincronize = async()=>{//tentar cadastrar dados quando conectado
+        deleteOldHistory()
         if(updating) return;
         setUpdating(true);
         let arr = [...DB];
         try{
             for (const [key, val] of arr.entries()) {
-                let req = await API[val.function](val.params);
-                console.log(req)
-                if(!req.error){//remover da fila caso de sucesso
-                    arr = arr.filter((val,index)=> index !== key);
+                if(!val.status){
+                    let req = await API[val.function](val.params);
+                    if(!req.error){//remover da fila caso de sucesso
+                        arr = arr[key].status = 1;
+                    }
                 }
             }
         }catch(e){
@@ -58,6 +65,7 @@ export default function LogoTitle({tintColor,title}) {
     }
 
     const sinclonizeLoading = ()=>{
+    
         return(
             <Animated.View                 // Special animatable View
             style={{
@@ -74,6 +82,25 @@ export default function LogoTitle({tintColor,title}) {
                 <IRefresh style={styles.refresh}/>
             </Animated.View>
         )
+    }
+
+    const deleteOldHistory = ()=>{
+        const compareDate = new Date();
+        compareDate.setDate(compareDate.getDate() - 7);
+        let arr = [...DB];
+
+        arr.map((val,key)=>{
+            let date = new Date(val.date);
+            if(!val.status) return true;//não sinclonizado
+
+            if(compareDate.getTime() >= date.getTime()){//tem mais de 7 dias salvo! excluir
+                arr.splice(key, 1)
+            } 
+
+        })
+
+        console.log(arr)
+        // setDB(arr);
     }
 
     useEffect(() => {
@@ -93,13 +120,24 @@ export default function LogoTitle({tintColor,title}) {
         }
     },[isConnected])
 
+    useEffect(() => {
+        let s = DB.filter((val)=> val.status);
+        let ns = DB.filter((val)=> !val.status);
+        setSincronized(s);
+        setNotSincronized(ns);
+    },[DB])
+
     if(DB.length || !isConnected){
         return (
             <View style={styles.container}>
                 <Text style={[styles.title,{color:tintColor}]}>{title}</Text>
                 <Pressable style={[styles.btn_pendent]} onPress={()=>setIsOpenModal(!isOpenModal)}>
-                    <Text style={styles.amount}>{DB.length?DB.length:""}</Text>
-                    <ICloudUpload style={isConnected?[styles.icon_on]:[styles.icon_on,styles.of]}/>
+                    <Text style={styles.amount}>{notSincronized.length?notSincronized.length:""}</Text>
+
+                    {notSincronized.length || !isConnected
+                        ? <ICloudUpload style={isConnected?[styles.icon_on]:[styles.icon_on,styles.of]}/>
+                        : <IHistory style={isConnected?[styles.icon_on]:[styles.icon_on,styles.of]}/>
+                    }
                 </Pressable>
 
 
@@ -108,34 +146,54 @@ export default function LogoTitle({tintColor,title}) {
                         <View style={styles.modal}>
                             <Pressable onPress={()=>setIsOpenModal(!isOpenModal)} style={styles.closeModal}/>
                             <View style={styles.modal_content_wrap}>
-                                <View style={styles.modal_header}>
-                                    <Text style={styles.title_2}>Aguardando conexão</Text>
-
-                                    <Pressable onPress={sincronize} style={styles.btm_refresh} android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}>
-
-                                           {sinclonizeLoading}
-                                        
-                                    </Pressable>
-                                </View>
 
                                 <ScrollView style={styles.tasks_wrap}>
-                                    {DB.map((val,key)=>{
-                                        return (
-                                            <View key={key} style={styles.tasks}>
-                                                <Text style={styles.task_title}>{val?.title}</Text>
+                                    {notSincronized.length ?
+                                        <View style={styles.modal_header}>
+                                            <Text style={styles.title_2}>Aguardando conexão</Text>
+                                            <Pressable onPress={sincronize} style={styles.btm_refresh} android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}>
+                                                {sinclonizeLoading}
+                                            </Pressable>
+                                        </View>
+                                        :<></>
+                                    }
 
-                                                {val.status?
-                                                    <Pressable>
-                                                        <Text>Ok!</Text>
-                                                    </Pressable>
-                                                :
+                                    {notSincronized.map((val,key)=>{
+
+                                        if(!val.status){
+                                            return (
+                                                <View key={key} style={styles.tasks}>
+                                                    <Text style={styles.task_title}>{val?.title}</Text>
+
                                                     <Text style={styles.task_title}>
-                                                        {val.date}
+                                                        {formatDate(val?.date, true)}
                                                     </Text>
-                                                }
-                                            </View>
-                                        )
+                                                </View>
+                                            )
+                                        }
                                     })}
+
+                                    <View style={[styles.modal_header, styles.modal_header_2]}>
+                                        <Text style={styles.title_2}>
+                                            Ultima{sincronized.length > 1 ?"s":""} atividade{sincronized.length > 1 ?"s":""}  concluida{sincronized.length > 1 ?"s":""} 
+                                        </Text>
+                                    </View>
+
+                                    <View style={styles.modal_itens_wrap}>
+                                        {sincronized.map((val,key)=>{
+                                            if(val.status){
+                                                return (
+                                                    <View key={key} style={styles.tasks}>
+                                                        <Text style={styles.task_title}>{val?.title}</Text>
+
+                                                        <Text style={styles.task_title}>
+                                                            {formatDate(val?.date, true)}
+                                                        </Text>
+                                                    </View>
+                                                )
+                                            }
+                                        })}
+                                    </View>
                                 </ScrollView>
                             </View>
                         </View>

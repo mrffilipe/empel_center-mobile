@@ -73,3 +73,16 @@ export const deleteFile = (file = fileProps)=>{
         }
     })
 }
+
+
+export const formatDate = (date = new Date(),dateTime = false, full = false)=>{
+    date = new Date(date);
+    let year = date.getFullYear().toString();
+    let formatedDate = `${leftPad(date.getDate(),2)}/${leftPad(date.getMonth(),2)}/${ full? year :year[2]+year[3]}` 
+    let time = `${date.getHours()}:${leftPad(date.getMinutes(),2)}`;
+
+    if(dateTime)
+        return formatedDate+" "+time
+
+    return formatedDate
+}

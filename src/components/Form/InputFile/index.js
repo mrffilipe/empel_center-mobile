@@ -1,8 +1,8 @@
 import React, {useState} from 'react'
 import styles from "./styles";
 import IImagePlus from "../../../assets/icons/imagePlus";
-import {Pressable, View, Text, Modal} from "react-native";
-// import {Camera} from "react-native-vision-camera";
+import {Pressable, View, Text} from "react-native";
+import {Camera} from "react-native-vision-camera";
 import ImagePicker from "../ImagePicker";
 import ViewImage from '../../ViewImage';
 
@@ -10,10 +10,10 @@ export default function InputFile({setValue, value, label}) {
     const [isOpenCamera, setIsOpenCamera] = useState(false);
     const [isOpenImage, setIsOpenImage] = useState(false);
     const openCamera = async()=>{
-        // const newCameraPermission = await Camera.requestCameraPermission()
-        // if(newCameraPermission === "authorized"){
+        const newCameraPermission = await Camera.requestCameraPermission()
+        if(newCameraPermission === "authorized"){
             setIsOpenCamera(true);
-        // }
+        }
     }
 
     const openImage = ()=>{

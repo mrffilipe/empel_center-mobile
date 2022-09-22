@@ -36,31 +36,34 @@ export default StyleSheet.create({
     },
     modal:{
         ...modal,
-        backgroundColor: "transparent",
+        backgroundColor: "rgba(0,0,0,0.3)",
         alignItems: "flex-end",
         justifyContent: "flex-start",
-        paddingTop:50,
+        paddingTop:55,
         paddingHorizontal:0,
     },
     closeModal,
+    modal_header_2:{
+        marginTop:10,
+    },
     modal_header:{
         display: "flex",
         flexDirection: "row",
         alignItems: "center",
     },  
     modal_content_wrap:{
-        backgroundColor:colors.black,
+        backgroundColor:colors.primary,
         width:"100%",
         borderRadius:5,
-        padding:10,
-        paddingBottom:20,
-        maxWidth:270,
+        paddingBottom:5,
+        maxWidth:320,
+        height:"102%",
     },
     title_2:{
         fontSize:fontSize.p,
         fontWeight:"bold",
-        marginBottom:10,
-        color:colors.white,
+        marginBottom:5,
+        color:colors.black,
     },
     btm_refresh:{
         marginBottom:5,
@@ -71,19 +74,25 @@ export default StyleSheet.create({
         height:25,
         color:colors.green,
     },
+    tasks_wrap:{
+        padding:10,
+    },
+    modal_itens_wrap:{
+        marginBottom:50,
+    },
     tasks:{
-        marginTop:8,
         display:"flex",
         justifyContent:"space-between",
         alignItems: "flex-end",
         flexDirection: "row",
         borderBottomWidth:1,
         borderStyle:"dotted",
-        borderColor:colors.white,
+        borderColor:"rgb(100,100,100)",
+        marginBottom:10,
     },
     task_title:{
-        fontSize:13,
-        color:colors.white,
+        fontSize:14,
+        color:colors.black,
     }
     
 

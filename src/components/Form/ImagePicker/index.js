@@ -3,7 +3,6 @@ import {launchCamera, launchImageLibrary} from 'react-native-image-picker';
 import {Alert} from 'react-native';
 // import {uploadTest} from "../../../services/api";
 import {storageFile} from "../../../services/tools";
-import * as RNFS from 'react-native-fs';
 export default function ImagePicker({setValue, closePicker}) {
 
     const handleImageUser = ()=>{

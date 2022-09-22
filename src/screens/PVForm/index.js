@@ -10,7 +10,7 @@ import Checkbox from "../../components/Form/Checkbox";
 import IPlus from "../../assets/icons/plus";
 import ILess from "../../assets/icons/less";
 import ITrash from "../../assets/icons/trash";
-import {validateEmail, leftPad} from "../../services/tools";
+import {validateEmail} from "../../services/tools";
 import {PVFormRegister} from "../../services/api";
 import {useMainContext} from "../../contexts/mainContext";
 import InputFile from "../../components/Form/InputFile";
@@ -81,15 +81,13 @@ export default function PVForm() {
             let register = await PVFormRegister(params).catch(err=> err);
             
             if(register.error){////salvar informaçoes para nova tentativa
-                let date = new Date();
-                date =  `${leftPad(date.getDate(),2)}/${leftPad(date.getMonth(),2)} ${date.getHours()}:${leftPad(date.getMinutes(),2)}`;
                 let arr = [...DB];
                 arr.push({
                     title:"Formulario fotovoltaico",
                     function:"PVFormRegister",
                     params,
                     status:0,
-                    date,
+                    date: new Date(),
                 })
                 return setDB(arr)
             }
