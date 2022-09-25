@@ -12,7 +12,7 @@ export default StyleSheet.create({
         borderBottomWidth:1,
         borderRadius:5,
         paddingVertical:0,
-        borderColor:textColor,
+        borderColor:colors.accent_dark,
         color:colors.accent,
         paddingHorizontal:0,
         marginTop:3,

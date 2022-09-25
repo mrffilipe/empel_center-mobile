@@ -21,7 +21,7 @@ export default StyleSheet.create({
         borderBottomWidth:1,
         paddingHorizontal:0,
         minWidth:140,
-        borderColor:colors.accent,
+        borderColor:colors.accent_dark,
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",

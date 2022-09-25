@@ -46,7 +46,7 @@ export default function Table({data, navigate}) {
                                 </View>
 
                                 <View>
-                                    <Text style={styles.small}>{value?.date}</Text>
+                                    <Text style={[styles.small,styles.category]}>{value?.date}</Text>
                                 </View>
 
                                 <View>

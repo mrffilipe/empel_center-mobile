@@ -22,10 +22,10 @@ export default StyleSheet.create({
     ico:{
         width:60,
         height:60,
-        color:colors.accent,
+        color:colors.accent_dark,
     },
     btn_text:{
-        backgroundColor:colors.accent,
+        backgroundColor:colors.accent_dark,
         color:colors.white,
         width:"100%",
         textAlign:"center",
@@ -35,5 +35,5 @@ export default StyleSheet.create({
         paddingVertical:5,
         fontWeight:"bold",
         marginTop:30
-    }
+    },
 })

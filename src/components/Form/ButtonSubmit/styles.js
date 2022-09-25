@@ -1,8 +1,9 @@
 import {StyleSheet} from "react-native";
-import {button,fontSize} from "../../../styles/defount.json";
+import {button,fontSize, colors} from "../../../styles/defount.json";
 export default StyleSheet.create({
     button:{
         ...button,
+        backgroundColor:colors.accent
     },
     text:{
         color:"#fff",

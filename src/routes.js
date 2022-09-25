@@ -33,7 +33,7 @@ const Routes = () => {
             return <MenuIcons name={route.name} color={color} focused={focused}/>
         },
         drawerActiveTintColor:colors.accent,
-        drawerInactiveTintColor:colors.accent,
+        drawerInactiveTintColor:colors.accent_dark,
         drawerLabelStyle: styles.drawerLabelStyle,
         drawerItemStyle:styles.drawerItemStyle,
         headerShown: signed?true:false, //ocultar menu bar

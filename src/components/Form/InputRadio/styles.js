@@ -26,7 +26,7 @@ export default StyleSheet.create({
         display:"flex",
         marginRight: 20,
         borderWidth:1,
-        borderColor:colors.accent
+        borderColor:colors.accent_dark
     },
     options_wrap:{
         flexDirection:"row",

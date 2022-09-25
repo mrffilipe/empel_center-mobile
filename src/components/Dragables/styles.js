@@ -52,9 +52,9 @@ export default StyleSheet.create({
         fontSize:fontSize.p
     },
     category:{
-        color:colors.accent,
+        color:colors.accent_dark,
         opacity:1,
-    },
+    }, 
     green:{
         color:colors.green
     },

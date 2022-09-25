@@ -13,8 +13,8 @@ export default function Budgets({navigation}) {
     const [search, setSearch] = useState("");
     const [initialDate, setInitialDate] = useState({});
     const [finalDate, setFinalDate] = useState({});
-    const [seller, setSeller] = useState("");
-    const [category, setCategory] = useState("");
+    const [seller, setSeller] = useState("Todos");
+    const [category, setCategory] = useState("Todos");
     const [searchStatus, setSearchStatus] = useState("");
 
     const [data, setData] = useState([]);

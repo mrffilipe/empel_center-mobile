@@ -2,6 +2,8 @@
     "colors":{
         "primary": "#F6F4F4",
         "accent": "#030A8C",
+        "accent_dark":"#192E5B",
+        "secondary":"#1d65a6",
         "white": "#fff",
         "black": "rgb(34, 35, 46)",
         "green":"rgb(24, 179, 58)",
@@ -42,7 +44,7 @@
         "top":0
     },
     "button":{
-        "backgroundColor":"#030A8C",
+        "backgroundColor":"#1d65a6",
         "paddingTop":6,
         "paddingBottom":9,
         "paddingHorizontal":10,

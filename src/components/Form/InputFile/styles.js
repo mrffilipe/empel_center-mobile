@@ -27,7 +27,7 @@ export default StyleSheet.create({
     },
     small:{
         fontWeight:"bold",
-        color:colors.accent,
+        color:colors.accent_dark,
         fontSize:14,
         marginLeft:10,
     },

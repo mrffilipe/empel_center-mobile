@@ -89,18 +89,12 @@ export default function LogoTitle({tintColor,title}) {
         compareDate.setDate(compareDate.getDate() - 7);
         let arr = [...DB];
 
-        arr.map((val,key)=>{
+        arr = arr.filter( val => {
             let date = new Date(val.date);
-            if(!val.status) return true;//não sinclonizado
+            return compareDate.getTime() <= date.getTime() || !val.status;
+        });
 
-            if(compareDate.getTime() >= date.getTime()){//tem mais de 7 dias salvo! excluir
-                arr.splice(key, 1)
-            } 
-
-        })
-
-        console.log(arr)
-        // setDB(arr);
+        setDB(arr);
     }
 
     useEffect(() => {

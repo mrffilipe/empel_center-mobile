@@ -38,7 +38,6 @@ export default function Drgables({
     const [panResponder, setPanResponder] = useState(PanResponder.create({}))
 
     const [newMessageInfo, setNewMessageInfo] = useState(null);
-    const [readMessageId, setReadMessageId] = useState(null);
 
     const saveMessage = (msg) =>{
         if(!msg){
@@ -65,7 +64,7 @@ export default function Drgables({
 
     const onDrag = ()=>{
         // if(data[index].status === 4) return; //não permitir drag no finalizado
-        if(index === dropZoneValues.length - 1) return;
+        // if(index === dropZoneValues.length - 1) return;
         setPanResponder(PanResponder.create({
             onStartShouldSetPanResponder: (e, gesture) => {
                 setIsDragIn(true);
@@ -90,7 +89,7 @@ export default function Drgables({
                           });
                     }
                 },
-                useNativeDriver:true
+                useNativeDriver:false
             }),
             // adjusting delta value
             onPanResponderRelease           : (e, gesture) => {
@@ -176,7 +175,7 @@ export default function Drgables({
                     </View>
 
                     <View>
-                        <Text style={styles.small}>{value?.date}</Text>
+                        <Text style={[styles.small, styles.category]}>{value?.date}</Text>
                     </View>
 
                     <View style={styles.icons_wrap}>
