@@ -26,9 +26,9 @@ export default function InputRadio({values, label, setValue, value, name, invali
         useEffect(() => {
             if(btnRef.current){
                 if(value === val)
-                    btnRef.current.transitionTo({height:75,width:75})
+                    btnRef.current.transitionTo({height:75,width:75});
                 else
-                    btnRef.current.transitionTo({height:705,width:705})
+                    btnRef.current.transitionTo({height:200,width:200});
             }
         },[value])
 

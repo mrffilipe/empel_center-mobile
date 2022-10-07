@@ -4,14 +4,13 @@ import {colors, fontSize} from "../../styles/defount.json"
 export default StyleSheet.create({
     container:{
         paddingTop:5,
-        paddingBottom:20,
         paddingHorizontal:15,
         flex:1,
         backgroundColor:colors.white,
-        minHeight:450,
+        minHeight:500
     },
     list_wrap:{
-        marginBottom:5,
+        marginBottom:7,
         borderBottomWidth:2,
         borderRightWidth:1,
         paddingHorizontal:5,
@@ -54,7 +53,14 @@ export default StyleSheet.create({
     category:{
         color:colors.accent_dark,
         opacity:1,
+        fontSize:fontSize.min
     }, 
+    blue_dark:{
+        color:colors.accent_dark,
+    },
+    black:{
+        color:"#000",
+    },
     green:{
         color:colors.green
     },
@@ -89,7 +95,7 @@ export default StyleSheet.create({
     },
     draggable_container:{
         // position:"relative",
-        width:350,
+        width:300,
         backgroundColor:colors.white,
         marginRight:10,
         paddingHorizontal:10,
@@ -101,12 +107,22 @@ export default StyleSheet.create({
         paddingTop:5,
         // opacity:0.3
     },
+    card_header:{
+        flexDirection: "row",
+        alignItems: "center",
+
+    },
+    drag_wrap:{
+        paddingBottom:10
+    },
     draggable_title:{
         marginBottom:20,
     },
     title_status:{
         fontSize:fontSize.label,
         fontWeight:"bold",
+        textTransform: "uppercase",
+        marginRight:20,
     },
     info_draggable:{
         justifyContent:"flex-start",
@@ -115,18 +131,20 @@ export default StyleSheet.create({
         fontSize:14
     },
     img_icon_wrap:{
-        width:60,
-        height:60,
+        width:55,
+        height:55,
         color:colors.black,
         opacity:0.3,
-        marginRight:15,
+        marginRight:10,
         padding:2,
         borderRadius:30,
         borderWidth:2,
+        alignItems: "center",
+        justifyContent: "center",
     },
     img_icon:{
-        width:50,
-        height:50,
+        width:40,
+        height:40,
         color:colors.black,
     },
     list_wrap_draggable:{
@@ -137,30 +155,20 @@ export default StyleSheet.create({
         zIndex:2,
     },
     h5_seller:{
-        fontSize:fontSize.label,
-        paddingRight:60,
+        fontSize:fontSize.p,
     },
     h4:{
         opacity:0.7,
-        paddingRight:60,
+        fontSize:fontSize.small
     },
-    msg_ico_wrap:{
+    ico_move:{
+        color:colors.accent_dark,
+        width:17,
+        height:17,
         position:"absolute",
-        top:-35,
-    },
-    icon_msg:{
-        color:colors.green,
-        marginRight:25,
-    },
-    msgs_count:{
-        color:colors.green,
-        position:"absolute",
-        right:50,
-        top:-5,
-        fontSize:13
-    },
-    text_wrap_padding:{
-        paddingRight:50,
-    },
+        right:5,
+        top:5,
+        opacity:0.3
+    }
 
 })

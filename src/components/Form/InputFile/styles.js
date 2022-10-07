@@ -14,8 +14,8 @@ export default StyleSheet.create({
         paddingRight:10,
     },  
     icon:{
-        width:40,
-        height:40,
+        width:55,
+        height:55,
         color:colors.green
     },
     btn_text:{

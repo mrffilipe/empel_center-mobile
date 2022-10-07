@@ -169,7 +169,7 @@ export default function LogoTitle({tintColor,title}) {
 
                                     <View style={[styles.modal_header, styles.modal_header_2]}>
                                         <Text style={styles.title_2}>
-                                            Ultima{sincronized.length > 1 ?"s":""} atividade{sincronized.length > 1 ?"s":""}  concluida{sincronized.length > 1 ?"s":""} 
+                                            Ultimas atividades  concluidas
                                         </Text>
                                     </View>
 

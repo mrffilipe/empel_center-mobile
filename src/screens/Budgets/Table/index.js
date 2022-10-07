@@ -2,17 +2,13 @@ import styles from "../../../components/Dragables/styles";
 import React from "react";
 import {View, Text, Pressable} from "react-native";
 import IDetails from "../../../assets/icons/details";
-export default function Table({data, navigate}) {
+export default function Table({data, navigate, states}) {
     return (
         <View style={styles.container}>
 
             <View style={styles.list}>
                 {data.map((value,key)=>{
-                    let status = value.status === 1 
-                    ? {name:"Orçamento",color:"red"} 
-                    : value.status === 2 ? {name:"Proposta Enviada",color:"dark_blue"} 
-                    : value.status === 3 ? {name:"Negocição",color:"orange"} 
-                    : {name:"Finalizado",color:"green"};
+                    let status = states.filter((s => s.key === value.status))[0];
 
                     return(
                         <View

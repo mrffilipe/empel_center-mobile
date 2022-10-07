@@ -36,11 +36,10 @@ export default StyleSheet.create({
     },
     modal:{
         ...modal,
-        backgroundColor: "rgba(0,0,0,0.3)",
+        backgroundColor: "rgba(0,0,0,0.2)",
         alignItems: "flex-end",
         justifyContent: "flex-start",
-        paddingTop:55,
-        paddingHorizontal:0,
+        padding:0,
     },
     closeModal,
     modal_header_2:{
@@ -53,11 +52,11 @@ export default StyleSheet.create({
     },  
     modal_content_wrap:{
         backgroundColor:colors.primary,
-        width:"100%",
+        width:"85%",
         borderRadius:5,
         paddingBottom:5,
-        maxWidth:320,
-        height:"102%",
+        maxWidth:335,
+        height:"100%",
     },
     title_2:{
         fontSize:fontSize.p,

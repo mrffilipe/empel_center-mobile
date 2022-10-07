@@ -86,3 +86,33 @@ export const formatDate = (date = new Date(),dateTime = false, full = false)=>{
 
     return formatedDate
 }
+
+export const verifyFildsClient = ({
+    setInvalid = Function, 
+    name = String, 
+    cpfCnpj = String,
+    phoneNumber = String,
+    email = String,
+})=>{
+
+    let cpfCnpjUnmask = cpfCnpj.replace(/\./g,"").replace(/\//g,"").replace(/\-/g,""); 
+
+    if(name.split(" ").length < 2 && name)
+        return setInvalid({input:name, message:"Inserir nome e sobrenome!"});
+
+    if(cpfCnpjUnmask.length !== 11 && cpfCnpjUnmask.length !== 14 && cpfCnpj)
+        return setInvalid({input:cpfCnpj, message:"CPF ou CNPJ invalido!"})
+
+    if(phoneNumber.length < 15 && phoneNumber) 
+        return setInvalid({input:phoneNumber, message:"Telefone invalido!"})
+
+    if(!validateEmail(email) && email)
+        return setInvalid({input:email,message:"E-mail invalido!"});
+}
+
+export const limitText = (value = "",limit = 20) =>{
+    if(value.length > limit)
+        return value.substring(0,limit - 3)+"...";
+
+    return value;  
+}

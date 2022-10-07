@@ -18,6 +18,7 @@ export default StyleSheet.create({
         borderRadius:10,
         minWidth:250,
         maxWidth:350,
+        elevation:10,
     },
     ico:{
         width:60,

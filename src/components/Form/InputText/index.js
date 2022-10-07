@@ -12,7 +12,8 @@ export default function InputText({
   invalid = false,
   focus = false,
   editable = true,
-  name = null
+  name = null,
+  onBlur = ()=>{},
 }) {
 
   return (
@@ -28,6 +29,7 @@ export default function InputText({
       <TextInput
         style={!invalid ? [styles.input] : [styles.input,styles.input_invalid]}
         value={value}
+        onEndEditing={()=>onBlur()}
         placeholder={placeholder}
         onChangeText={(text) => name?setValue(text,name):setValue(text)} //retorna o valor ao state
         autoComplete={type} //tipo de conteudo tel, password, email, of ...

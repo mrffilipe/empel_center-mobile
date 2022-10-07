@@ -1,7 +1,8 @@
 import React, { useState, useContext, createContext, useEffect } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-// import {login, signUp} from "../services/api"
+import API from "../services/api";
+
 const mainContextData = {
     loading:Boolean,
     setLoading:Function,
@@ -16,7 +17,9 @@ const mainContextData = {
         status:Number, //sincronizado(1) ou não (0)
         date:Date //data formatada do armazenamento
     }],
-    setDB:Function
+    setDB:Function,
+    cities:Array,
+    getCities:Function,
 };
 
 const MainContext = createContext(mainContextData);
@@ -24,6 +27,7 @@ const MainContext = createContext(mainContextData);
 export const MainProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [DB,setDB] = useState([]);
+    const [cities, setCities] = useState([]);
 
     const [user,setUser] = useState({
         name: 'user',
@@ -61,7 +65,7 @@ export const MainProvider = ({ children }) => {
         }catch (e) {}
     }
 
-    const storage = async(res)=>{
+    const storageUser = async(res)=>{
         try{
             await AsyncStorage.setItem(
                 '@token',
@@ -81,7 +85,7 @@ export const MainProvider = ({ children }) => {
         }
     }
 
-    const getStorageData = async()=>{
+    const getStorageData = async()=>{//pegar 
         try {
             let data = await AsyncStorage.getItem("@data");
             
@@ -92,7 +96,7 @@ export const MainProvider = ({ children }) => {
         }
     }
 
-    const updateStorageData = async()=>{
+    const updateStorageData = async()=>{ //atualizar funçoes a serem sincronizadas offline sempre que o stado DB from atualizado 
         try{
             const jsonValue = JSON.stringify(DB)
             await AsyncStorage.setItem(
@@ -101,6 +105,23 @@ export const MainProvider = ({ children }) => {
             );
         }catch(e){
             alert('Erro ao salvar dados no dispositivo!')
+        }
+    }
+
+    const getCities = async ()=>{//buscar, atualizar cidades e armazenar no dispositivo 
+        let res = await API.get("Address");
+        if(!res.error){
+            setCities(res);
+            try{
+                const jsonValue = JSON.stringify(res)
+                await AsyncStorage.setItem(
+                    "@cities",
+                    jsonValue
+                )
+            }catch(e){
+                return;
+            }
+            
         }
     }
 
@@ -128,6 +149,8 @@ export const MainProvider = ({ children }) => {
             loggout,
             DB,
             setDB,
+            cities,
+            getCities,
         }}>
             {children}
         </MainContext.Provider>

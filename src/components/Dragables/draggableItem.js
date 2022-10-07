@@ -1,11 +1,9 @@
 import styles from "./styles";
 import React, {useState, useEffect} from "react";
-import {View, Text, Pressable, Image, Animated, PanResponder, useWindowDimensions} from "react-native";
-import IDetails from "../../assets/icons/details";
+import {View, Text, Image, Animated, PanResponder, useWindowDimensions} from "react-native";
 import IUser from "../../assets/icons/user";
-import IMessage from "../../assets/icons/message";
-import NewMessage from "../NewMessage";
-import Reminders from "./Reminder";
+import {limitText} from "../../services/tools";
+import IMove from "../../assets/icons/move";
 // import AddMessage from "../AddMessage";
 // import Reminder from "./Reminder";
 
@@ -30,42 +28,39 @@ export default function Drgables({
     navigate,
     scrollRef,
     data,
-    setData,
 } = props) {
     const window = useWindowDimensions();
-    const [msgs, setMsgs] = useState(null);
     const [pan] = useState(new Animated.ValueXY())
     const [panResponder, setPanResponder] = useState(PanResponder.create({}))
 
-    const [newMessageInfo, setNewMessageInfo] = useState(null);
+    const notDragable = [0,1];
 
-    const saveMessage = (msg) =>{
-        if(!msg){
-            setNewMessageInfo(null);
-            return;
+    const allowDrag = (state)=>{
+        for(let i in notDragable){
+            if(state === notDragable[i])
+                return false;
         }
-    
-        let arr = [...data];
-        arr[index].reminder.push({
-            id:10,
-            name: "Jonatã",
-            msg:msg
-        });
-        // console.log(msg);
-        setData(arr);
-        setNewMessageInfo(null);
+        return true;
     }
 
-    const deleteMessage = (msgs = [])=>{
-        let arr = [...data];
-        arr[index].reminder = msgs;
-        setData(arr)
-    }
 
-    const onDrag = ()=>{
-        // if(data[index].status === 4) return; //não permitir drag no finalizado
-        // if(index === dropZoneValues.length - 1) return;
+    const onDrag = (scrolled = false)=>{
+        let toNavigate = false;
+        let allowDrop = scrolled;//evitar drop quando arrastar sem querer rapidamente
+        let onLongPressTimeout;
+        let onLongPressTimeoutDrop;
         setPanResponder(PanResponder.create({
+            onPanResponderGrant: (e, gestureState) => {
+
+                toNavigate = true;
+                onLongPressTimeout = setTimeout(() => {
+                  toNavigate = false;
+                }, 100);
+
+                onLongPressTimeoutDrop = setTimeout(() => {
+                    allowDrop = true;
+                  }, 500);
+            },
             onStartShouldSetPanResponder: (e, gesture) => {
                 setIsDragIn(true);
                 return true
@@ -75,29 +70,42 @@ export default function Drgables({
             ],
             {
                 listener: (event,gesture) => {
-                    if(gesture.moveX < 40){
+                    if(gesture.moveX < 30){
                         scrollRef.current?.scrollTo({
                             y: 0,
                             x:scrollValue - 300,
                             animated: true,
                           });
-                    }else if(gesture.moveX > window.width - 40){
+                    }else if(gesture.moveX > window.width - 30){
                         scrollRef.current?.scrollTo({
                             y: 0,
                             x:scrollValue + 300,
                             animated: true,
-                          });
+                        });
                     }
                 },
                 useNativeDriver:false
             }),
             // adjusting delta value
-            onPanResponderRelease           : (e, gesture) => {
+            onPanResponderRelease: (e, gesture) => {
+                clearTimeout(onLongPressTimeout);
+                clearTimeout(onLongPressTimeoutDrop);
+                
                 // count = 0;
                 let res = isDropZone(gesture);
                     setIsDragIn(false);
-                if(!res === false && gesture.moveX > 10)
+                if(res !== false && gesture.moveX > 10 && res && allowDrop){
                     updateStatus(index,res)
+                }else{
+                    if(toNavigate){ //navegar para detalhes 
+                    
+                        navigate({
+                            name: 'Detalhes do orçamento',
+                            params: { id: value.id },
+                                // merge: true,
+                        })
+                    }
+                }
 
                 Animated.spring(          //retornar a posição certa
                     pan,         
@@ -117,8 +125,12 @@ export default function Drgables({
     const isDropZone = (gesture)=>{   
         var dz = dropZoneValues;
         for(var i=0; i<dz.length; i++){
-            if(gesture.moveX + scrollValue > dz[i]?.x && gesture.moveX + scrollValue < dz[i]?.x + dz[i]?.width && data[index].status !== 4)
+            if(gesture.moveX + scrollValue > dz[i]?.x && gesture.moveX + scrollValue < dz[i]?.x + dz[i]?.width){
+                if(!allowDrag(data[index].status))
+                    return false;
+                
                 return dz[i].status
+            }
         }
 
         return false;
@@ -126,7 +138,11 @@ export default function Drgables({
 
     useEffect(()=>{
         onDrag()
-    },[dropZoneValues,scrollValue])
+    },[dropZoneValues, data])
+
+    useEffect(()=>{
+        onDrag(true)
+    },[scrollValue])
       
 
     const panStyle = {
@@ -135,38 +151,37 @@ export default function Drgables({
 
     return (
         <>
-        <NewMessage newMessageInfo={newMessageInfo} saveMessage={saveMessage} />
-        <Reminders msgs={msgs} setMsgs={setMsgs} deleteMessage={deleteMessage} />
-
         <Animated.View
         {...panResponder.panHandlers}
         teste={"teste"}
         style={[panStyle]}>
             <View style={[styles.list_wrap, styles.list_wrap_draggable]}>
+                {allowDrag(value?.status) 
+                    ? <IMove style={styles.ico_move}/>
+                    :<></>
+                }
 
-                <Pressable 
-                android_ripple={{ color: "rgba(0, 0, 0, 0.03)"}}
-                style={[styles.info,styles.info_draggable]} 
-                onPress={()=>setNewMessageInfo({id:value.id})}>
+                <View
+                style={[styles.info,styles.info_draggable]} >
 
                     {value.perfil
                         ? <Image
                             style={styles.tinyLogo}
-                            source={url('https://lh3.googleusercontent.com/ogw/AOh-ky1c19kdtLzv9Q272rV3ZWsmdkA6dt-E14rK2iI2jg=s32-c-mo')}/>
+                            source={url('')}/>
                         : <View style={styles.img_icon_wrap}><IUser style={styles.img_icon} /></View>
                     } 
             
                     <View>
                         <View style={styles.text_wrap}>
-                            <Text style={[styles.h5,styles.h5_seller]}>{value?.seller}</Text>
+                            <Text style={[styles.h5,styles.h5_seller]}>{limitText(value?.seller,24)}</Text>
                         </View>
 
                         <View style={[styles.text_wrap,styles.text_wrap_padding]}>
-                            <Text style={[styles.h5,styles.h4]}>{value?.customer}</Text>
+                            <Text style={[styles.h5,styles.h4]}>{limitText(value?.customer,24)}</Text>
                         </View>
                     </View>
 
-                </Pressable>
+                </View>
             
 
                 <View style={styles.actions} >
@@ -176,24 +191,6 @@ export default function Drgables({
 
                     <View>
                         <Text style={[styles.small, styles.category]}>{value?.date}</Text>
-                    </View>
-
-                    <View style={styles.icons_wrap}>
-                        {value?.reminder.length ?
-                        <Pressable onPress={()=>setMsgs(value?.reminder)} style={styles.msg_ico_wrap}>
-                            <IMessage style={[styles.icon,styles.icon_msg]}/>
-                            <Text style={styles.msgs_count}>{value?.reminder.length}</Text>
-                        </Pressable>
-                        :<></>}
-
-                        <Pressable 
-                        onPress={()=>navigate({
-                        name: 'Detalhes do orçamento',
-                        params: { id: value.id },
-                            // merge: true,
-                        })} >
-                            <IDetails style={styles.icon}/>
-                        </Pressable>
                     </View>
                 </View>
             

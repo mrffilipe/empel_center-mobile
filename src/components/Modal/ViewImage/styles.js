@@ -1,5 +1,5 @@
 import {StyleSheet} from "react-native";
-import {colors,fontSize,button} from "../../styles/defount.json"
+import {colors,fontSize,button} from "../../../styles/defount.json"
 
 export default StyleSheet.create({
 
@@ -9,7 +9,7 @@ export default StyleSheet.create({
         top:0,
         width:"100%",
         height:"100%",
-        backgroundColor:"rgba(0,0,0,0.8)"
+        backgroundColor:"rgba(0,0,0,1)"
     },
     image:{
         width:"100%",

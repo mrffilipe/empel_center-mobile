@@ -5,8 +5,8 @@ import ISun from "../../assets/icons/sun";
 import IUser from "../../assets/icons/user";
 import IMarkMap from "../../assets/icons/mapMark";
 import IMagnetic from "../../assets/icons/magnect";
-import AddLeads from "./AddLeads";
-import AddCity from "../../components/AddCity";
+import AddLeads from "../../components/Modal/AddLeads";
+import AddCity from "../../components/Modal/AddCity";
 export default function Home({navigation}) {
     const [isOpenAddCity, setIsOpenAddCity] = useState(false);
     const [isOpenAddLeads, setIsOpenAddLeads] = useState(false);

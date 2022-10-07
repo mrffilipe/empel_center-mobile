@@ -1,5 +1,5 @@
 import {StyleSheet} from "react-native";
-import {colors,fontSize,container, button, modal, limitSize} from "../../styles/defount.json"
+import {colors,fontSize,container, button, modal, limitSize} from "../../../styles/defount.json"
 
 export default StyleSheet.create({
     modal:{

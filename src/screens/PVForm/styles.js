@@ -34,6 +34,9 @@ export default StyleSheet.create({
         opacity:0.8,
         fontSize:14,
     },
+    btn_unity:{
+        opacity:0.8
+    },
     addUcs:{
         display:"flex",
         justifyContent: "space-between",
@@ -42,7 +45,8 @@ export default StyleSheet.create({
         marginTop:30,
     },
     btn_group:{
-        ...button
+        ...button,
+        width:120
     },
     btn_text:{
         fontSize:fontSize.label,
@@ -77,7 +81,7 @@ export default StyleSheet.create({
     },
     icon:{
         fontSize:33,
-        color:colors.accent,
+        color:colors.secondary,
         width:20,
         height:20,
         marginRight:5,
@@ -100,5 +104,15 @@ export default StyleSheet.create({
     },
     flex:{
         display:"flex",
+        flexDirection: "row",
+    },
+    file_wrap:{
+        paddingTop:20,
+        paddingBottom:50
+    },
+    btn_add_city_wrap:{
+        position:"absolute",
+        left:250,
+        top:26
     }
 })

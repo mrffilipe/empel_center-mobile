@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View, ScrollView, Text, Pressable} from "react-native"; 
+import {View, ScrollView, Text, Pressable, Alert} from "react-native"; 
 import styles from "./styles";
 import InputText from "../../components/Form/InputText";
 import InputMask from "../../components/Form/InputMask";
@@ -10,20 +10,22 @@ import Checkbox from "../../components/Form/Checkbox";
 import IPlus from "../../assets/icons/plus";
 import ILess from "../../assets/icons/less";
 import ITrash from "../../assets/icons/trash";
-import {validateEmail} from "../../services/tools";
-import {PVFormRegister} from "../../services/api";
+import BtnPlus from '../../components/Form/BtnPlus';
+import API from "../../services/api";
 import {useMainContext} from "../../contexts/mainContext";
-import InputFile from "../../components/Form/InputFile";
+import Documents from "../../components/Modal/Documents";
+import {verifyFildsClient} from "../../services/tools";
+import AddCity from '../../components/Modal/AddCity';
 export default function PVForm() {
     const {setDB, DB} = useMainContext();
     
-    var costsModel ={
-        name:"",
-        price:"",
-    }
+    // var costsModel ={
+    //     name:"",
+    //     price:"",
+    // }
 
     const [groups, setGroups] = useState([]);
-    const [costs, setCosts] = useState([costsModel]);
+    // const [costs, setCosts] = useState([costsModel]);
     const [name, setName] = useState("");
     const [cpfCnpj, setCpfCnpj] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
@@ -32,34 +34,30 @@ export default function PVForm() {
     const [address, setAddress] = useState("");
     const [addressType, setAddressType] = useState("Urbano");
     const [installLocation,setInstallLocation] = useState("");
-    const [distance, setDistance] = useState("");
-    const [file, setFile] = useState(null);
+    // const [distance, setDistance] = useState("");
+    const [file, setFile] = useState([]);
 
     const [transformer, setTransformer] = useState("");
 
     const [invalid, setInvalid] = useState({});
 
+    const [isOpenAddCity, setIsOpenAddCity] = useState(false);
+
     const handleSubmit = async()=>{
         setInvalid(null)
-        let cpfCnpjUnmask = cpfCnpj.replace(/\./g,"").replace(/\//g,"").replace(/\-/g,""); 
-        if(name === "" || cpfCnpj === "" || phoneNumber === "" || email === "" || distance === "" || generatorId === "" || address === "" || addressType === "" || installLocation === "")
+        if(name === "" || cpfCnpj === "" || phoneNumber === "" || email === "" || generatorId === "" || address === "" || addressType === "" || installLocation === "")
             return setInvalid({input:"",message:"Campo obrigatório!"});
-        if(name.split(" ").length < 2)
-            return setInvalid({input:name, message:"Inserir nome e sobrenome!"});
-        if(cpfCnpjUnmask.length !== 11 && cpfCnpjUnmask.length !== 14)
-            return setInvalid({input:cpfCnpj, message:"CPF ou CNPJ invalido!"})
-        if(phoneNumber.length < 7) 
-            return setInvalid({input:phoneNumber, message:"Telefone invalido!"})
-        if(!validateEmail(email))
-            return setInvalid({input:email,message:"E-mail invalido!"});
 
-        if(!groups.length)
+        if(!groups.filter(val => val.isGenerator).length)
+            return alert("Adicione um grupo a unidade geradora!");
+
+        if(!groups.filter(val => !val.isGenerator).length)
             return alert("Adicione pelo menos uma unidade consumidora!");
         
-        for(let {name, price} of costs ){
-            if(!name || !price)
-                return setInvalid({input:"",message:"Campo obrigatório!"});
-        }
+        // for(let {name, price} of costs ){
+        //     if(!name || !price)
+        //         return setInvalid({input:"",message:"Campo obrigatório!"});
+        // }
 
         for(const i in groups){
             for(const keys of Object.keys(groups[i])){
@@ -67,8 +65,6 @@ export default function PVForm() {
                 return setInvalid({input:"",message:"Campo obrigatório!"});
             }
         }
-
-
 
         let params = {
             name, 
@@ -78,27 +74,28 @@ export default function PVForm() {
         }
         
         try{
-            let register = await PVFormRegister(params).catch(err=> err);
+            let register = await API.post({route:"PVForm",body:params});
             
-            if(register.error){////salvar informaçoes para nova tentativa
-                let arr = [...DB];
-                arr.push({
-                    title:"Formulario fotovoltaico",
-                    function:"PVFormRegister",
-                    params,
-                    status:0,
-                    date: new Date(),
-                })
-                return setDB(arr)
-            }
 
+            let arr = [...DB];
+            arr.push({
+                title:"Formulario fotovoltaico",
+                route:"PVForm",
+                params,
+                status:register.error?0:1,
+                date: new Date(),
+            })
+            
+            setDB(arr)
+            if(!register.error)
+                alert("register")
 
-            alert("register")
         }catch(e){console.log(e)}
     }
 
     var groupModelA = {
         groupA:true,
+        isGenerator:false,
         pontaKWH:"",
         pontaRS:"",
         foraPontaKWH:"",
@@ -112,10 +109,11 @@ export default function PVForm() {
 
     var groupModelB = {
         groupB:true,
+        isGenerator:false,
         medidaConsumo:"",
         valorFinal:"",
         Fornecimento:"",
-        extra:0,
+        extra:"",
     }
 
     const addGroupA = () => {
@@ -126,31 +124,64 @@ export default function PVForm() {
         setGroups([...groups, groupModelB]);
     }
 
-    const deleteOne = (index)=>{
+    const confirmDeleteGroup = (title,message)=>{
+        return new Promise((resolve)=>{
+
+            Alert.alert(
+                title,
+                message,
+                [
+                    {
+                        text:"Sim",
+                        onPress:()=> resolve(true)
+                    },
+                    {
+                        text:"Não",
+                        onPress:()=> resolve(false),
+                        type:"default"
+                    }
+                ],
+                {
+                    cancelable: true,
+                    onDismiss:()=> resolve(false)
+                }
+            )
+        })
+    }
+
+    const deleteOne = async(index)=>{
         let arr = [...groups];
+        if(!await confirmDeleteGroup(`Deletar grupo da unidade ${arr[index].isGenerator?"Geradora":"Consumidora"}?`))
+            return;
+
         arr = arr.filter((obj, key)=> key !== index);
 
         setGroups(arr);
 
     }
 
-    const clearGroups = () => {
-        setGroups([]);
-    }
-
-    const addCost = () => {
-        setCosts([...costs, costsModel]);
-    }
-
-    const deleteOneCost = (index)=>{
-        if(costs.length === 1)
+    const clearGroups = async() => {
+        if(!await confirmDeleteGroup(`Deletar todos as unidade Consumidoras?`))
             return;
 
-        let arr = [...costs];
-        arr = arr.filter((obj, key)=> key !== index);
-
-        setCosts(arr);
+        let arr = [...groups];
+        arr = arr.filter(val => val.isGenerator);
+        setGroups(arr);
     }
+
+    // const addCost = () => {
+    //     setCosts([...costs, costsModel]);
+    // }
+
+    // const deleteOneCost = (index)=>{
+    //     if(costs.length === 1)
+    //         return;
+
+    //     let arr = [...costs];
+    //     arr = arr.filter((obj, key)=> key !== index);
+
+    //     setCosts(arr);
+    // }
     
 
     
@@ -188,6 +219,7 @@ export default function PVForm() {
                     value={groups[key]["pontaRS"]}
                     setValue={insertValue}
                     name="pontaRS"
+                    mask="BRL_CURRENCY"
                 />
     
                 <InputMask
@@ -206,6 +238,7 @@ export default function PVForm() {
                     value={groups[key]["foraPontaRS"]}
                     setValue={insertValue}
                     name="foraPontaRS"
+                    mask="BRL_CURRENCY"
                 />
     
                 <InputMask
@@ -224,6 +257,7 @@ export default function PVForm() {
                     value={groups[key]["horaRS"]}
                     setValue={insertValue}
                     name="horaRS"
+                    mask="BRL_CURRENCY"
                 />
     
                 <InputMask
@@ -242,6 +276,7 @@ export default function PVForm() {
                     value={groups[key]["demandaRS"]}
                     setValue={insertValue}
                     name="demandaRS"
+                    mask="BRL_CURRENCY"
                 />
 
                 <Checkbox
@@ -257,10 +292,46 @@ export default function PVForm() {
     
     const UnitGroupB = (key) => {
 
-        const insertValue = (value,objName)=>{
+        const insertValue = async(value,objName)=>{
             let arr = [...groups];
+            if(objName === "valorFinal")
+                value = await confirmFinalValue(value,arr[key][objName]);
+
             arr[key][objName] = value;
             setGroups(arr);
+        }
+
+        const confirmFinalValue = (val,lastValue)=>{
+            return new Promise((resolve)=>{
+                let valInt = parseFloat(val.replace(",","."));
+                let lastInt = lastValue? parseFloat(lastValue.replace(/\./g,"").replace(",",".")) : 0;
+                if(valInt > 2 && valInt > lastInt) {
+
+                    Alert.alert(
+                        "Valor final "+val+" kWh",
+                        "Este valor está correto?",
+                        [
+                            {
+                                text:"Sim",
+                                onPress:()=> resolve(val)
+                            },
+                            {
+                                text:"Não",
+                                onPress:()=> resolve(lastValue),
+                                type:"default"
+                            }
+                        ],
+                        {
+                            cancelable: true,
+                            onDismiss:()=> resolve(lastValue)
+                        }
+                    )
+                }else{
+                    resolve(val);
+                }
+                            
+            })
+            
         }
 
         return (
@@ -281,7 +352,7 @@ export default function PVForm() {
                     setValue={insertValue}
                     name="medidaConsumo"
                 />
-                <InputMask
+                <InputText
                     keyboardType="number-pad"
                     label="Valor final (kWh)"
                     invalid={invalid?.input === groups[key]["valorFinal"] ? invalid?.message : null}
@@ -294,7 +365,7 @@ export default function PVForm() {
                     label="Fornecimento de energia"
                     invalid={invalid?.input === groups[key]["Fornecimento"] ? invalid?.message : null}
                     value={groups[key]["Fornecimento"]}
-                    values={["Pires do Rio","São Jose"]}
+                    values={["Monofásico","Bifásico","Trifásico"]}
                     setValue={insertValue}
                     name="Fornecimento"
                 />
@@ -323,57 +394,93 @@ export default function PVForm() {
         );
     }
 
-    const UnitCost = (key) => {
+    // const UnitCost = (key) => {
 
-        const insertValue = (value,objName)=>{
-            let arr = [...costs];
-            arr[key][objName] = value;
-            setCosts(arr);
-        }
+    //     const insertValue = (value,objName)=>{
+    //         let arr = [...costs];
+    //         arr[key][objName] = value;
+    //         setCosts(arr);
+    //     }
 
-        return (
-            <View style={styles.uc}>
-                {/* ADICIONAR NÚMERO DA UNIDADE CRIADA */}
-                <View style={styles.group_title}>
-                    <Text style={styles.subtitle_2}>Custo {key + 1}</Text>
-                    {costs.length > 1 && 
-                    <Pressable onPress={()=>deleteOneCost(key)}>
-                        <ITrash style={styles.icon_trash}/>
-                    </Pressable>}
-                </View>
+    //     return (
+    //         <View style={styles.uc}>
+    //             {/* ADICIONAR NÚMERO DA UNIDADE CRIADA */}
+    //             <View style={styles.group_title}>
+    //                 <Text style={styles.subtitle_2}>Custo {key + 1}</Text>
+    //                 {costs.length > 1 && 
+    //                 <Pressable onPress={()=>deleteOneCost(key)}>
+    //                     <ITrash style={styles.icon_trash}/>
+    //                 </Pressable>}
+    //             </View>
                 
-                <InputText
-                    label="Descrição"
-                    invalid={invalid?.input === costs[key].name ? invalid?.message : null}
-                    value={costs[key]["name"]}
-                    setValue={insertValue}
-                    name="name"
-                />
-                <InputMask
-                    label="Valor (R$)"
-                    invalid={invalid?.input === costs[key].price ? invalid?.message : null}
-                    value={costs[key]["price"]}
-                    setValue={insertValue}
-                    name="price"
-                    keyboardType="number-pad"
-                    mask="BRL_CURRENCY"
-                />
-            </View>
-        );
+    //             <InputText
+    //                 label="Descrição"
+    //                 invalid={invalid?.input === costs[key].name ? invalid?.message : null}
+    //                 value={costs[key]["name"]}
+    //                 setValue={insertValue}
+    //                 name="name"
+    //             />
+    //             <InputMask
+    //                 label="Valor (R$)"
+    //                 invalid={invalid?.input === costs[key].price ? invalid?.message : null}
+    //                 value={costs[key]["price"]}
+    //                 setValue={insertValue}
+    //                 name="price"
+    //                 keyboardType="number-pad"
+    //                 mask="BRL_CURRENCY"
+    //             />
+    //         </View>
+    //     );
+    // }
+
+    const generatorUnityTypeA = ()=>{
+        let arr = [...groups];
+        arr = arr.filter((val)=> !val.isGenerator);
+        let group = groupModelA;
+        group.isGenerator = true;
+        arr.push(group);
+        setGroups(arr);
+    }
+
+    const generatorUnityTypeB = ()=>{
+        let arr = [...groups];
+        arr = arr.filter((val)=> !val.isGenerator);
+        let group = groupModelB;
+        group.isGenerator = true;
+        arr.push(group);
+        setGroups(arr);
+    }
+
+    const checkIsValid = ()=>{
+        setInvalid(null);
+        verifyFildsClient({
+            setInvalid, 
+            name, 
+            cpfCnpj,
+            phoneNumber,
+            email,
+        })
+    }
+
+    const closeAddCity = ()=>{
+        setIsOpenAddCity(false);
     }
   
     return (
         <ScrollView>
             <View style={styles.container}>
+                <AddCity isOpen={isOpenAddCity} close={closeAddCity} />
+
                 <View style={styles.limitSize}>
                     <View style={styles.form_group}>
                         <Text style={[styles.subtitle,styles.subtitle_first]}>Cliente</Text>
 
                         <InputText
-                            label="Nome do cliente"
+                            label="Nome"
                             value={name}
                             setValue={setName}
                             invalid={invalid?.input === name ? invalid?.message : null}
+                            onBlur={checkIsValid}
                         />
 
                         <InputMask
@@ -386,6 +493,7 @@ export default function PVForm() {
                             }
                             keyboardType="number-pad"
                             invalid={invalid?.input === cpfCnpj ? invalid?.message : null}
+                            onBlur={checkIsValid}
                         />
 
                         <InputMask
@@ -395,6 +503,7 @@ export default function PVForm() {
                             mask="BRL_PHONE"
                             keyboardType="number-pad"
                             invalid={invalid?.input === phoneNumber ? invalid?.message : null}
+                            onBlur={checkIsValid}
                         />
 
                         <InputText
@@ -403,44 +512,54 @@ export default function PVForm() {
                             setValue={setEmail}
                             type="email"
                             invalid={invalid?.input === email ? invalid?.message : null}
+                            onBlur={checkIsValid}
                         />
                         
-                        <InputMask
+                        {/* <InputMask
                             label="Distancia (KM)"
                             value={distance}
                             setValue={setDistance}
                             keyboardType="number-pad"
                             invalid={invalid?.input === distance ? invalid?.message : null}
-                        />
-
-                        <InputFile
-                            value={file}
-                            setValue={setFile}
-                            label={"Adicionar Documento "}
-                        />
+                        /> */}
 
                         <Text style={styles.subtitle}>Unidade geradora</Text>
 
                         <InputText
-                            label="ID da unidade geradora"
+                            label="ID da unidade geradora/Referencia"
                             value={generatorId}
                             setValue={setGeneratorId}
                             invalid={invalid?.input === generatorId ? invalid?.message : null}
                         />
 
-                        <Select
-                            label="Endereço de instalação"
-                            value={address}
-                            values={["Pires do Rio","São José"]}
-                            setValue={setAddress}
-                            invalid={invalid?.input === address ? invalid?.message : null}
-                        />
+                        <View>
+                            <Select
+                                label="Endereço de instalação"
+                                value={address}
+                                values={["Pires do Rio","São José"]}
+                                setValue={setAddress}
+                                invalid={invalid?.input === address ? invalid?.message : null}
+                                labelTop={true}
+                            />
+
+                            <View style={styles.btn_add_city_wrap}>
+                                <BtnPlus onPress={()=>setIsOpenAddCity(true)}/>
+                            </View>
+                        </View>
 
                         <InputRadio
                             invalid={invalid?.input === addressType ? invalid?.message : null}
                             value={addressType}
                             values={["Rural","Urbano"]}
                             setValue={setAddressType}
+                        />
+
+                        <Select
+                            label="Local de instalação"
+                            invalid={invalid?.input === installLocation ? invalid?.message : null}
+                            value={installLocation}
+                            values={["Terrio","Telhado"]}
+                            setValue={setInstallLocation}
                         />
 
                         {addressType === "Rural"
@@ -455,22 +574,51 @@ export default function PVForm() {
                             :<></>
                         }
 
-                        <Select
-                            label="Local de instalação"
-                            invalid={invalid?.input === installLocation ? invalid?.message : null}
-                            value={installLocation}
-                            values={["Terrio","Telhado"]}
-                            setValue={setInstallLocation}
-                        />
+                        {groups.filter(val => val.isGenerator).length === 0?
+                            <View style={styles.addUcs}>
+                                <Pressable 
+                                android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}
+                                style={[styles.btn_group,styles.btn_unity]} 
+                                onPress={generatorUnityTypeA}>
+                                    {/* <IPlus style={styles.icon}/> */}
+                                    <Text style={styles.btn_text}>Grupo A</Text>
+                                </Pressable>
+                                <Pressable 
+                                android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}
+                                style={[styles.btn_group,styles.btn_unity]} 
+                                onPress={generatorUnityTypeB}>
+                                    {/* <IPlus style={styles.icon}/> */}
+                                    <Text style={styles.btn_text}>Grupo B</Text>
+                                </Pressable>
+
+                                <View style={{width:120}}/>
+                            </View>
+                            :<></>
+                        }
+
+                        {groups.map((group, key) => {
+                            if(group.isGenerator){
+                                return(
+                                    group.groupA
+                                        ? <View style={styles.costs_wrap} key={key}>{UnitGroupA(key)}</View>
+                                        : <View style={styles.costs_wrap} key={key}>{UnitGroupB(key)}</View>
+                                )
+                            }
+                        })}
 
                         <View style={styles.ucs}>
                             <Text style={styles.subtitle}>Unidades consumidoras</Text>
                             {groups.length === 0 ? <Text style={styles.small}>Adicione pelo menos uma UC</Text> : <></>}
-                            {groups.map((group, key) => (
-                                group.groupA
-                                    ? <View style={styles.costs_wrap} key={key}>{UnitGroupA(key)}</View>
-                                    : <View style={styles.costs_wrap} key={key}>{UnitGroupB(key)}</View>
-                            ))}
+                            {groups.map((group, key) =>{ 
+                                
+                                if(!group.isGenerator){
+                                    return (
+                                        group.groupA
+                                            ? <View style={styles.costs_wrap} key={key}>{UnitGroupA(key)}</View>
+                                            : <View style={styles.costs_wrap} key={key}>{UnitGroupB(key)}</View>
+                                    )
+                                }
+                            })}
                         </View>
 
                         <View style={styles.addUcs}>
@@ -491,16 +639,16 @@ export default function PVForm() {
 
                             <Pressable 
                             android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}
-                            style={groups.length
+                            style={groups.filter(val => val.isGenerator === false).length
                                 ? [styles.btn_group,styles.btn_clear]
                                 : [styles.btn_group,styles.btn_clear,styles.desabled]} 
-                            onPress={clearGroups}>
+                            onPress={groups.filter(val => val.isGenerator === false).length?clearGroups:()=>{}}>
                                 <ILess style={[styles.icon,styles.btn_clear_icon]}/>
                                 <Text style={styles.btn_text}>Limpar</Text>
                             </Pressable>
                         </View>
 
-                        <View style={styles.ucs}>
+                        {/* <View style={styles.ucs}>
                             <Text style={styles.subtitle}>Custos</Text>
                             {costs.length === 0 ? <Text  style={styles.small}>Adicione pelo menos um custo</Text> : <></>}
                             
@@ -515,6 +663,14 @@ export default function PVForm() {
                                 <IPlus style={styles.icon} />
                                 <Text style={[styles.add_cost_text, styles.btn_text]}>Adicionar custo</Text>
                             </Pressable>
+                        </View> */}
+
+                        <View style={styles.file_wrap}>
+                            <Documents
+                                value={file}
+                                setValue={setFile}
+                                text={"Adicionar Documento "}
+                            />
                         </View>
 
                         <ButtonSubmit onPress={handleSubmit} value={"Enviar para análise"} styles={styles.btn_submit}/>

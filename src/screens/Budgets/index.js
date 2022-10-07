@@ -8,6 +8,7 @@ import IDetailsList from "../../assets/icons/detailsList";
 import IFilter from "../../assets/icons/filter";
 import Table from "./Table";
 import Dragables from "../../components/Dragables";
+import Leads from "./Leads";
 export default function Budgets({navigation}) {
     const [filter, setFilter] = useState(true);
     const [search, setSearch] = useState("");
@@ -38,13 +39,6 @@ export default function Budgets({navigation}) {
             category:"Fotovoltaica",
             date:"26/07/2022",
             status:1,
-            reminder:[
-                {   
-                    id:1,
-                    name: "Jonatã",
-                    msg:"Enviar proposta"
-                }
-            ]
         },
         {
             id:2,
@@ -62,18 +56,6 @@ export default function Budgets({navigation}) {
             category:"Fotovoltaica",
             date:"26/07/2022",
             status:3,
-            reminder:[
-                {   
-                    id:1,
-                    name: "Bruno",
-                    msg:"Enviar proposta"
-                },
-                {
-                    id:2,
-                    name: "Bruno",
-                    msg:"Enviar proposta teste"
-                },
-            ]
         },
         {
             id:4,
@@ -82,40 +64,47 @@ export default function Budgets({navigation}) {
             category:"Fotovoltaica",
             date:"26/07/2022",
             status:4,
-            reminder:[
-                {   
-                    id:1,
-                    name: "Felipe",
-                    msg:"Enviar proposta"
-                },
-            ]
+        },
+        {
+            id:5,
+            customer:"Felipe",
+            seller:"Bruno",
+            category:"Fotovoltaica",
+            date:"26/07/2022",
+            status:0,
         }
     ]
 
     const status = [
         {
-            key:1,
+            key:4,
             name:"ORÇAMENTO",
-            color:"red",
-            amount:data.filter(obj => obj.status === 1).length,
-        },
-        {
-            key:2,
-            name:"PROPOSTA ENVIADA",
-            color:"dark_blue",
-            amount:data.filter(obj => obj.status === 2).length,
+            color:"blue_dark",
+            amount:data.filter(obj => obj.status === 4).length,
         },
         {
             key:3,
-            name:"NEGOCIÇÃO",
-            color:"orange",
+            name:"PROPOSTA ENVIADA",
+            color:"dark_blue",
             amount:data.filter(obj => obj.status === 3).length,
         },
         {
-            key:4,
+            key:2,
+            name:"NEGOCIÇÃO",
+            color:"orange",
+            amount:data.filter(obj => obj.status === 2).length,
+        },
+        {
+            key:1,
             name:"FINALIZADO",
             color:"green",
-            amount:data.filter(obj => obj.status === 4).length,
+            amount:data.filter(obj => obj.status === 1).length,
+        },
+        {
+            key:0,
+            name:"CANCELADO",
+            color:"red",
+            amount:data.filter(obj => obj.status === 0).length,
         }
     ]
 
@@ -217,8 +206,10 @@ export default function Budgets({navigation}) {
                         </View>
 
                         {!filter
-                            ? <Table data={data} navigate={navigation.navigate}/>
-                            : <Dragables data={data} setData={setData} status={status} navigate={navigation.navigate} />
+                            ? <Table data={data} states={status} navigate={navigation.navigate}/>
+                            : <Dragables data={data} setData={setData} status={status} navigate={navigation.navigate} >
+                                <Leads/>
+                            </Dragables>
                         }
                 </View>
             </View>

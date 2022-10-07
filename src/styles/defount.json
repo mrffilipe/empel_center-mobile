@@ -14,7 +14,10 @@
     "fontSize":{
         "p":17,
         "subtitle":28,
-        "label":20
+        "h3":25,
+        "label":20,
+        "small":15,
+        "min":14
     },
     "container":{
         "paddingHorizontal":15,

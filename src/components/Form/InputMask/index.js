@@ -15,7 +15,8 @@ export default function InputText({
     focus = false,
     invalid = null,
     editable = true,
-    name = null
+    name = null,
+    onBlur = ()=>{},
 }) {
 
   const dollarMask = createNumberMask({
@@ -32,17 +33,17 @@ export default function InputText({
       /[1-3]/, /[0-9]/, /[0-9]/,/[0-9]/, ",", " ",
       /[0-2]/,parseInt(value[12]) === 2 ? /[0-3]/ : /[0-9]/,":",/[0-5]/,/[0-9]/];
       
-    Masks.CPF = [/\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/]
-    Masks.CNPJ = [/\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "/", /\d/, /\d/, /\d/, /\d/, "-", /\d/, /\d/]
+  Masks.CPF = [/\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/]
+  Masks.CNPJ = [/\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "/", /\d/, /\d/, /\d/, /\d/, "-", /\d/, /\d/]
 
 
   const addValue = (val)=>{
       if(mask === "percent"){
-        if(val.includes(",") || val.length > 2){3443
+        if(val.includes(",")){
           val = val;
         }else{
           val = parseInt(val)
-          val = val < 0 ? 0 : val;
+          val = val < 0 ? "" : val;
         }
       }
 
@@ -56,6 +57,7 @@ export default function InputText({
       <MaskInput
         style={!invalid ? [styles.input] : [styles.input,styles.input_invalid]}
         value={value}
+        onEndEditing={()=>onBlur()}
         mask={Masks[mask]}
         placeholder={placeholder}
         onChangeText={(text, unmask) => addValue(text)}
@@ -67,7 +69,7 @@ export default function InputText({
         editable={editable}
       />
 
-      {invalid 
+      {invalid && mask !== "percent"
         ? <Text style={styles.invalid_alert}>{invalid}</Text>
         : <></>
       }

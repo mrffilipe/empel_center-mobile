@@ -20,7 +20,6 @@ export default StyleSheet.create({
         width:35,
         height:35,
         borderRadius:4,
-        backgroundColor:"#fff",
         alignItems:"center",
         justifyContent:"center",
         display:"flex",
