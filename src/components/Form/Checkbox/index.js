@@ -27,12 +27,13 @@ export default function InputText({
   return (
     
     <View style={[styles.checkbox]} >
-        <Text style={styles.label}>{label}</Text>
 
         <Pressable style={[styles.btn,value?styles.enabled:styles.disabled]} onPress={save}>
           <Text style={styles.text}>{value?"Sim":"Não"}</Text>
           <Animatable.View ref={boolRef} style={value?[styles.input]:[styles.input,styles.disabled_input]}/>
         </Pressable>
+
+        <Text style={styles.label}>{label}</Text>
     </View>
   )
 }

@@ -1,0 +1,7 @@
+{
+    "instalationLocation":["Solo","Telhado"],
+    "instalationType":["Monofásico","Bifásico","Trifásico"],
+    "leadOrigin":["Site","Vendedor","Radio","Facebook","Instalação","WhatsApp","Outros"],
+    "permissionTypes":["Administrador","Vendedor"],
+    "addressType":["Rural","Urbano"]
+}

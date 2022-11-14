@@ -92,6 +92,11 @@ export default StyleSheet.create({
     task_title:{
         fontSize:14,
         color:colors.black,
+    },
+    icons_wrap:{
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "center",
     }
     
 

@@ -28,6 +28,5 @@ export default StyleSheet.create({
         color:colors.red,
         width:45,
         height:45,
-        position:"absolute",
     }
 })

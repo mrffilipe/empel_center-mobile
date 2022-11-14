@@ -24,7 +24,16 @@ export default function InputText({
       separator: ',',
       precision: 2,
   })
+
+  const kWhMask = createNumberMask({
+      delimiter: '.',
+      separator: ',',
+      precision: 3,
+  })
+
   Masks["BRL_CURRENCY"] = dollarMask;
+  Masks["KWH"] = Masks.CPF = [/\d/, ",", /\d/, /\d/, /\d/];
+
   Masks.Number = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/];//maskara para apenas numeros
   Masks.Percent = [value.length === 3? '1' : /[\d]/, value.length === 3? '0' : /\d/, value.length === 3? '0' : /\d/];//maskara para porcentagem maximo 100%
   Masks.DateTime = [
@@ -33,8 +42,8 @@ export default function InputText({
       /[1-3]/, /[0-9]/, /[0-9]/,/[0-9]/, ",", " ",
       /[0-2]/,parseInt(value[12]) === 2 ? /[0-3]/ : /[0-9]/,":",/[0-5]/,/[0-9]/];
       
-  Masks.CPF = [/\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/]
-  Masks.CNPJ = [/\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "/", /\d/, /\d/, /\d/, /\d/, "-", /\d/, /\d/]
+  Masks.CPF = [/\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/];
+  Masks.CNPJ = [/\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "/", /\d/, /\d/, /\d/, /\d/, "-", /\d/, /\d/];
 
 
   const addValue = (val)=>{

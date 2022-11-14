@@ -1,19 +1,36 @@
 import styles from "./styles";
 import React, {useState, useEffect} from "react";
-import {View, Text, ScrollView, Pressable} from "react-native";
+import {View, Text, ScrollView, TouchableOpacity} from "react-native";
 import InputText from "../../components/Form/InputText";
 import InputMask from "../../components/Form/InputMask";
 import Button from "../../components/Form/ButtonSubmit";
 import TableA from "./TableA";
+import IHistory from "../../assets/icons/history";
+import Documents from "../../components/Modal/Documents";
+import IDownload from "../../assets/icons/download";
+import GenerateProposal from "./GenerateProposal";
 export default function BudgetDetail({navigation}) {
     const [atualStatus, setAtualStatus] = useState("");
     const [dataGroupA, setDataGroupA] = useState([]);
     const [dataGroupB, setDataGroupB] = useState([]);
-    const [dataGroupC, setDataGroupC] = useState([]);
+    const [dataGenerate, setDataGenerate] = useState([])
+    const [isOpenModalHistory, setIsOpenModalHistory] = useState(false);
 
+    const [documents, setDocuments] = useState([])
+    const [files, setFiles] = useState([]);
 
-    const data1 = [
+    const handleSubmit = ()=>{
+
+    }
+
+    const viewProposal = ()=>{
+
+    }
+
+    const data = [
         {
+            group: 'A',
+            isGenerator:false,
             id:1,
             pontaKWH:20.22,
             pontaRS:200.00,
@@ -24,45 +41,33 @@ export default function BudgetDetail({navigation}) {
             demandaKWH:200,
             demandaRS:200,
             desconto:1,
-        }
-    ]
-
-    const data2 = [
-        {
-            id:1,
-            medidaConsumo:1800.00,
-            valorFinal:200.00,
-            fornecimento:"Pires do Rio",
-            local:"Pires do Rio",
-            extra:5+"00,50",
         },
         {
-            id:1,
-            medidaConsumo:1800.00,
-            valorFinal:200.00,
-            fornecimento:"Pires do Rio",
-            local:"Pires do Rio",
-            extra:5+"",
-        }
-    ]
-
-    const data3 = [
-        {
-            id:1,
-            description: "Distancia ate o local",
-            value:200.00
-        },
-        {
+            group: 'B',
+            isGenerator:false,
             id:2,
-            description: "Distancia ate o local",
-            value:200.00
+            medidaConsumo:1800.00+" kWh",
+            valorFinal:200.00 +" kWh",
+            fornecimento:"Mofásico",
+            precoPorKWH:"R$ 20,00"
+        },
+        {
+            group: 'B',
+            isGenerator:true,
+            id:3,
+            medidaConsumo:1800.00+" kWh",
+            valorFinal:200.00 +" kWh",
+            fornecimento:"Mofásico",
+            precoPorKWH:"R$ 20,00"
         }
     ]
+
+    const filesSaved = []
 
     useEffect(()=>{
-        setDataGroupA(data1);
-        setDataGroupB(data2);
-        setDataGroupC(data3); 
+        setDataGroupA(data.filter(val => !val.isGenerator && val.group === "A"));
+        setDataGroupB(data.filter(val => !val.isGenerator && val.group === "B"));
+        setDataGenerate(data.filter(val => val.isGenerator));
     },[])
 
     const statusData = [
@@ -108,12 +113,17 @@ export default function BudgetDetail({navigation}) {
                 <View style={styles.main}>
                     <View>
                         <View style={[styles.actions_wrap_1,styles.margin]}>
-                            <Text style={styles.category}>Fotovoltaica</Text>
-                            <Text style={atualStatus === "Finalizado!"?[styles.status,styles.green]:[styles.status]}>{atualStatus}</Text>
+                            <View style={[styles.actions_wrap,styles.actions_wrap_2]}>
+                                <Text style={styles.category}>Fotovoltaica</Text>
+                                <Text style={atualStatus === "Finalizado!"?[styles.status,styles.green]:[styles.status]}>{atualStatus}</Text>
+                            </View>
 
-                            <View style={[styles.actions_wrap_1,styles.actions_wrap]}>
-                                <Button onPress={()=>navigation.navigate("Proposta")} styles={styles.btn} value={"Visualizar Proposta"} />
-                                <Button styles={[styles.btn,styles.btn_send]} value={"Enviar Proposta"} />
+                            <View style={[styles.actions_wrap]}>
+                                <GenerateProposal/>
+                                {/* <Button styles={[styles.btn,styles.btn_send]} value={"Enviar Proposta"} /> */}
+                                <TouchableOpacity style={[styles.btn_history]} onPress={()=>setIsOpenModalHistory(!isOpenModalHistory)}>
+                                    <IHistory style={styles.icon_history}/>
+                                </TouchableOpacity>
                             </View>
                         </View>
 
@@ -121,7 +131,7 @@ export default function BudgetDetail({navigation}) {
                         <View style={styles.info_wrap}>
                             <View style={styles.info_single}>
                                 <InputText
-                                    label="Data"
+                                    label="Data de envio"
                                     value={"03/08/2022"}
                                     editable={false}
                                 />  
@@ -162,35 +172,96 @@ export default function BudgetDetail({navigation}) {
                             <View style={styles.info_single}>
                                <InputMask
                                     label="E-mail"
-                                    value={"felipe@gmail.com"}
+                                    value={"felipe@gmail.comkjgf"}
                                     editable={false}
                                 /> 
-                            </View>
-                            
+                            </View>                        
+                        </View>
+
+                        <Text style={styles.h2}>Unidade geradora/consumidora</Text>
+
+                        <View style={styles.info_wrap}>
                             <View style={styles.info_single}>
                                 <InputMask
-                                    label="Distancia "
-                                    value={"50 KM"}
-                                    editable={false}
-                                />
-                            </View>
-                            
-                            <View style={styles.info_single}>
-                                <InputMask
-                                    label="ID da unidade geradora"
+                                    label="ID da unidade/Referencia"
                                     value={"#1238378"}
                                     editable={false}
                                 />  
                             </View>
+
                             
-                                        
+                            <View style={styles.info_single}>
+                                <InputText
+                                    label="Taxa de luz minima (kWh)"
+                                    editable={false}
+                                    value={"1,22"}
+                                />
+                            </View>
+
+                            
+                            <View style={styles.info_single}>
+                                <InputText
+                                    label="Produção extra"
+                                    editable={false}
+                                    value={"2%"}
+                                />
+                            </View>
+
+                            <View style={styles.info_single}>
+                                <InputText
+                                    label="Endereço de instalação"
+                                    editable={false}
+                                    value={"Pires do Rio"}
+                                />
+                            </View>
+
+                            <View style={styles.info_single}>
+                                <InputText
+                                    label="Zona"
+                                    editable={false}
+                                    value={"Urbana"}
+                                />
+                            </View>
+
+                            <View style={styles.info_single}>
+                                <InputText
+                                    label="Local da instalação"
+                                    editable={false}
+                                    value={"Telhado"}
+                                />
+                            </View>
+
+                            <View style={styles.info_single}>
+                                <InputText
+                                    label="transformador existente"
+                                    editable={false}
+                                    value={"2 kVA"}
+                                />
+                            </View>
                         </View>
+                        <TableA data={dataGenerate} title={"Grupo "+dataGenerate[0]?.group}/>
+
+                        <Text style={styles.h2}>Unidades consumidoras</Text>
                         
                         <TableA data={dataGroupA} title="Grupo A"/>
                         <TableA data={dataGroupB} title="Grupo B"/>
-                        <TableA data={dataGroupC} title="Valores adiconais"/>
-                        {/* <TableB/> */}
-                        {/* <TableCosts/> */}
+
+                        <Text style={styles.h2}>Documentos ({filesSaved.length})</Text>
+
+                        <View style={styles.files_wrap}>
+                            {filesSaved.map((val,key)=>{
+                                // arquivos para downsload
+                                return (
+                                    <View key={key} style={styles.file_single}>
+                                        <TouchableOpacity>
+                                            <IDownload style={styles.icon_download} />
+                                        </TouchableOpacity>
+                                        <Text style={styles.p}>{val.label}</Text>
+                                    </View>
+                                )
+                            })}
+                        </View>
+                        
                     </View>
 
                     {/* <AsideHistory/> */}

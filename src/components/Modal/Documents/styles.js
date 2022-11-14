@@ -80,5 +80,20 @@ export default StyleSheet.create({
     file_name:{
         color:colors.accent_dark,
         fontSize:fontSize.p,
+    },
+    submit_wrap:{
+        marginTop:30,
+    },
+    submit_wrap_2:{
+        flexDirection: "row",
+        justifyContent: "flex-end",
+    },
+    btn_red:{
+        backgroundColor:colors.red,
+        marginRight:25,
+        minWidth:150,
+    },
+    btn_submit:{
+        minWidth:150,
     }
 })

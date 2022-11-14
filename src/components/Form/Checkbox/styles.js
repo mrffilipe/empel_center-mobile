@@ -31,8 +31,9 @@ export default StyleSheet.create({
         fontSize:20,
         fontWeight:"bold",
         opacity:0.7,
-        marginRight:20,
+        marginLeft:20,
         color:colors.black,
+        flexShrink:1,
     },
     text:{
         fontSize:13,

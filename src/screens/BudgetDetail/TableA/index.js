@@ -66,34 +66,29 @@ export default function Table({data = [], title}) {
 
                                         {/* GRUPO B */}
 
-                                        {value.medidaConsumo !== undefined && 
+                                        {value?.medidaConsumo !== undefined && 
                                             <View style={[styles2.text_wrap]}>
                                                 <Text style={[styles2.h5,styles.h5,styles.h5_content]}>MEDIDA DE CONSUMO: </Text>
                                                 <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.medidaConsumo}</Text>
                                             </View>
                                         }
-                                        {value.valorFinal !== undefined && 
+                                        {value?.valorFinal !== undefined && 
                                             <View style={[styles2.text_wrap]}>
                                                 <Text style={[styles2.h5,styles.h5,styles.h5_content]}>VALOR FINAL: </Text>
                                                 <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.valorFinal}</Text>
                                             </View>
                                         }
-                                        {value.fornecimento !== undefined && 
+                                        {value?.precoPorKWH !== undefined && 
+                                            <View style={[styles2.text_wrap]}>
+                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>PREÇO POR kWh: </Text>
+                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.precoPorKWH}</Text>
+                                            </View>
+                                        }
+
+                                        {value?.fornecimento !== undefined && 
                                             <View style={[styles2.text_wrap]}>
                                                 <Text style={[styles2.h5,styles.h5,styles.h5_content]}>FORNECIMENTO: </Text>
                                                 <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.fornecimento}</Text>
-                                            </View>
-                                        }
-                                        {value.local !== undefined && 
-                                            <View style={[styles2.text_wrap]}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>LOCAL: </Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.local}</Text>
-                                            </View>
-                                        }
-                                        {value.extra !== undefined && 
-                                            <View style={[styles2.text_wrap]}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>EXTRA: </Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.extra}{value.extra.includes(",")?" kWh":"%"}</Text>
                                             </View>
                                         }
 

@@ -5,11 +5,11 @@ import InputText from "../../components/Form/InputText";
 import ButtonSubmit from "../../components/Form/ButtonSubmit";
 import Logo from "../../assets/images/logoempel.png";
 import {validateEmail} from "../../services/tools";
-import {useMainContext} from "../../contexts/mainContext";
+import {useAuthContext} from "../../contexts/authContext";
 
 export default function Login({navigation}) {
 
-    const {login} = useMainContext();
+    const {login} = useAuthContext();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 

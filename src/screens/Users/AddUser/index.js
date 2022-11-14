@@ -5,6 +5,7 @@ import InputMask from "../../../components/Form/InputMask";
 import Select from "../../../components/Form/Select";
 import styles from "./styles";
 import ButtonSubmit from "../../../components/Form/ButtonSubmit";
+import {verifyFildsClient} from "../../../services/tools";
 const props = {
     close: Function ///fechar modal
 }
@@ -26,15 +27,25 @@ export default function AddUser({isOpen,close} = props) {
 
     const registerUser = (e)=>{
         e.preventDefault();
-        let [name, lastName] = fullName.split(" ");
-        if(!name || !lastName)
-            return setInvalid(fullName);
+        if(!acess)
+            return setInvalid({input:phoneNumber, message:"Selecione um cargo!"});
 
-        if(!email)   
-            return setInvalid(email);
+        if(invalid)
+            return;
 
         
     }
+
+    const checkIsValid = ()=>{
+        setInvalid(null);
+        verifyFildsClient({
+            setInvalid, 
+            name:fullName, 
+            cpfCnpj,
+            email,
+        })
+    }
+
 
     return (
         <Modal
@@ -53,7 +64,8 @@ export default function AddUser({isOpen,close} = props) {
                                 label="Nome e Sobrenome"
                                 value={fullName}
                                 setValue={setFullName}
-                                valid={invalid !== fullName}
+                                onBlur={checkIsValid}
+                                invalid={invalid?.input === fullName ? invalid?.message : null}
                             />
 
                             <InputText
@@ -61,7 +73,8 @@ export default function AddUser({isOpen,close} = props) {
                                 label="E-mail"
                                 value={email}
                                 setValue={setEmail}
-                                valid={invalid !== email}
+                                invalid={invalid?.input === email ? invalid?.message : null}
+                                onBlur={checkIsValid}
                             />
                     
                             <InputMask
@@ -73,6 +86,8 @@ export default function AddUser({isOpen,close} = props) {
                                     : "CNPJ"
                                 }
                                 keyboardType="number-pad"
+                                onBlur={checkIsValid}
+                                invalid={invalid?.input === cpfCnpj ? invalid?.message : null}
                             />
 
                             <View style={styles.select_wrap}>
@@ -85,7 +100,7 @@ export default function AddUser({isOpen,close} = props) {
                             </View>
 
                             <View style={styles.btn_wrap}>
-                                <ButtonSubmit value={"Cancelar"} onPress={close}  styles={[styles.btn, styles.btn_close]}/>
+                                <ButtonSubmit value={"Cancelar"} onPress={clear}  styles={[styles.btn, styles.btn_close]}/>
                                 <ButtonSubmit value={"Cadastrar"} onPress={registerUser}  styles={[styles.btn]}/>
                             </View>
                         </View>

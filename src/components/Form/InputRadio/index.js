@@ -8,24 +8,26 @@ const props = {
     values:Array,
     value:String,
     label:String,
-    setValue:Function
+    setValue:Function,
+    getValue:Boolean //retornar o valor nao o id ou a key
 }
-export default function InputRadio({values, label, setValue, value, name, invalid}= props) {
+export default function InputRadio({values, label, setValue, value, name, invalid, getValue = false}= props) {
   
-    const setSelect = (val)=>{
+    const setSelect = (val,key)=>{
         if(name !== undefined)
             setValue(val,name)
         else
-            setValue(val);
+            setValue(getValue? val :val?.id ? val.id : key);
     }
 
 
-    const Option = (val)=>{
+    const Option = (val, key)=>{
         const btnRef = useRef(null);
 
+        let verify = value === val && getValue || !getValue && value === key;
         useEffect(() => {
             if(btnRef.current){
-                if(value === val)
+                if(verify)
                     btnRef.current.transitionTo({height:75,width:75});
                 else
                     btnRef.current.transitionTo({height:200,width:200});
@@ -33,9 +35,9 @@ export default function InputRadio({values, label, setValue, value, name, invali
         },[value])
 
         return(
-            <Pressable style={styles.btn} onPress={()=>setSelect(val)}>
+            <Pressable style={styles.btn} onPress={()=>setSelect(val, key)}>
                 
-                <Animatable.View  ref={btnRef} style={value === val? [styles.animated]:[styles.animated_desabled]}>
+                <Animatable.View  ref={btnRef} style={verify? [styles.animated]:[styles.animated_desabled]}>
                     <ICheck style={styles.icon}/>
                 </Animatable.View>
             </Pressable>
@@ -50,7 +52,7 @@ export default function InputRadio({values, label, setValue, value, name, invali
                   {values.map((val,key)=>{
                       return (
                           <View key={key} style={styles.option_single} >
-                              {Option(val)}
+                              {Option(val,key)}
                               <Text style={styles.label}>{val}</Text>
                           </View>
                       )

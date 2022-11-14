@@ -87,27 +87,44 @@ export const formatDate = (date = new Date(),dateTime = false, full = false)=>{
     return formatedDate
 }
 
+const verifyFildsClientProps = {
+    setInvalid:Function, 
+    name:String, 
+    cpfCnpj:String,
+    phoneNumber:String,
+    email:String,
+}
+
 export const verifyFildsClient = ({
-    setInvalid = Function, 
-    name = String, 
-    cpfCnpj = String,
-    phoneNumber = String,
-    email = String,
-})=>{
+    setInvalid, 
+    name, 
+    cpfCnpj,
+    phoneNumber,
+    email,
+} = verifyFildsClientProps)=>{
 
     let cpfCnpjUnmask = cpfCnpj.replace(/\./g,"").replace(/\//g,"").replace(/\-/g,""); 
+    if(name && name.split(" ").length < 2 || name && !name.split(" ")[1]){
+        setInvalid({input:name, message:"Inserir nome e sobrenome!"});
+        return false;
+    }
 
-    if(name.split(" ").length < 2 && name)
-        return setInvalid({input:name, message:"Inserir nome e sobrenome!"});
+    if(cpfCnpj && cpfCnpjUnmask.length !== 11 && cpfCnpjUnmask.length !== 14){
+        setInvalid({input:cpfCnpj, message:"CPF ou CNPJ invalido!"});
+        return false;
+    }
 
-    if(cpfCnpjUnmask.length !== 11 && cpfCnpjUnmask.length !== 14 && cpfCnpj)
-        return setInvalid({input:cpfCnpj, message:"CPF ou CNPJ invalido!"})
+    if(phoneNumber && phoneNumber.length < 15) {
+        setInvalid({input:phoneNumber, message:"Telefone invalido!"});
+        return false;
+    }
 
-    if(phoneNumber.length < 15 && phoneNumber) 
-        return setInvalid({input:phoneNumber, message:"Telefone invalido!"})
+    if(email && !validateEmail(email)){
+        setInvalid({input:email,message:"E-mail invalido!"});
+        return false;
+    }
 
-    if(!validateEmail(email) && email)
-        return setInvalid({input:email,message:"E-mail invalido!"});
+    return true;
 }
 
 export const limitText = (value = "",limit = 20) =>{

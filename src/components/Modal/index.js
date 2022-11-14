@@ -5,7 +5,8 @@ import ITimes from "../../assets/icons/times";
 const props = {
     isOpen:Boolean,
     title:String,
-    close: Function ///fechar modal
+    close: Function, ///fechar modal
+    closeTop:Boolean,
 }
 export default function AddCity({isOpen, close, children, title, closeTop = false} = props) {
 

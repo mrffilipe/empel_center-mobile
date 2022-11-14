@@ -6,6 +6,7 @@ import Routes from "./routes";
 import styles from "./styles/global";
 import { NavigationContainer, DefaultTheme } from '@react-navigation/native';
 import {MainProvider} from "./contexts/mainContext";
+import {AuthProvider} from "./contexts/authContext";
 const App = () => {
   const backgroundColor = "#F6F4F4";
   const textColor = "#000";
@@ -27,9 +28,11 @@ const App = () => {
   return (
     <NavigationContainer theme={MyTheme}>
       <SafeAreaView style={styles.container}>
-        <MainProvider>
-          <Routes/>  
-        </MainProvider>
+        <AuthProvider>
+          <MainProvider>
+            <Routes/>  
+          </MainProvider>
+        </AuthProvider>
       </SafeAreaView>
     </NavigationContainer>
   );

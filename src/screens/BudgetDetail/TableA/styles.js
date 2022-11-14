@@ -42,8 +42,8 @@ export default StyleSheet.create({
     },
     title:{
         color:colors.black,
-        fontSize:fontSize.subtitle,
-        paddingTop:30,
+        fontSize:21,
+        paddingTop:10,
         paddingBottom:10,
         paddingHorizontal:10,
         backgroundColor:colors.primary,

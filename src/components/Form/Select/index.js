@@ -22,14 +22,15 @@ export default function Select({
     name = null,
     style2 = {},
     invalid = null,
+    getValue = false,
     } = props) {
     const [modalVisible, setModalVisible] = useState(false);
 
-    const setSelect = (val)=>{
+    const setSelect = (val,key)=>{
         if(name !== undefined)
             setValue(val,name)
         else
-            setValue(val);
+            setValue(getValue? val :val?.id ? val.id : key);
         setModalVisible(false);
     }
 
@@ -38,11 +39,11 @@ export default function Select({
             {label ?<Text style={styles.label}>{label}</Text>:<></>}
 
             <Pressable 
-            style={labelTop?[styles.select,styles.select_w100,invalid ? styles.input_invalid:{}]:[styles.select,invalid ? styles.input_invalid:{}]} 
+            style={labelTop?[styles.select,styles.select_w100,invalid ? styles.input_invalid:{}]:[styles.select,invalid ? styles.input_invalid:{},style2.select]} 
             android_ripple={{ color: "rgba(220, 220, 220, 0.25)"}}
             onPress={()=>setModalVisible(true)}>
-                <Text style={styles.value}>{value}</Text> 
-                <IArrowDown style={styles.icon}/>
+                <Text style={[styles.value,, style2.text]}>{value}</Text> 
+                <IArrowDown style={[styles.icon, style2.text]}/>
             </Pressable>
 
             {invalid 
@@ -64,7 +65,7 @@ export default function Select({
                             {values.map((val,key) =>{
                                 return(
                                     <Pressable 
-                                    onPress={()=>setSelect(val)}
+                                    onPress={()=>setSelect(val,key)}
                                     android_ripple={{ color: "rgba(0, 0, 0, 0.25)"}} 
                                     style={val === value
                                         ?[styles.option,styles.optionSelected]

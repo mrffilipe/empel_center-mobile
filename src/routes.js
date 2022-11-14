@@ -14,18 +14,19 @@ import PVFormScreen from './screens/PVForm';
 import BudgetsScreen from "./screens/Budgets";
 import BudgetDetailScreen from "./screens/BudgetDetail";
 import UsersScreen from "./screens/Users";
+import CitiesScreen from "./screens/Cities";
 import ProposalsScreen from "./screens/Proposals";
 // import PlanningScreen from "./screens/Planning";
 import {colors} from "./styles/defount.json";
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import {useMainContext} from "./contexts/mainContext";
+import {useAuthContext} from "./contexts/authContext";
 
 const Stack = createNativeStackNavigator();
 import { CommonActions } from '@react-navigation/native';
 
 const Routes = () => {
-    const {signed,loggout} = useMainContext();
+    const {signed,loggout} = useAuthContext();
 
     const options = ({ route }) => ({
         drawerIcon: ({ color, focused }) => {
@@ -65,6 +66,10 @@ const Routes = () => {
                 <Stack.Screen 
                     name="Gerenciar usuários" 
                     component={UsersScreen} />
+
+                <Stack.Screen 
+                    name="Gerenciar cidades" 
+                    component={CitiesScreen} />
 
             </Stack.Navigator>
         );

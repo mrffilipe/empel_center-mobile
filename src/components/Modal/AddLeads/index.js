@@ -12,6 +12,7 @@ import * as Animatable from 'react-native-animatable';
 import InputFile from "../..//Form/InputFile";
 import IHelpCircle from "../../../assets/icons/helpCircle";
 import { limitText } from '../../../services/tools';
+import {leadOrigin} from "../../../enum/selectOptions.json";
 const props = {
     close: Function ///fechar modal
 }
@@ -50,25 +51,25 @@ export default function AddCity({isOpen,close} = props) {
         
     }
 
-    const openHelp = (e)=>{
+    const openHelp = async(e)=>{
         e.preventDefault();
         setIsClosedHelp(false);
         try{
-            AsyncStorage.setItem('leadsHelper',JSON.stringify(false));
+            await AsyncStorage.setItem('@leadsHelper',JSON.stringify(false));
         }catch(e){}
     }
 
-    const closeHelp = (e)=>{
+    const closeHelp = async(e)=>{
         e.preventDefault();
         setIsClosedHelp(true);
         try{
-            AsyncStorage.setItem('leadsHelper',JSON.stringify(true));
+            await AsyncStorage.setItem('@leadsHelper',JSON.stringify(true));
         }catch(e){}
     }
 
-    const restorePreference = ()=>{
+    const restorePreference = async()=>{
         try{
-            let res = AsyncStorage.getItem('leadsHelper');
+            let res = await AsyncStorage.getItem('@leadsHelper');
             if(res!== null)
                 setIsClosedHelp(JSON.parse(res))
         }catch(e){}
@@ -173,18 +174,7 @@ export default function AddCity({isOpen,close} = props) {
                                 label="Origem"
                                 value={origin}
                                 setValue={setOrigin}
-                                values={[
-                                    "Redes sociais",
-                                    "Radio",
-                                    "TV",
-                                    "Indicação",
-                                    "E-mail",
-                                    "Blog",
-                                    "YouTube",
-                                    "Links patrocinados",
-                                    "Site",
-                                    "Outros"
-                                ]}
+                                values={leadOrigin}
                             />
                         </>
                     :

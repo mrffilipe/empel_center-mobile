@@ -59,7 +59,13 @@ export default StyleSheet.create({
     btn_clear_icon:{
         color:colors.red,
     },
+    btn_wrap:{
+        flexDirection: "row",
+        marginTop:30,
+        flexWrap:"wrap",
+    },
     btn_submit:{
+        flex:1,
         paddingTop:10,
         paddingBottom:14,
     },
@@ -114,5 +120,54 @@ export default StyleSheet.create({
         position:"absolute",
         left:250,
         top:26
+    },
+    btn_goBack:{
+        backgroundColor:colors.yellow,
+        marginRight:15,
+    },
+    btn_goNext:{
+        backgroundColor:colors.secondary,
+    },
+    ///progresso do formulario
+
+    form_progress:{
+        alignItems: "center",
+        paddingVertical:30,
+    },
+    history_wrap:{
+        flexDirection: "row",
+        justifyContent: "space-between",
+        maxWidth:400,
+        width:"100%",
+    },
+    progress_form_text:{
+        color:colors.black,
+        fontWeight:"bold",
+        minWidth:90,
+        textAlign: "center",
+    },
+    history_line:{
+        width:"100%",
+        position:"absolute",
+        top:-10,
+        backgroundColor:colors.gray,
+        height:3,
+        right:-45,
+        justifyContent:"center",
+    },
+    history_line_last:{
+        height:0,
+        // width:20,
+    },
+    boolet:{
+        width:20,
+        height:20,
+        backgroundColor:colors.gray,
+        left:-10,
+        borderRadius:10,
+        top:-9,
+        position:"absolute",
+        borderWidth:2,
+        borderColor:colors.primary
     }
 })

@@ -26,7 +26,7 @@ export default StyleSheet.create({
         flexWrap:"wrap",
     },
     select_single:{
-        flex:4,
+        flex:1,
     },
     country_wrap:{
         flex:1,
@@ -39,7 +39,7 @@ export default StyleSheet.create({
         marginTop:30
     },
     btn:{
-        minWidth:150
+        minWidth:110
     },
     btn_close:{
         backgroundColor:colors.red,

@@ -6,29 +6,34 @@ import React, {useState, useEffect, useCallback} from "react";
 import BtnPlus from "../../Form/BtnPlus";
 import fileValues from "./values.json";
 import {View,TouchableOpacity, Text} from "react-native";
-import ButtonSubmit from "../../Form/ButtonSubmit";
 import FilePicker from "../../Form/FilePicker";
 import ImageView from "../ViewImage";
+import ButtonSubmit from "../../Form/ButtonSubmit";
 export default function Documents({
     setValue = Function, 
     value = [],
     text = "",
     required = false,
     valueSaved = null, ///valores ja cadastrados para não mostar opção de cadastro 
-    submit = false
+    submit
 }) {
     const [isOpenPicker, setIsOpenPicker] = useState(null);
     const [isOpenFileSelected, setIsOpenFileSelected] = useState(null);
     const [imageToView, setImageToView] = useState(null);
     const [isOpenModalDocuments, setIsOpenModalDocuments] = useState(false);
 
-    const openModal = (e)=>{
-        e.preventDefault();
-        setIsOpenModalDocuments(true);
+    const handleSubmit = ()=>{
+        submit();
+        setIsOpenModalDocuments(false);
     }
 
-    const closeModal = (e)=>{
-        e.preventDefault();
+    const openModal = ()=>{
+        setIsOpenModalDocuments(true);
+        
+    }
+
+    const closeModal = ()=>{
+        setValue([]);
         setIsOpenModalDocuments(false);
     }
 
@@ -66,10 +71,11 @@ export default function Documents({
         setIsOpenPicker(null);
     }
 
-    useEffect(()=>{
+    const getPossibleValues = ()=>{
+        let values = [...fileValues];
         if(valueSaved){
             for(let i in valueSaved){
-                fileValues = fileValues.map((val)=> {
+                values = values.map((val)=> {
                     if(valueSaved[i]?.label === val?.label) 
                         val.value = null;
 
@@ -77,8 +83,14 @@ export default function Documents({
                 })
             }
         }
-        setValue(fileValues);
-    },[])
+
+        return values;
+    }
+
+    useEffect(()=>{
+        let values = getPossibleValues();
+        setValue(values);
+    },[isOpenModalDocuments])
 
     useEffect(() => {
         if(isOpenFileSelected) {
@@ -240,7 +252,7 @@ export default function Documents({
                 {filesView()}
             </Modal>
 
-            <Modal isOpen={isOpenModalDocuments} close={closeModal} title={text} closeTop={true}>
+            <Modal isOpen={isOpenModalDocuments} close={closeModal} title={text} >
                 <View>
 
                     {value.map((val, key) =>{
@@ -259,11 +271,23 @@ export default function Documents({
                         }
                     })}
 
-                    {submit &&
-                        <View style={styles.btn_wrap}>
-                            <TouchableOpacity onPress={submit} style={styles.btn_submit}>Enviar</TouchableOpacity>
-                        </View>
-                    }
+                    
+                        
+
+                            {submit 
+                                ? 
+                                <View style={[styles.submit_wrap, styles.submit_wrap_2]}>
+                                    <ButtonSubmit styles={styles.btn_red} value={"Cancelar"} onPress={closeModal}/>
+                                    <ButtonSubmit styles={styles.btn_submit} value={"Salvar"} onPress={handleSubmit}/>
+                                </View>
+
+                                : 
+                                <View style={styles.submit_wrap}>
+                                    <ButtonSubmit styles={styles.btn_submit} value={"Ok"} onPress={closeModal}/>
+                                </View>
+                            }
+                        
+                    
                 </View>
             </Modal>
         </View>

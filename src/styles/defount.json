@@ -9,7 +9,8 @@
         "green":"rgb(24, 179, 58)",
         "yellow":"rgb(255, 153, 0)",
         "red":"rgb(255, 51, 0)",
-        "orange":"rgb(255, 153, 0)"
+        "orange":"rgb(255, 153, 0)",
+        "gray":"rgb(199, 199, 199)"
     },
     "fontSize":{
         "p":17,

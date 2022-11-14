@@ -6,13 +6,14 @@ import IPlus from "../../assets/icons/plus";
 import IReorder from "../../assets/icons/reorder";
 import { ScrollView, View, Pressable, Text } from 'react-native';
 import AddUser from "./AddUser";
+import Select from "../../components/Form/Select";
 export default function Users() {
     const [data, setData] = useState([]);
     const [isFiltered, setIsFiltered] = useState(0);
     const [permission, setPermission] = useState([]);
     const [isOpenAddUser, setIsOpenAddUser] = useState(false);
 
-    const p = ["Vendedor","Administrador","Developer","Desativadas"];
+    const p = ["Ativas","Vendedor","Administrador","Developer","Desativadas"];
     const d = [
         {
             id:1,
@@ -31,19 +32,31 @@ export default function Users() {
         }
     ]
 
-    const filter = ()=>{
+    const filter = ()=>{//mudar filltro ao clicar 
         let arr = [...d];
         if(!isFiltered)
-            return  setData(d.filter(e=> e.active));
-        let index = p[isFiltered - 1];
+            return  setData(arr.filter(e=> e.active));
+        let index = p[isFiltered];
         if(index !== undefined){
-            if(isFiltered === p.length)
+            if(isFiltered === p.length - 1)
                 setData(arr.filter(e=> !e.active));
             else
                 setData(arr.filter(val => val.permission === index && val.active));
         }else{
             setIsFiltered(0);
         }
+    }
+
+
+    const changeFilter = (val)=>{
+        
+        let index = isFiltered;
+        for(let i in p){
+            if(p[i] === val)   
+                index = i;
+        }
+
+        setIsFiltered(parseInt(index));
     }
 
 
@@ -65,14 +78,12 @@ export default function Users() {
                     <Pressable style={styles.order} onPress={()=>setIsFiltered(isFiltered + 1)}>
                         {/* <BiShuffle/> */}
                         <IReorder style={styles.ico}/>
-                        <Text style={styles.btn_text}>
-                            {!isFiltered 
-                                ?"Ativas"
-                                : p[isFiltered - 1] 
-                                ? p[isFiltered - 1]
-                                :"Ativas"
-                            }
-                        </Text>
+                        <Select
+                            value={p[isFiltered]}
+                            values={p}
+                            setValue={changeFilter}
+                            style2={styles.select}
+                        />
                     </Pressable>
 
                     <Pressable onPress={()=>setIsOpenAddUser(true)} style={styles.add_user}>
