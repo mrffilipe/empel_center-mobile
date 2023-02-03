@@ -9,8 +9,9 @@ import ICheck from "../../../assets/icons/check";
 import ITrash from "../../../assets/icons/trash";
 import NewMessage from "../../NewMessage";
 import AllClear from "../../AllClear";
+import Header from "../Header";
 
-export default function LogoTitle({tintColor,title}) {
+export default function LogoTitle(props) {
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [tasks, setTasks] = useState([]);
     const [editMode, setEditMode] = useState(false);
@@ -86,8 +87,7 @@ export default function LogoTitle({tintColor,title}) {
         )
     }
     return (
-        <View style={styles.container}>
-            <Text style={[styles.title,{color:tintColor}]}>{title}</Text>
+        <Header {...props}>
             <Pressable onPress={()=>setIsOpenModal(!isOpenModal)}>
                 <ICheckList style={styles.icon}/>
             </Pressable>
@@ -100,7 +100,7 @@ export default function LogoTitle({tintColor,title}) {
                         <NewMessage newMessageInfo={newTask} saveMessage={saveTask} title={"Digite uma tarefa"} />
 
                         <View style={styles.headerTasks}>
-                           <Text style={styles.title2}>Tarefas</Text> 
+                            <Text style={styles.title2}>Tarefas</Text> 
                             <View style={styles.headerTasks}>
                                 <Pressable onPress={()=>setEditMode(!editMode)}>
                                     {editMode
@@ -142,6 +142,6 @@ export default function LogoTitle({tintColor,title}) {
                     </View>
                 </View>
             </Modal>
-        </View>
+        </Header>
     );
 }

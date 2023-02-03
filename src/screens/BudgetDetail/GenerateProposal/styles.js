@@ -18,7 +18,7 @@ export default StyleSheet.create({
     },
     btn:{
         ...button,
-        paddingHorizontal:5,
+        paddingHorizontal:10,
         marginTop:10,
         height:40,
     },
@@ -41,5 +41,57 @@ export default StyleSheet.create({
     btn_red:{
         backgroundColor:colors.red,
         minWidth:130,
+    },
+    icon_trash:{
+        backgroundColor: colors.primary,
+        color:colors.red,
+        width:23,
+        height:23,
+        marginLeft:50
+    },
+    extra_or_discount_button:{
+        position:"absolute",
+        right: 0,
+        bottom: 3,
+        color:colors.red,
+        Zindex: 1,
+        elevation:2,
+        fontSize:16,
+    },
+    add_extra_or_discount:{
+        paddingTop: 15
+    },
+    
+    add_extra_or_discount_h3:{
+        fontSize:fontSize.h3,
+        textAlign: 'center',
+        fontWeight:"bold",
+        color: colors.black,
+        opacity: .8,
+    },
+    
+    add_extra_or_discount_div:{
+        display:"flex",
+        justifyContent:"center",
+        alignItems:"center",
+        flexDirection:"row",
+    },
+    
+    add_extra_or_discount_button:{
+        marginTop: 10,
+        alignItems:"center",
+        backgroundColor:colors.secondary,
+        paddingBottom:5,
+        paddingTop:2,
+        borderRadius: 5,
+        minWidth:120,
+        justifyContent: "center",
+        marginHorizontal:15,
+
+    },
+    add_extra_or_discount_button_text:{
+        fontSize:fontSize.p,
+        color: colors.white,
+        fontWeight:"bold",
     }
 })

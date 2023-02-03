@@ -7,9 +7,9 @@ import Logo from "../../assets/images/logoempel.png";
 import {validateEmail} from "../../services/tools";
 import {useAuthContext} from "../../contexts/authContext";
 
-export default function Login({navigation}) {
+export default function Login() {
 
-    const {login} = useAuthContext();
+    const {login, setCallback} = useAuthContext();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -19,8 +19,24 @@ export default function Login({navigation}) {
         if(!validateEmail(email))
             return setInvalid({input:email,message:"E-mail invalido!"});
             
-        await login(email, password);
-    }
+        let res = await login({email,password}).catch(e => e);
+
+        if(res !== 200){
+            setCallback({
+                action:()=>setCallback(null),
+                actionName:"Ok",
+                message:res === "Unauthorized"? "E-mail ou senha inválido" : res,
+                type:0,
+                close: ()=>setCallback(null)
+            })
+        }
+    };
+
+    const checkIsValid = ()=>{
+        if(!validateEmail(email) && email !== "")
+                return setInvalid({input:email,message:"E-mail invalido!"});
+    };
+
 
     return (
         <ScrollView>
@@ -41,6 +57,7 @@ export default function Login({navigation}) {
                         value={email}
                         setValue={setEmail}
                         invalid={email === invalid?.input ? invalid?.message : null}
+                        onBlur={checkIsValid}
                     />
 
                     <InputText

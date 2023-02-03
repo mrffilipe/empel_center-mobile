@@ -12,7 +12,7 @@ import * as Animatable from 'react-native-animatable';
 import InputFile from "../..//Form/InputFile";
 import IHelpCircle from "../../../assets/icons/helpCircle";
 import { limitText } from '../../../services/tools';
-import {leadOrigin} from "../../../enum/selectOptions.json";
+import {leadOrigin} from "../../../data/selectOptions.json";
 const props = {
     close: Function ///fechar modal
 }

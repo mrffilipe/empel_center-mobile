@@ -5,7 +5,7 @@ import InputMask from "../../../components/Form/InputMask";
 import styles from "../styles";
 import Select from "../../../components/Form/Select";
 import InputRadio from "../../../components/Form/InputRadio";
-import selectOptions from "../../../enum/selectOptions.json";
+import selectOptions from "../../../data/selectOptions.json";
 import BtnPlus from '../../../components/Form/BtnPlus';
 
 export default function GeneretorUnity({
@@ -33,7 +33,9 @@ export default function GeneretorUnity({
     UnitGroupA,
     UnitGroupB,
     confirmDeleteGroup,
-    setOpenConfirm
+    setOpenConfirm,
+    installationType,
+    setInstallationType
 }){
 
     const groupModelA = {
@@ -54,8 +56,12 @@ export default function GeneretorUnity({
         "groupB":true,
         "isGenerator":false,
         "mediaConsumo":"",
-        "fornecimento":"",
         "precoPorKWH":""
+    }
+
+    const citieSelectedName = ()=>{
+        let city = cities.filter(c => c.id === parseInt(address))[0];
+        return city ? city?.citie + " (" + city.state+ ")" : "";
     }
 
     const generatorUnityTypeA = ()=>{
@@ -97,20 +103,15 @@ export default function GeneretorUnity({
 
             <View>
                 <InputMask
-                    label={`Produção extra ${extra
-                        ? typeof extra === "number" ? "(%)" : "(kWh)"
-                        : "(%) / (kWh)"
-                    }`
-                    }
-                    invalid={invalid?.input === extra ? invalid?.message : null}
+                    label={`Produção extra (kWh)`}
+                    // invalid={invalid?.input === extra ? invalid?.message : null}
                     value={extra}
                     setValue={setExtra}
                     keyboardType="number-pad"
-                    mask="percent"
                 />
                 <View style={styles.info}>
                     <Text style={styles.small}>Mín. recomendado 5%</Text>
-                    <Text style={styles.small}>Adicione <Text style={styles.span}>" , "</Text> para kWh</Text>
+                    {/* <Text style={styles.small}>Adicione <Text style={styles.span}>" , "</Text> para kWh</Text> */}
                 </View>
                 
             </View>
@@ -118,8 +119,8 @@ export default function GeneretorUnity({
             <View>
                 <Select
                     label="Endereço de instalação"
-                    value={address}
-                    values={["Pires do Rio","São José"]}
+                    value={citieSelectedName()}
+                    values={cities.map(val => {return {name:`${val?.citie}  (${val.state})`, id:val?.id}})}
                     setValue={setAddress}
                     invalid={invalid?.input === address ? invalid?.message : null}
                     labelTop={true}
@@ -137,23 +138,6 @@ export default function GeneretorUnity({
                 setValue={setAddressType}
             />
 
-            <Select
-                label={"Local de instalação"}
-                invalid={invalid?.input === installLocation ? invalid?.message : null}
-                value={installLocation}
-                values={selectOptions?.instalationLocation}
-                setValue={setInstallLocation}
-            />
-
-            <InputMask
-                mask="Number"
-                keyboardType="number-pad"
-                label="Distancia (Km)"
-                value={distance}
-                setValue={setDistance}
-                invalid={invalid?.input === distance ? invalid?.message : null}
-            />
-
             {selectOptions?.addressType[addressType] === selectOptions?.addressType[0]
                 ?
                 <InputMask
@@ -165,6 +149,31 @@ export default function GeneretorUnity({
                 />
                 :<></>
             }
+
+            <InputMask
+                mask="Number"
+                keyboardType="number-pad"
+                label="Distancia (Km)"
+                value={distance}
+                setValue={setDistance}
+                invalid={invalid?.input === distance ? invalid?.message : null}
+            />
+
+            <Select
+                label={"Local de instalação"}
+                invalid={invalid?.input === installLocation ? invalid?.message : null}
+                value={selectOptions?.instalationLocation[installLocation]}
+                values={selectOptions?.instalationLocation}
+                setValue={setInstallLocation}
+            />
+
+            <Select
+                label="Fornecimento de energia"
+                value={selectOptions?.instalationType[installationType]}
+                values={selectOptions?.instalationType}
+                setValue={setInstallationType}
+                invalid={invalid?.input === installationType ? invalid?.message : null}
+            />
 
             {groups.filter(val => val.isGenerator).length === 0?
                 <View style={styles.addUcs}>

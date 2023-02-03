@@ -10,8 +10,9 @@ const props = {
     setData:Function,
     status:Array,
     navigate:Function,
+    changeStatus:Function,
 }
-export default function Drgables({data = [], setData, status = [], navigate, children} = props) {
+export default function Drgables({data = [], setData, status = [], navigate, children, changeStatus} = props) {
 
     const [dropZoneValues, setDropZoneValues] = useState([]);
     const [scrollValue, setScrollValue] = useState(0);
@@ -30,13 +31,14 @@ export default function Drgables({data = [], setData, status = [], navigate, chi
         ]);
     }
 
-    const updateStatus = (index,newStatus)=>{
+    const updateStatus = (index,item)=>{
         let arr = [...data];
-        arr[index].status = newStatus;
+        arr[index].status = item.status;
         let obj = arr[index];
         arr = arr.filter((val,key) => key !== index);
         arr.push(obj);
         setData(arr);
+        changeStatus(item);
     }
 
     const onScrollHandler = (val)=>{
@@ -58,7 +60,7 @@ export default function Drgables({data = [], setData, status = [], navigate, chi
                             onLayout={(e)=> setDropZoneValue(e,val.key)} 
                             style={[styles.draggable_container,{
                                 backgroundColor:isDragIn ? "rgba(220,220,220,0.2)":colors.white
-                                }]}>
+                            }]}>
 
                                 <View style={styles.draggable_title}>
                                     <Text style={[styles.title_status,styles[val?.color]]}>{val.name}</Text>
@@ -80,7 +82,9 @@ export default function Drgables({data = [], setData, status = [], navigate, chi
                                                     navigate={navigate}
                                                     scrollRef={scrollRef}
                                                     data={data}
-                                                    value={value} />
+                                                    value={value} 
+                                                    backgroundColor={styles[val?.color+"_opacity"]}
+                                                />
                                             )
 
                                         }

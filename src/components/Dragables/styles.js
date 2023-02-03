@@ -11,14 +11,14 @@ export default StyleSheet.create({
     },
     list_wrap:{
         marginBottom:7,
-        borderBottomWidth:2,
-        borderRightWidth:1,
+        borderBottomWidth:3,
+        borderRightWidth:2,
         paddingHorizontal:5,
         paddingVertical:5,
-        borderColor:"rgba(100, 100, 100,0.1)",
+        borderColor:"rgba(100, 100, 100,0.2)",
         backgroundColor:colors.primary,
         borderRadius:5,
-        elevation:2,
+        // elevation:2,
     },
     text_wrap:{
         display:"flex",
@@ -38,7 +38,7 @@ export default StyleSheet.create({
     h5_content:{
         opacity:0.7,
         minWidth:110,
-        marginBottom:3
+        marginBottom:3,
     },
     small:{
         color:colors.black,
@@ -58,8 +58,9 @@ export default StyleSheet.create({
     blue_dark:{
         color:colors.accent_dark,
     },
-    black:{
-        color:"#000",
+    gray:{
+        color:colors.black,
+        opacity:.7
     },
     green:{
         color:colors.green
@@ -70,9 +71,30 @@ export default StyleSheet.create({
     orange:{
         color:colors.orange
     },
-    dark_blue:{
+    yellow:{
+        color:colors.yellow
+    },
+    blue:{
         color:colors.accent
     },
+    // blue_opacity:{
+    //     color:colors.accent_dark,
+    // },
+    // blue_dark_opacity:{
+    //     backgroundColor:colors.blue_dark_opacity
+    // },
+    // green_opacity:{
+    //     backgroundColor:colors.green_opacity
+    // },
+    // red_opacity:{
+    //     backgroundColor:colors.red_opacity
+    // },
+    // orange_opacity:{
+    //     backgroundColor:colors.orange_opacity
+    // },
+    // blue_opacity:{
+    //     backgroundColor:colors.blue_opacity
+    // },
     actions:{
         display:"flex",
         flexDirection: "row",
@@ -151,8 +173,7 @@ export default StyleSheet.create({
         position:"relative",
         paddingLeft:10,
         paddingTop:10,
-        elevation:2,
-        zIndex:2,
+        zIndex:1,
     },
     h5_seller:{
         fontSize:fontSize.p,

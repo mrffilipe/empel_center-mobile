@@ -23,7 +23,6 @@ export default function ConsumerUnity({groups,setGroups,UnitGroupA, UnitGroupB, 
         "groupB":true,
         "isGenerator":false,
         "mediaConsumo":"",
-        "fornecimento":"",
         "precoPorKWH":""
     }
 

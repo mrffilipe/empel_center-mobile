@@ -59,6 +59,6 @@ export default StyleSheet.create({
         marginTop:2
     },
     btn_red:{
-        backgroundColor:colors.red
+        backgroundColor:colors.orange
     }
 })

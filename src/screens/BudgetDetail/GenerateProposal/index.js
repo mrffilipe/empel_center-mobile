@@ -1,35 +1,46 @@
 import styles from "./styles";
-import React, {useState} from "react";
+import React, {createRef, useState} from "react";
 import Modal from "../../../components/Modal";
 import InputText from "../../../components/Form/InputText";
 import InputMask from "../../../components/Form/InputMask";
 import Checkbox from "../../../components/Form/Checkbox";
 import API from "../../../services/api";
 import LoadingPDF from "../../../assets/animation/loading_pdf.json";
-import Loading from "../../../components/Loading";
 import {toNumber} from "../../../services/tools";
 import {View, Text, TouchableOpacity} from "react-native";
 import ButtonSubmit from "../../../components/Form/ButtonSubmit";
+import ITrash from "../../../assets/icons/trash";
+import Loading from "../../../components/Loading";
+import Callback from "../../../components/Modal/Callback";
+import Share from "react-native-share";
+import FileViewer from 'react-native-file-viewer';
 
-export default function GenerateProposal({id}) {
+import FileSystem from "react-native-fs";
 
-    const [hasProposal, setHasProposal] = useState(false);
+export default function GenerateProposal({id,customerName}) {
+
+    const [hasProposalId, setHasProposalId] = useState(null);
     const [isOpenGenerateProposal, setIsOpenGenerateProposal] = useState(false);
-    const [loading, setLoading] = useState(false);
 
     const [inverterBrand, setInverterBrand] = useState("");
     const [moduleBrand, setModuleBrand] = useState("");
-    const [modulePower_kWp, setModulePower_kWp] = useState("");
+    const [modulePower_kWp, setModulePower_kWp] = useState("0");
     const [structureBrand, setStructureBrand] = useState("");
     const [materialCost, setMaterialCost] = useState("");
     const [includeMinimumProductionFee, setIncludeMinimumProductionFee] = useState(true);
     const [produceTip, setProduceTip] = useState(true);
     const [produceTime, setProduceTime] = useState(true);
+    const [supplierName, setSupplierName] = useState("");
+    const [extraValueOrDiscount, setExtraValueOrDiscount] = useState("");
+    const [isExtraOrDiscount, setIsExtraOrDiscount] = useState(0)
+
+    const [loading, setLoading] = useState(false);
+    const [callback, setCallback] = useState(null);
+    const [progress, setProgress] = useState(0);
 
     const [invalid, setInvalid] = useState(null);
     
-    const generateProposal = async(e)=>{//a proposta tem validade de 3 dias. apos isso aparecer botão de gerar novamente
-        e.preventDefault();
+    const generateProposal = async()=>{//a proposta tem validade de 3 dias. apos isso aparecer botão de gerar novamente
         setInvalid(null)
         if(!inverterBrand || !moduleBrand || !materialCost || !modulePower_kWp || !structureBrand || !materialCost)
             return setInvalid({input:"",message:"Campo obrigatório!"});
@@ -38,67 +49,115 @@ export default function GenerateProposal({id}) {
             return setInvalid({input:modulePower_kWp,message:"Valor muinto auto"});
         }
 
-
+        let extraOrDiscount = toNumber(extraValueOrDiscount);
+        
+        if(isExtraOrDiscount === 2)//mudar valor para negativo
+            extraOrDiscount = extraOrDiscount - extraOrDiscount - extraOrDiscount;
 
         let params = {
-            "includeDataManually": true,
-            "inverterBrand": inverterBrand,
-            "moduleBrand": moduleBrand,
-            "modulePower_kWp": toNumber(modulePower_kWp),
-            "structureBrand": structureBrand,
-            "materialCost": toNumber(materialCost),
-            "includeMinimumProductionFee": includeMinimumProductionFee,
+            "includeLightRateValue": includeMinimumProductionFee,
             "produceTip": produceTip,
-            "produceTime": produceTime
-        };
-
-        setLoading(true);
-        let res = await API.post("PVView/generate-budget/"+id,params);
-        setLoading(false);
-        
-        if(res && !res.error && res.data?.id !== undefined){
-            setHasProposal(true);
-            close();
-            console.log(res)
-            let url = "/proposta/"+res.data?.id;
-
-            var win = window.open(url, '_blank');
-            win.focus();
-            
+            "produceTime": produceTime,
+            "extraValueOrDiscount": extraOrDiscount,
+            "pvSupplier": {
+                "supplierName": supplierName,
+                "inverterBrand": inverterBrand,
+                "moduleBrand": moduleBrand,
+                "modulePower": toNumber(modulePower_kWp),
+                "structureBrand": structureBrand,
+                "materialCost": toNumber(materialCost)
+            },
+            "idPVForm": parseInt(id)
         }
 
+        setLoading(true);
+        let res = await API.post("PVForm/get-quote",params).catch(e => e);
+        
+        setIsOpenGenerateProposal(false);
+        if(res && !res.error && res.data?.id !== undefined){
+            setHasProposalId(res.data?.id);
+            download(res.data?.id);
+            return;
+        }
+
+        setLoading(false);
+        return setCallback({
+            type: 0,
+            message:res?.error ? res.error : `Algo deu errado!`,
+            action:()=>generateProposal(),
+            actionName:"Tentar Novamente",
+            close:()=>setCallback(null)
+        })
     }
 
-    const download = async()=>{
-        setLoading(true);
-        let res = await API.downloadPDF({id,name:""});
-        setLoading(false);
-        if(res.error)
-            return alert(res.error);
+    const calcProgress = (bites)=>{
+        let percentage = (bites.bytesWritten / bites.contentLength) * 100;
+        if(progress < parseInt(percentage))
+            setProgress(parseInt(percentage));
+    }
 
-            // create file link in browser's memory
-        const href = URL.createObjectURL(res.data);
-        const link = document.createElement('a');
-        link.href = href;
-        link.setAttribute('download', `${"name"}_proposta.pdf`); //or any other extension
-        document.body.appendChild(link);
-        link.click();
-        
-            // clean up "a" element & remove ObjectURL
-        document.body.removeChild(link);
-        URL.revokeObjectURL(href);
+
+    const download = async(proposalId)=>{
+        try{ 
+            setLoading(true);
+            let fileUri = `${FileSystem.DocumentDirectoryPath}/proposta_${id}_${customerName.replace(/ /,"-")}.pdf`;
+            let res = await API.downloadPDF({id:proposalId,fileUri, progress:calcProgress}).catch(e => e);
+            setProgress(100);
+            setTimeout(() => {
+                setLoading(false);
+                setProgress(0);
+            }, 500);
+            
+
+            if(res?.error || !res){
+                return setCallback({
+                    type: 0,
+                    message:res?.error ? res.error : `Algo deu errado!`,
+                    action:()=>download(proposalId),
+                    actionName:"Tentar Novamente",
+                    close:()=>setCallback(null)
+                })
+            }
+
+            FileViewer.open("file://"+fileUri, { showOpenWithDialog: true })//abrir arquivo
+            .catch(error => {
+                share({ //compartilhar arquivo
+                    title: "Empel proposta fotovoltaco",
+                    message: "",
+                    url: "file://"+fileUri,
+                    type: 'application/pdf',
+                }).catch(e =>{})
+            });
+
+        }catch(e){
+            setLoading(false);
+        }
+    }
+
+    const changenExtraOrDiscount = (type)=>{
+        setIsExtraOrDiscount(type);
     }
 
     const close = ()=>{
         setIsOpenGenerateProposal(false);
     }
 
+    const share = async (customOptions = options) => {
+        try {
+            await Share.open(customOptions);
+        } catch (err) {
+
+        }
+    };
+
     return (
         <View>
-            <Loading newLoading={loading} animation={LoadingPDF} />
+            <Loading loading2={loading} animation={LoadingPDF} progress={progress} />
+            <Callback params={callback}/>
             <View style={styles.actions_wrap}>
-                {hasProposal
-                    ? <TouchableOpacity style={[styles.btn, styles.btn_green]}>
+
+                {hasProposalId
+                    ? <TouchableOpacity onPress={()=>download(hasProposalId)} style={[styles.btn, styles.btn_green]}>
                         <Text style={[styles.btn_text]}>Baixar Proposta</Text>
                     </TouchableOpacity>
 
@@ -111,6 +170,14 @@ export default function GenerateProposal({id}) {
             <Modal isOpen={isOpenGenerateProposal} close={close} title="Parametros da proposta" >
                 <View style={styles.form}>
                     <View>
+                        <InputText
+                            label="Nome do fornecedor"
+                            required={true}
+                            value={supplierName}
+                            setValue={setSupplierName}
+                            invalid={invalid?.input === supplierName ? invalid?.message : null}
+                        />
+
                         <InputText
                             label="Marca do Inversor"
                             required={true}
@@ -155,6 +222,38 @@ export default function GenerateProposal({id}) {
                             setValue={setMaterialCost}
                             invalid={invalid?.input === materialCost ? invalid?.message : null}
                         />
+
+                        {!isExtraOrDiscount?
+                            <View style={styles.add_extra_or_discount}>
+                                <Text style={styles.add_extra_or_discount_h3}>Adicionar</Text>
+                                <View style={styles.add_extra_or_discount_div}>
+                                    <TouchableOpacity onPress={()=>changenExtraOrDiscount(1)} style={styles.add_extra_or_discount_button}>
+                                        {/* <BiPlus /> */}
+                                        <Text style={styles.add_extra_or_discount_button_text}>Valor extra</Text>
+                                    </TouchableOpacity>
+                                    <TouchableOpacity onPress={()=>changenExtraOrDiscount(2)} style={styles.add_extra_or_discount_button}>
+                                        {/* <BiPlus /> */}
+                                        <Text style={styles.add_extra_or_discount_button_text}>Desconto</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </View>
+                        :
+                            <View style={styles.extra_or_discount}>
+                                <InputMask
+                                    keyboardType="number-pad"
+                                    mask="BRL_CURRENCY"
+                                    label={isExtraOrDiscount === 1? "Valor extra" : "Valor desconto"}
+                                    required={true}
+                                    value={extraValueOrDiscount}
+                                    setValue={setExtraValueOrDiscount}
+                                    invalid={invalid?.input === extraValueOrDiscount ? invalid?.message : null}
+                                />
+
+                                <TouchableOpacity onPress={()=>changenExtraOrDiscount(0)} style={styles.extra_or_discount_button}>
+                                    <ITrash style={[styles.icon_trash]}/>
+                                </TouchableOpacity>
+                            </View>
+                        }
                     </View>
 
                     <View style={styles.checkbox_wrap}>
@@ -178,7 +277,6 @@ export default function GenerateProposal({id}) {
                     </View>
 
                     <View style={styles.btn_wrap}>
-
                         <ButtonSubmit styles={styles.btn_red} onPress={close} value={"Cancelar"} />
                         <ButtonSubmit styles={styles.btn_submit} onPress={generateProposal} value={"Gerar proposta"} />
                     </View>

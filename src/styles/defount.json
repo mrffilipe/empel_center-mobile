@@ -9,8 +9,14 @@
         "green":"rgb(24, 179, 58)",
         "yellow":"rgb(255, 153, 0)",
         "red":"rgb(255, 51, 0)",
-        "orange":"rgb(255, 153, 0)",
-        "gray":"rgb(199, 199, 199)"
+        "orange":"rgb(250, 123, 5)",
+        "gray":"rgb(199, 199, 199)",
+
+        "blue_dark_opacity": "rgba(25, 46, 91,.15)",
+        "green_opacity":"rgba(24, 179, 58,.08)",
+        "blue_opacity":"rgba(3, 10, 140,.08)",
+        "red_opacity":"rgba(255, 51, 0,.08)",
+        "orange_opacity":"rgba(250, 123, 5,.08)"
     },
     "fontSize":{
         "p":17,

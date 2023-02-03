@@ -39,7 +39,7 @@ export default StyleSheet.create({
         marginTop:30
     },
     btn:{
-        minWidth:110
+        minWidth:130
     },
     btn_close:{
         backgroundColor:colors.red,

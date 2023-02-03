@@ -10,96 +10,142 @@ const AuthContextData = {
     signed:Boolean,
     login:()=> new Promise,
     loggout:Function,
-    DB:[{
+    tasksStoraged:[{
         title:String,//descrição da tarefa
         function:String,//nome da função para requisição
         params:Object, ///parametros para requisição
         status:Number, //sincronizado(1) ou não (0)
         date:Date //data formatada do armazenamento
     }],
-    setDB:Function,
+    setTasksStoraged:Function,
+    setCallback: Function,
+    callback:Object,
+    hasPermission:Function
 };
 
 const AuthContext = createContext(AuthContextData);
 
 export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
-    const [DB,setDB] = useState([]);
+    const [tasksStoraged,setTasksStoraged] = useState([]);
+    const [user,setUser] = useState(null);
+    const [accessData, setAccessData] = useState(null);
+    const [callback, setCallback] = useState(null)
 
-    const [user,setUser] = useState({
-        name: 'user',
-        email: 'user@example.com',
-        permission:2
-    });
-
-    const [token, setToken] = useState(null);
-
-    const getStorageUser = async()=>{
+    const getStorageDataAccessUser = async()=>{
         try {
-            let tok = await AsyncStorage.getItem("@token");
-            let use = await AsyncStorage.getItem("@user");
+            let data = await AsyncStorage.getItem("@dataAccessUser");
+            data = JSON.parse(data);
 
-            if(!tok || !use) return signOut();
-            setUser(JSON.parse(use));
-            setToken(tok);
-        }catch(e) {
-            return;
-        }
+            if(!data) return logout();
+
+            API.setAccessToken(data?.accessToken);
+            data.user.name = data?.user?.firstName + " " + data?.user?.lastName;
+            setUser(data?.user);
+            data.user = null;
+            
+            setAccessData(data);
+        }catch(e) {}
     }
 
-    const login = async(email, password) => {
-        return new Promise((resolve) => {
-            setUser({name: email.split("@")[0], email: email})
+    const login = async({email, password}) => {
+        return new Promise(async(resolve) => {
+            setLoading(true);
+            let response = await API.post("Auth/signin",{email,password}).catch(e => e);
+            if(response?.status !== 200 || response?.error){
+                setLoading(false);
+                resolve(response?.error || response?.status);                
+                return;
+            }
+            let data = response?.data;
 
-            resolve();
+            storageAcess(data);
+            resolve(200);
         }) 
     }
 
-    const loggout = async()=>{
+    const logout = async()=>{
         try{
+            if(!!user){
+                setLoading(true);
+                let res = await API.get('Auth/revoke').catch(e => e);
+                console.log(res);
+                setLoading(false);
+            }
+            
             setUser(null)
-            setToken(null)
-            await AsyncStorage.removeItem('@token');
-            await AsyncStorage.removeItem("@user")
+            setAccessData(null)
+            API.setAccessToken(null);
+            await AsyncStorage.removeItem('@dataAccessUser');
         }catch (e) {}
     }
 
-    const storageUser = async(res)=>{
+    const storageAcess = async(data)=>{
         try{
+            API.setAccessToken(data?.accessToken);
+            let consultant = await API.get("Consultant/details/"+data.user.id).catch(e => e);
+            setLoading(false);
+            if(!consultant?.error && consultant){
+                data.user.idConsultant = consultant?.id;
+                data.user.commissionInPercentage = consultant?.commissionInPercentage;
+            }
+
+            data.user.name = data?.user?.firstName + " " + data?.user?.lastName;
+            setUser(data?.user);
+
+            const jsonData = JSON.stringify(data);
             await AsyncStorage.setItem(
-                '@token',
-                res.token
+                "@dataAccessUser",
+                jsonData
             );
 
-            const jsonValue = JSON.stringify(res.user)
-            await AsyncStorage.setItem(
-                "@user",
-                jsonValue
-            )
-
-            setUser(res.user);
-            setToken(res.token);
+            data.user = null;
+            setAccessData(data);    
         }catch(e){
             return;
         }
     }
 
+    const hasPermission = (permission = 0)=>{
+        return user?.typeAccess <= permission;
+    }
+
+    const verifyRefreshToken = async()=>{
+        let nowDate = new Date();
+        let expiresInDate = new Date(accessData?.expiration);
+        let treeMinuts = 1000 * 60 * 3;
+        let treeMinutsInMilliseconds = 180000;
+
+        // setInterval(()=>{
+        //     if(nowDate.getTime() > expiresInDate.getTime() - treeMinutsInMilliseconds){
+                // refreshToken()
+        //     }
+        // },treeMinuts);
+    }
+
+    const refreshToken = async()=>{
+        let res = await API.post("auth/refresh",accessData).catch(e=> e);
+        console.log(res);
+        console.log(accessData.accessToken);
+        
+    }
+
     const getStorageData = async()=>{//pegar 
         try {
-            let data = await AsyncStorage.getItem("@data");
+            let data = await AsyncStorage.getItem("@tasksStoraged");
             
             if(!data || data === "null") return;
-                setDB(JSON.parse(data));
+                setTasksStoraged(JSON.parse(data));
         }catch(e) {
             return;
         }
     }
 
-    const updateStorageData = async()=>{ //atualizar funçoes a serem sincronizadas offline sempre que o stado DB from atualizado 
+    const updateStorageData = async()=>{ //atualizar funçoes a serem sincronizadas offline sempre que o stado TasksStoraged from atualizado 
         try{
-            const jsonValue = JSON.stringify(DB)
+            const jsonValue = JSON.stringify(tasksStoraged)
             await AsyncStorage.setItem(
-                '@data',
+                '@tasksStoraged',
                 jsonValue
             );
         }catch(e){
@@ -107,16 +153,22 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
-
     useEffect(() => {
-        getStorageUser();
-        getStorageData();
-    }, []);
-
-    useEffect(() => {
-        if(DB)
+        if(tasksStoraged)
             updateStorageData();
-    }, [DB]);
+    }, [tasksStoraged]);
+
+    useEffect(()=>{
+        if(accessData){
+            verifyRefreshToken();
+        }
+    },[accessData])
+
+    useEffect(() => {
+        getStorageDataAccessUser();
+        getStorageData();
+        API.setLogoutApi(logout);
+    },[]);
 
     return (
         <AuthContext.Provider value={{
@@ -125,9 +177,12 @@ export const AuthProvider = ({ children }) => {
             user,
             signed:!!user,
             login,
-            loggout,
-            DB,
-            setDB,
+            logout,
+            tasksStoraged,
+            setTasksStoraged,
+            callback,
+            setCallback,
+            hasPermission
         }}>
             {children}
         </AuthContext.Provider>

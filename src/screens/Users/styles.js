@@ -51,7 +51,8 @@ export default StyleSheet.create({
         backgroundColor:colors.green,
         height:40,
         flex:1,
-        marginLeft:10
+        marginLeft:10,
+        maxWidth:190
     },
     order:{
         ...button,
@@ -66,8 +67,8 @@ export default StyleSheet.create({
         padding:0,
         bottom:-1.5,
         text:{
-          color:colors.white,
-          top:-2,
+            color:colors.white,
+            top:-2,
         },
         select:{
             height:40,
@@ -82,5 +83,19 @@ export default StyleSheet.create({
             borderRadius:5
         }
         
+    },
+    container_length:{
+        ...container,
+        paddingHorizontal:25,
+        paddingVertical:0,
+        alignItems:"flex-start",
+    },
+    h2:{
+        color:colors.black,
+        fontSize:fontSize.p,
+        opacity:.5,
+        padding:0,
+        margin:0,
+        fontWeight:"bold",
     }
 })

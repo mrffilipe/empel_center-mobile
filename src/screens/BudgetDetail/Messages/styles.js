@@ -1,0 +1,77 @@
+import {StyleSheet} from "react-native";
+import {colors,fontSize,container, button} from "../../../styles/defount.json"
+
+export default StyleSheet.create({
+    container:{
+        flex:1,
+    },
+    h2:{
+        fontSize:fontSize.subtitle,
+        color:colors.black,
+        fontWeight:"bold",
+        paddingTop:20,
+        borderTopWidth:2,
+        borderColor:"#fff",
+        marginTop:30,
+        paddingHorizontal:15,
+        marginBottom:5
+    },
+    messages:{
+        paddingHorizontal:15,
+    },
+    form:{
+        paddingHorizontal:15,
+    },
+    message:{
+        flexDirection:"row",
+        marginBottom:15,
+        backgroundColor:colors.white,
+        paddingVertical:15,
+        paddingHorizontal:10,
+        borderRadius:10,
+        elevation:1,
+        zIndex:1,
+        position: "relative",
+    },
+    icon_wrap:{
+        width:60,
+        height:60,
+        borderWidth:1,
+        borderColor:colors.gray,
+        borderRadius:30,
+        padding:10,
+        marginRight:10,
+    },
+    icon:{
+        color:colors.gray,
+        width:"100%",
+        height:"100%",
+    },
+    content_wrap:{
+        paddingVertical:2,
+        flex:1
+    },
+    h5:{
+        color:colors.black,
+        position:"absolute",
+        right:0,
+        top:-10
+    },
+    span:{
+        color:colors.black,
+        fontSize:fontSize.label,
+        fontWeight:"bold",
+        paddingRight:15,
+        paddingBottom:10,
+    },
+    p:{
+        color:colors.black,
+        fontSize:fontSize.p,
+    },
+    btn_wrap:{
+        maxWidth:150,
+    },
+    btn:{
+        backgroundColor:colors.secondary
+    }
+})

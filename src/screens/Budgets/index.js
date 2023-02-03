@@ -9,19 +9,32 @@ import IFilter from "../../assets/icons/filter";
 import Table from "./Table";
 import Dragables from "../../components/Dragables";
 import Leads from "./Leads";
+import API from "../../services/api";
+import {useAuthContext} from "../../contexts/authContext";
+import { useMainContext } from "../../contexts/mainContext";
+import States from "../../data/selectOptions.json";
+
 export default function Budgets({navigation}) {
+    const {setCallback, callback, loading} = useAuthContext();
+    const {budgets, getBudgets, users} = useMainContext();
+
+    const getAll = "Todos";
+    
     const [filter, setFilter] = useState(true);
     const [search, setSearch] = useState("");
-    const [initialDate, setInitialDate] = useState({});
-    const [finalDate, setFinalDate] = useState({});
-    const [seller, setSeller] = useState("Todos");
-    const [category, setCategory] = useState("Todos");
-    const [searchStatus, setSearchStatus] = useState("");
+    const [initialDate, setInitialDate] = useState("");
+    const [finalDate, setFinalDate] = useState("");
+    const [seller, setSeller] = useState(getAll);
+    // const [category, setCategory] = useState(getAll);
+    const [searchStatus, setSearchStatus] = useState(getAll);
 
     const [data, setData] = useState([]);
+    
 
-    const handleSubmit = ()=>{
+    const [status, setStatus] = useState([]);
 
+    const handleSubmit = (e)=>{
+        e.preventDefault();
 
     }
 
@@ -30,96 +43,92 @@ export default function Budgets({navigation}) {
         setFilter(!filter);
     }
 
-
-    const d = [
-        {
-            id:1,
-            customer:"Felipe",
-            seller:"Bruno",
-            category:"Fotovoltaica",
-            date:"26/07/2022",
-            status:1,
-        },
-        {
-            id:2,
-            customer:"Felipe",
-            seller:"Bruno",
-            category:"Fotovoltaica",
-            date:"26/07/2022",
-            status:2,
-            reminder:[]
-        },
-        {
-            id:3,
-            customer:"Bruno",
-            seller:"Felipe",
-            category:"Fotovoltaica",
-            date:"26/07/2022",
-            status:3,
-        },
-        {
-            id:4,
-            customer:"Felipe",
-            seller:"Bruno",
-            category:"Fotovoltaica",
-            date:"26/07/2022",
-            status:4,
-        },
-        {
-            id:5,
-            customer:"Felipe",
-            seller:"Bruno",
-            category:"Fotovoltaica",
-            date:"26/07/2022",
-            status:0,
-        }
-    ]
-
-    const status = [
-        {
-            key:4,
-            name:"ORÇAMENTO",
-            color:"blue_dark",
-            amount:data.filter(obj => obj.status === 4).length,
-        },
-        {
-            key:3,
-            name:"PROPOSTA ENVIADA",
-            color:"dark_blue",
-            amount:data.filter(obj => obj.status === 3).length,
-        },
-        {
-            key:2,
-            name:"NEGOCIÇÃO",
-            color:"orange",
-            amount:data.filter(obj => obj.status === 2).length,
-        },
-        {
-            key:1,
-            name:"FINALIZADO",
-            color:"green",
-            amount:data.filter(obj => obj.status === 1).length,
-        },
-        {
-            key:0,
-            name:"CANCELADO",
-            color:"red",
-            amount:data.filter(obj => obj.status === 0).length,
-        }
-    ]
-
-    const clearView = ()=>{
-        setInitialDate({});
-        setFinalDate({});
-        setSeller("");
-        setCategory("");
-        setSearchStatus("");
+    const clearForm = ()=>{
+        setInitialDate("");
+        setFinalDate("");
+        setSeller(getAll);
+        // setCategory(getAll);
+        setSearchStatus(getAll);
         setSearch("");
     }
 
+    const filterSearch = ()=>{ //pesquisar filtrar
+        let dataFiltered = budgets.filter(item => {
+            let res = true;
+            let createdAtTime = new Date(item.createdAt.split("T")[0]);
+
+            if(initialDate){
+                let initialTime = new Date(Object.keys(initialDate)[0]);
+                if(createdAtTime < initialTime)
+                    res = false;
+            }
+
+            if(finalDate){
+                let finalTime = new Date(Object.keys(finalDate)[0]);
+                if(createdAtTime > finalTime)
+                    res = false;
+            }
+
+            if(search && !item.customerName.toLowerCase().includes(search.toLowerCase()) && !item.seller.toLowerCase().includes(search.toLowerCase()))
+                res = false;
+
+            if(seller  && seller !== getAll && !item?.seller.toLowerCase().includes(seller.toLowerCase()))
+                res = false;
+
+            if(searchStatus && searchStatus !== getAll && status[item.status]?.name !== searchStatus)
+                res = false;
+            
+            return res;
+        });
+        setData(dataFiltered);
+    }
+
+    const changeStatus = async(obj)=>{
+
+        let res = await API.put("PVForm/change-status",{},
+        {   
+            headers:
+                {
+                    id:obj?.id,
+                    newStatus:obj?.status
+                }
+        }).catch(err => err);
+                
+        if(res.error || res !== 200){
+            getBudgets();
+            setCallback({
+                type: 0,
+                message:res?.error ? res.error : res === 204 ? "Não foi possível mudar status.\n Error: "+res : `Algo deu errado!`,
+                action:()=>setCallback(null),
+                actionName:"Ok",
+                close:()=>setCallback(null)
+            })
+        }
+    }
+
+    const usersList = ()=>{
+        let arr = users.filter(user => user.consultant && user.consultant.active).map(user => user.firstName+ " " + user.lastName);
+        return arr;
+    }
+
     useEffect(()=>{
-        setData(d);
+        if(!budgets.length)
+            getBudgets(true);
+        else
+            getBudgets(false);//atualizar sem loading
     },[])
+
+
+    useEffect(()=>{
+        filterSearch();
+    },[search, initialDate, finalDate, searchStatus, budgets, seller])
+
+    useEffect(()=>{
+        setStatus(States.budgetsStatus.map((val)=>{//adcionar quantidade em cada status
+            val.amount = data.filter(obj => obj.status === val.key).length
+            return val;
+        }))
+    },[data])
 
     return (
         <ScrollView>
@@ -149,11 +158,12 @@ export default function Budgets({navigation}) {
                                             label="Vendedor"
                                             labelTop={true}
                                             value={seller}
-                                            values={["Todos","Bruno","felipe"]}
+                                            values={[getAll,...usersList()]}
                                             setValue={setSeller}
+                                            getValue={true}
                                         />
                                     </View>
-                                    <View style={[styles.input_single]}>
+                                    {/* <View style={[styles.input_single]}>
                                         <Select
                                             label="Categoria"
                                             labelTop={true}
@@ -161,14 +171,15 @@ export default function Budgets({navigation}) {
                                             values={["Todos","Fotovoltaica","Motores"]}
                                             setValue={setCategory}
                                         />
-                                    </View>
+                                    </View> */}
 
                                     {!filter ? <View style={styles.input_single}><Select
                                         label="Status"
                                         labelTop={true}
                                         value={searchStatus}
-                                        values={["Todos","Pendente","Em Andamento","Finalizadas"]}
+                                        values={[getAll,... States?.budgetsStatus.map(val => val.name)]}
                                         setValue={setSearchStatus}
+                                        getValue={true}
                                     /></View> :
                                     <></>}
 
@@ -194,7 +205,7 @@ export default function Budgets({navigation}) {
                                         }
                                     </Pressable>
 
-                                    <Pressable onPress={clearView} style={[styles.btn, styles.btn_red]} android_ripple={{ color: "rgba(250, 250, 250, 0.3)"}}>
+                                    <Pressable onPress={clearForm} style={[styles.btn, styles.btn_red]} android_ripple={{ color: "rgba(250, 250, 250, 0.3)"}}>
                                         <Text  style={styles.btn_text}>Limpar</Text>
                                     </Pressable>
                                     
@@ -207,7 +218,7 @@ export default function Budgets({navigation}) {
 
                         {!filter
                             ? <Table data={data} states={status} navigate={navigation.navigate}/>
-                            : <Dragables data={data} setData={setData} status={status} navigate={navigation.navigate} >
+                            : <Dragables changeStatus={changeStatus} data={data} setData={setData} status={status} navigate={navigation.navigate} >
                                 <Leads/>
                             </Dragables>
                         }

@@ -7,80 +7,64 @@ import IReorder from "../../assets/icons/reorder";
 import { ScrollView, View, Pressable, Text } from 'react-native';
 import AddUser from "./AddUser";
 import Select from "../../components/Form/Select";
-export default function Users() {
+import optionsSelect from "../../data/selectOptions.json";
+import { useMainContext } from '../../contexts/mainContext';
+
+export default function Users({navigation}) {
+    const {users, getUsers} = useMainContext();
+
     const [data, setData] = useState([]);
     const [isFiltered, setIsFiltered] = useState(0);
-    const [permission, setPermission] = useState([]);
     const [isOpenAddUser, setIsOpenAddUser] = useState(false);
 
-    const p = ["Ativas","Vendedor","Administrador","Developer","Desativadas"];
-    const d = [
-        {
-            id:1,
-            name:"Felipe",
-            email:"email@gmail.com",
-            phone:99999999999,
-            permission:p[2],
-            active:false
-        },{
-            id:2,
-            name:"Bruno",
-            email:"email@gmail.com",
-            phone:99999999999,
-            permission:p[1],
-            active:true
-        }
-    ]
+    const permissionTypesFilter = ["Ativos",...optionsSelect?.typeAccess,"Inativos"]
 
     const filter = ()=>{//mudar filltro ao clicar 
-        let arr = [...d];
-        if(!isFiltered)
-            return  setData(arr.filter(e=> e.active));
-        let index = p[isFiltered];
-        if(index !== undefined){
-            if(isFiltered === p.length - 1)
-                setData(arr.filter(e=> !e.active));
-            else
-                setData(arr.filter(val => val.permission === index && val.active));
+        let arr = [...users];
+        if(!isFiltered)// 0 todas as contas ativas
+            return  setData(arr.filter(e=> e?.consultant && e?.consultant?.active));
+        let permissionValueSelected = permissionTypesFilter[isFiltered];
+        if(permissionValueSelected !== undefined){
+            if(isFiltered === permissionTypesFilter.length - 1)//contas desativadas
+                setData(arr.filter(e=> !e?.consultant || !e?.consultant?.active));
+            else //filtrar por permissão ou cargo
+                setData(arr.filter(val => optionsSelect?.typeAccess[val.typeAccess] === permissionValueSelected && val?.consultant && val?.consultant?.active));
         }else{
             setIsFiltered(0);
         }
     }
 
-
     const changeFilter = (val)=>{
-        
-        let index = isFiltered;
-        for(let i in p){
-            if(p[i] === val)   
-                index = i;
-        }
 
-        setIsFiltered(parseInt(index));
+        setIsFiltered(parseInt(val));
     }
-
 
     useEffect(()=>{
         filter();
-    },[isFiltered])
+    },[isFiltered, users])
 
     useEffect(()=>{
-        setData(d.filter(e=> e.active));
-        setPermission(p.filter(e => e !== "Desativadas"))
+        if(users.length === 0){
+            getUsers(true);   
+        }else{
+            getUsers()
+        }
     },[])
+
+
     return (
         <ScrollView>
             <View style={styles.users}>
                 
-                <AddUser isOpen={isOpenAddUser} close={setIsOpenAddUser} />
+                <AddUser isOpen={isOpenAddUser} close={setIsOpenAddUser} updateUsers={getUsers}/>
 
                 <View style={styles.container}>
                     <Pressable style={styles.order} onPress={()=>setIsFiltered(isFiltered + 1)}>
                         {/* <BiShuffle/> */}
                         <IReorder style={styles.ico}/>
                         <Select
-                            value={p[isFiltered]}
-                            values={p}
+                            value={permissionTypesFilter[isFiltered]}
+                            values={permissionTypesFilter}
                             setValue={changeFilter}
                             style2={styles.select}
                         />
@@ -92,7 +76,14 @@ export default function Users() {
                         <Text style={styles.btn_text}>Novo usuário</Text>
                     </Pressable>
                 </View>
-                <Table data={data} permission={permission} setData={setData}/>
+
+                <View style={styles.container_length}>
+                    <Text style={styles.h2}>
+                        Resultados ({data.length})
+                    </Text>
+                </View>
+                
+                <Table data={data} navigation={navigation} setData={setData} getData={getUsers}/>
             </View>
         </ScrollView>
     )

@@ -26,7 +26,7 @@ export default function Table({data, navigate, states}) {
 
                                     <View style={styles.text_wrap}>
                                         <Text style={[styles.h5, styles.h5_content]}>Cliente: </Text>
-                                        <Text style={styles.h5}>{value?.customer}</Text>
+                                        <Text style={styles.h5}>{value?.customerName}</Text>
                                     </View>
                                 </View>
 

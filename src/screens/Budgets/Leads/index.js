@@ -1,15 +1,17 @@
 import styles from "../../../components/Dragables/styles";
 import React, {useState, useEffect, useRef} from "react";
-import {View, Text} from "react-native";
+import {View, Text, TouchableOpacity} from "react-native";
 import AddLeads  from "../../../components/Modal/AddLeads";
 import BtnPlus from "../../../components/Form/BtnPlus";
 // import IUser from "../../../assets/icons/user";
 import {limitText} from "../../../services/tools";
+import { useNavigation } from '@react-navigation/native';
+
 const props = {
     data:Array,
 }
 export default function Drgables({data = []} = props) {
-
+    const navigation = useNavigation();
     const [isOpenAddLeads, setIsOpenAddLeads] = useState(false);
 
     const leads = [
@@ -19,64 +21,6 @@ export default function Drgables({data = []} = props) {
             email:"bruno@gmail.com",
             phone:99999999999,
             origin:"Redes sociais",
-            date:"26/07/2022",
-        },{
-            id:2,
-            name:"Bruno",
-            email:"bruno@gmail.com",
-            phone:99999999999,
-            origin:"Site",
-            date:"26/07/2022",
-        },{
-            id:2,
-            name:"Bruno",
-            email:"bruno@gmail.comilhjhjdssfhuikghi",
-            phone:99999999999,
-            origin:"Site",
-            date:"26/07/2022",
-        },
-        {
-            id:1,
-            name:"Felipe",
-            email:"bruno@gmail.com",
-            phone:99999999999,
-            origin:"Redes sociais",
-            date:"26/07/2022",
-        },{
-            id:2,
-            name:"Bruno",
-            email:"bruno@gmail.com",
-            phone:99999999999,
-            origin:"Site",
-            date:"26/07/2022",
-        },{
-            id:2,
-            name:"Bruno",
-            email:"bruno@gmail.comilhjhjdssfhuikghi",
-            phone:99999999999,
-            origin:"Site",
-            date:"26/07/2022",
-        },
-        {
-            id:1,
-            name:"Felipe",
-            email:"bruno@gmail.com",
-            phone:99999999999,
-            origin:"Redes sociais",
-            date:"26/07/2022",
-        },{
-            id:2,
-            name:"Bruno",
-            email:"bruno@gmail.com",
-            phone:99999999999,
-            origin:"Site",
-            date:"26/07/2022",
-        },{
-            id:2,
-            name:"Bruno",
-            email:"bruno@gmail.comilhjhjdssfhuikghi",
-            phone:99999999999,
-            origin:"Site",
             date:"26/07/2022",
         }
     ]
@@ -90,7 +34,7 @@ export default function Drgables({data = []} = props) {
 
                 <View style={styles.draggable_title}>
                     <View style={styles?.card_header}>
-                        <Text style={[styles.title_status,styles.black]}>Leads</Text>
+                        <Text style={[styles.title_status,styles.gray]}>Leads</Text>
                         <BtnPlus onPress={()=>setIsOpenAddLeads(true)}/>
                     </View>
                     
@@ -100,17 +44,10 @@ export default function Drgables({data = []} = props) {
                 <View style={styles.drag_wrap}>
                     {leads.map((value,index)=>{
                         return(
-                            <View key={index}>
+                            <TouchableOpacity onPress={()=>navigation.navigate("Lead",{id:value.id})} key={index}>
                                 <View style={[styles.list_wrap, styles.list_wrap_draggable]}>
                     
                                     <View style={[styles.info,styles.info_draggable]} >
-{/*                     
-                                        {value.perfil
-                                            ? <Image
-                                                style={styles.tinyLogo}
-                                                source={url('')}/>
-                                            : <View style={styles.img_icon_wrap}><IUser style={styles.img_icon} /></View>
-                                        }  */}
                                 
                                         <View>
                                             <View style={styles.text_wrap}>
@@ -140,10 +77,8 @@ export default function Drgables({data = []} = props) {
                                     </View>
                                 
                                 </View>
-                            </View>
+                            </TouchableOpacity>
                         )
-
-                        
                     })}
                 </View>
             </View>

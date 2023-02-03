@@ -6,34 +6,103 @@ import Select from "../../../components/Form/Select";
 import styles from "./styles";
 import ButtonSubmit from "../../../components/Form/ButtonSubmit";
 import {verifyFildsClient} from "../../../services/tools";
+import optionsSelect from "../../../data/selectOptions.json";
+import api from "../../../services/api";
+import VMasker from 'vanilla-masker';
+import { useAuthContext } from '../../../contexts/authContext';
+import Callback from "../../../components/Modal/Callback";
+import Loading from "../../../components/Loading";
 const props = {
+    isOpen: Boolean,
+    updateUsers: Function,
     close: Function ///fechar modal
 }
-export default function AddUser({isOpen,close} = props) {
+export default function AddUser({isOpen, close, updateUsers} = props) {
 
     const [fullName, setFullName] = useState("");
     const [email, setEmail] = useState("");
     const [cpfCnpj, setCpfCnpj] = useState("");
     const [invalid, setInvalid] = useState(null);
-    const [acess, setAcess] = useState("");
+    const [access, setAccess] = useState(1);
+    const [callback, setCallback] = useState(null);
+    const [loading, setLoading] = useState(false);
 
     const clear = ()=>{
         setFullName("");
         setEmail("");
         setCpfCnpj("");
+        setAccess(0);
         setInvalid(null);
         close(false);
     }
 
-    const registerUser = (e)=>{
-        e.preventDefault();
-        if(!acess)
-            return setInvalid({input:phoneNumber, message:"Selecione um cargo!"});
+    const registerUser = async()=>{
+        
+        if(!access)
+            return setInvalid({input:access, message:"Selecione um cargo!"});
 
-        if(invalid)
+        if(!verifyClient())
             return;
 
+        const firstName =  fullName.split(" ")[0];
+        const lastName = fullName.split(firstName)[1];
+
+        let params = {
+            firstName,
+            lastName,
+            document: {
+                record: VMasker.toNumber(cpfCnpj),
+                documentType: 0
+            },
+            email,
+            typeAccess:parseInt(access)
+        }
         
+        try{
+            setLoading(true);
+            let res = await api.post("Auth/register",params).catch(e => e);
+            setLoading(false);
+
+            if(res?.error || res.status !== 200){
+                return setCallback({
+                    message:res.error? res.error : res.status === 204? "E-mail ou documento já cadastrado" : res.status,
+                    close:()=>setCallback(null),
+                    action:()=>setCallback(null),
+                    actionName:"Ok!"
+                });
+            }
+
+            setCallback({
+                message:"Usuário cadastrado com sucesso!",
+                close:()=>setCallback(null),
+                action:()=>setCallback(null),
+                type:1,
+                actionName:"Ok!"
+            });
+            updateUsers();
+            clear();
+        }catch(err){
+            setLoading(false);
+        }
+        
+    }
+
+    const verifyClient = ()=>{
+        
+        if(fullName === "" || cpfCnpj === "" || access === "" || email === ""){
+                setInvalid({input:"",message:"Campo obrigatório!"});
+                return false;
+        }
+
+        if(!verifyFildsClient({
+            setInvalid, 
+            name:fullName, 
+            cpfCnpj,
+            email,
+        })){
+            return false;
+        }
+        return true;
     }
 
     const checkIsValid = ()=>{
@@ -54,7 +123,8 @@ export default function AddUser({isOpen,close} = props) {
             visible={isOpen}
         >
             <View style={styles.modal}>
-                
+                <Callback params={callback} />
+                <Loading loading2={loading}/>
                 <View style={styles.modal_main}>
                     <ScrollView >
                         <Text style={styles.title}>Cadastrar usuario</Text>
@@ -93,9 +163,9 @@ export default function AddUser({isOpen,close} = props) {
                             <View style={styles.select_wrap}>
                                 <Select
                                     label="Cargo: "
-                                    value={acess}
-                                    setValue={setAcess}
-                                    values={["Vendedor"]}
+                                    value={optionsSelect?.typeAccess[parseInt(access)]}
+                                    setValue={setAccess}
+                                    values={optionsSelect?.typeAccess}
                                 />
                             </View>
 

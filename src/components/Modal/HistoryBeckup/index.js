@@ -11,7 +11,7 @@ import {useAuthContext} from "../../../contexts/authContext";
 import {formatDate} from "../../../services/tools";
 
 export default function HistoryBeckup() {
-    const {DB,setDB} = useAuthContext([]);
+    const {tasksStoraged,setTasksStoraged} = useAuthContext([]);
 
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [isConnected, setIsConnected] = useState(false);
@@ -47,7 +47,7 @@ export default function HistoryBeckup() {
         deleteOldHistory()
         if(updating) return;
         setUpdating(true);
-        let arr = [...DB];
+        let arr = [...tasksStoraged];
         try{
             for (const [key, val] of arr.entries()) {
                 if(!val.status){
@@ -61,7 +61,7 @@ export default function HistoryBeckup() {
             console.log(e)
         }
 
-        setDB(arr);
+        setTasksStoraged(arr);
         setUpdating(false);
     }
 
@@ -88,14 +88,14 @@ export default function HistoryBeckup() {
     const deleteOldHistory = ()=>{
         const compareDate = new Date();
         compareDate.setDate(compareDate.getDate() - 7);
-        let arr = [...DB];
+        let arr = [...tasksStoraged];
 
         arr = arr.filter( val => {
             let date = new Date(val.date);
             return compareDate.getTime() <= date.getTime() || !val.status;
         });
 
-        setDB(arr);
+        setTasksStoraged(arr);
     }
 
     useEffect(() => {
@@ -116,11 +116,11 @@ export default function HistoryBeckup() {
     },[isConnected])
 
     useEffect(() => {
-        let s = DB.filter((val)=> val.status);
-        let ns = DB.filter((val)=> !val.status);
+        let s = tasksStoraged.filter((val)=> val.status);
+        let ns = tasksStoraged.filter((val)=> !val.status);
         setSincronized(s);
         setNotSincronized(ns);
-    },[DB])
+    },[tasksStoraged])
 
     return (
         <View style={styles.container}>

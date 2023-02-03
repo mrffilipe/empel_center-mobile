@@ -3,33 +3,38 @@ import {colors,fontSize,button} from "../../../styles/defount.json"
 
 export default StyleSheet.create({
     container:{
-        marginTop:20,
-        paddingTop:5,
+        marginTop:10,
         paddingBottom:20,
-        paddingHorizontal:15,
+        // paddingHorizontal:15,
+        marginLeft:15,
         flex:1,
     },
     list:{
-        paddingHorizontal:10,
+        flexDirection:'row',
+        flexWrap:"wrap"
     },
     info:{
         backgroundColor:colors.white,
         marginBottom:15,
-        borderRadius:5
+        borderRadius:5,
+        marginRight:15,
+        elevation:2,
+        zIndex:2,
+        flex:1,
+        minWidth:280,
     },
     info_desabled:{
         opacity:0.8,
     },
     table_wrap:{
         width:"100%",
-       paddingHorizontal:7,
-
+        paddingHorizontal:10,
+        paddingVertical:10,
     },
     text_wrap:{
         display: 'flex',
         flexDirection: "row",
         justifyContent: "space-between",
-        flex:1,
         marginTop:7,
         backgroundColor:"rgba(150,150,150,0.02)",
     },
@@ -45,18 +50,19 @@ export default StyleSheet.create({
         justifyContent:"flex-end",
     },
     h5:{
-        minWidth:90,
         textAlign: "left",
-        textTransform: "uppercase",
         marginRight:5,
-        flex:.7,
         fontWeight:"bold",
         fontSize:fontSize.p,
         color:colors.black,
+        opacity:.8
+    },
+    content_wrap:{
+        flex:1,
     },
     h5_content:{
-        opacity:0.7,
-        minWidth:110,
+        opacity:1,
+        flex:1,
         marginBottom:3,
         color:colors.accent,
     },
@@ -67,13 +73,10 @@ export default StyleSheet.create({
         marginTop:10,
         backgroundColor:"rgba(100,100,100,0.1)"
     },
-    flex1:{
-        flex:10,
-    },
     btn:{
         ...button,
         backgroundColor:colors.red,
-        paddingTop:0,
+        paddingTop:1,
         paddingBottom:4,
     },
     btn_activete:{
@@ -81,6 +84,10 @@ export default StyleSheet.create({
     },
     btn_text:{
         color:colors.white,
-        fontSize:fontSize.p
+        fontSize:fontSize.small,
+        fontWeight:"bold"
+    },
+    not_link:{
+        color:colors.black
     }
 })

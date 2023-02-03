@@ -4,7 +4,7 @@ export default StyleSheet.create({
     container: {
         flex: 1,
         position: "relative",
-        left:-73,
+        left:-70,
         display: "flex",
         justifyContent: "space-between",
         flexDirection: "row",
@@ -14,7 +14,7 @@ export default StyleSheet.create({
     icon:{
         height:40,
         width:40,
-        color: "#fff",
+        color: colors.white,
     },
     title: {
         fontSize: 19,

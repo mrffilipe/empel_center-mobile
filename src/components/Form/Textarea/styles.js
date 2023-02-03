@@ -44,5 +44,10 @@ export default StyleSheet.create({
         position:"absolute",
         bottom:-20,
         color:colors.red
+    },
+    limit_text:{
+        color:colors.black,
+        opacity:.8,
+        textAlign:"right"
     }
 })

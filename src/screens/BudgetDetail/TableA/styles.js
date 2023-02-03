@@ -18,7 +18,7 @@ export default StyleSheet.create({
     },
     table_wrap:{
         width:"100%",
-       paddingHorizontal:7,
+        paddingHorizontal:7,
 
     },
     text_wrap:{
@@ -33,7 +33,6 @@ export default StyleSheet.create({
         minWidth:90,
         color:colors.accent,
         textAlign: "left",
-        textTransform: "uppercase",
         marginRight:5,
         flex:1,
     },

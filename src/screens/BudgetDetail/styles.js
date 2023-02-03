@@ -6,6 +6,7 @@ export default StyleSheet.create({
         ...container,
         paddingLeft:0,
         paddingRight:0,
+        paddingBottom:80
     },
     info_wrap:{
         display: "flex",
@@ -31,18 +32,14 @@ export default StyleSheet.create({
         flexDirection: "row",
         alignItems: "flex-start",
         flexWrap:"wrap",
-        flex:1,
-        minWidth:300,
-
     },
     actions_wrap_1:{
-        flexDirection: "row",
-        alignItems: "center",
-        flexWrap:"wrap",
         marginRight:15,
+        flex:1,
     },
     actions_wrap_2:{
         alignItems: "flex-end",
+        flex:1,
     },
 
     category:{
@@ -52,10 +49,9 @@ export default StyleSheet.create({
     },
     status:{
         color:colors.orange,
-        fontSize:fontSize.p,
+        fontSize:fontSize.label,
         marginLeft:15,
         fontWeight:"bold",
-        paddingTop:5,
     },
     green:{
         color:colors.green
@@ -110,6 +106,9 @@ export default StyleSheet.create({
     center:{
         alignItems:"center",
         paddingBottom:50,
+    },
+    add_document:{
+        marginTop:30,
     }
 
 })

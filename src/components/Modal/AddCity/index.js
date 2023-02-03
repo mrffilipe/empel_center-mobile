@@ -5,28 +5,33 @@ import InputMask from "../../Form/InputMask";
 import Select from "../../Form/Select";
 import styles from "./styles";
 import ButtonSubmit from "../../Form/ButtonSubmit";
-import Cityes from "../../../services/cityes.json";
-import countries from "../../../services/countries.json";
+import Cityes from "../../../data/cityes.json";
+import countries from "../../../data/countries.json";
 import Modal from "../";
 import {useMainContext} from "../../../contexts/mainContext";
 import API from "../../../services/api";
 import {useAuthContext} from "../../../contexts/authContext";
 import Loading from "../../Loading";
 import Callback from "../Callback";
+import {toNumber} from "../../../services/tools";
 const props = {
     isOpen:Boolean,
     close: Function, ///fechar modal
     values:{
-        "name": String,
+        "id": Number,
+        "citie": String,
         "state": String,
         "country": String,
-        "constant": String,
+        "constant": Number,
+        "active": Boolean,
+        "createdAt": Date,
+        "updatedAt": Date,
     }
 }
 
-export default function AddCity({isOpen,close, values} = props) {
+export default function AddCity({isOpen,close, values = null} = props) {
     const {getCities, cities, setCities} = useMainContext();
-    const {user} = useAuthContext();
+    const {hasPermission} = useAuthContext();
 
     const [name, setName] = useState("");
     const [state, setState] = useState("GO");
@@ -35,7 +40,7 @@ export default function AddCity({isOpen,close, values} = props) {
     const [invalid, setInvalid] = useState(null);
 
     const [callback, setCallback] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState();
     
     const clear = ()=>{
         setName("");
@@ -44,37 +49,83 @@ export default function AddCity({isOpen,close, values} = props) {
         close(false);
     }
 
+    const citieExists = async (params) => {//verify if citie exists
+        let res = null;
+        cities.map((city) => {
+            if(city.citie === params.citie && city.state === params.state && city.country === params.country) 
+                res = city.id;
+        })
+        return res;
+    }
+
+
     const registerCity = async()=>{
-        if(!name)
+        if(!name || !state || !country)
             return;
 
         let params = {
             "citie": name,
             "state": state,
             "country": country,
-            "constant": constant,
+            "constant": hasPermission() ? toNumber(constant) : 0,
+            "active" : hasPermission() && toNumber(constant) > 0,
         }
 
-        setLoading(true);
-        let res = await API.post({
-            route:"/Address",
-            body:params
-        });
-        setLoading(false);
+        let existsId = await citieExists(params);
 
-        addNewCity(params);
-        
-        if(res.error)
+        if(typeof existsId === 'number' && !hasPermission() || typeof existsId === 'number' && hasPermission() && !values){
+            return setCallback({
+                type: 0,
+                message:"Cidade já foi cadastrada!",
+                action:()=>setCallback(null),
+                actionName:"Ok!",
+                close:()=>setCallback(null),
+            })
+        }
+
+        var res;
+        setLoading(true);
+        if(values?.id || typeof existsId === 'number'){//update city
+            params.id = values?.id ? values.id : existsId;
+            res = await putCity(params);
+        }else{  //register new city
+            res = await postCity(params);
+        }
+        setLoading(false);
+    
+        if(res?.error){
+            addNewCity(params);
+
             return setCallback({
                 type: 0,
                 message:res.error,
-                action:closeCallback,
+                action:()=>setCallback(null),
+                actionName:"Ok!"
+            })
+        }
+
+        if(!params.id)
+            setCallback({
+                type: 1,
+                message:"Cidade cadastrada com sucesso!",
+                action:()=>setCallback(null),
                 actionName:"Ok!"
             })
 
-            console.log(res);
         getCities();
-        // clear()
+        clear(!!params.id);
+    }
+
+    const postCity = async(params)=>{
+        let res = await API.post("Address",params).catch( e => e );;
+
+        return res;
+    }
+
+    const putCity = async(params)=>{
+        let res = await API.put("Address",params).catch( e => e );
+
+        return res;
     }
 
     const addNewCity = (params)=>{
@@ -86,28 +137,25 @@ export default function AddCity({isOpen,close, values} = props) {
         })
 
         if(res){
-            params.id = name+"_"+state;
+            params.id = 0;
             setCities([...cities,params])
         }
     }
 
-    const closeCallback = ()=>{
-        setCallback(null);
-    }
 
     useEffect(()=>{
         if(values){
-            setName(values?.name);
+            setName(values?.citie);
             setCountry(values?.country);
             setState(values?.state);
-            setConstant(values?.constant? values?.constant : "");
+            setConstant(values?.constant);
         }
     },[values])
 
     return (
         <>
         <Loading loading2={loading}/>
-        <Callback params={callback} close={closeCallback} />
+        <Callback params={callback} />
         <Modal isOpen={isOpen}>
             
 
@@ -122,6 +170,7 @@ export default function AddCity({isOpen,close, values} = props) {
                         <Select
                             label="Nome"
                             value={name}
+                            getValue={true}
                             setValue={setName}
                             valid={invalid !== name}
                             values={Cityes[country]? Cityes[country].estados.filter(val => val.sigla === state)[0]?.cidades:[]}
@@ -154,8 +203,8 @@ export default function AddCity({isOpen,close, values} = props) {
                                     value={state}
                                     setValue={setState}
                                     values={Cityes[country]? Cityes[country].estados.map(val => val.sigla).sort():[]}
-
                                     labelTop={true}
+                                    getValue={true}
                                 />
                                 :
                                 <InputText
@@ -181,6 +230,7 @@ export default function AddCity({isOpen,close, values} = props) {
                                 setValue={setCountry}
                                 values={countries.map(val => val.sigla).sort()}
                                 labelTop={true}
+                                getValue={true}
                             />
                         :
                             <InputText
@@ -193,7 +243,7 @@ export default function AddCity({isOpen,close, values} = props) {
                     </View>
                 </View>
 
-                {user?.permission <= 2 ?
+                {hasPermission()?
                     <View style={styles.w100}>
                         <InputMask
                             label="Constante (R$)"
@@ -201,7 +251,7 @@ export default function AddCity({isOpen,close, values} = props) {
                             setValue={setConstant}
                             keyboardType="number-pad"
                             valid={invalid !== constant}
-                            mask="BRL_CURRENCY"
+                            mask="Number"
                         />
                     </View>
 
@@ -210,7 +260,7 @@ export default function AddCity({isOpen,close, values} = props) {
                 <View style={styles.btn_wrap}>
                     <ButtonSubmit value={"Cancelar"} onPress={clear}  styles={[styles.btn, styles.btn_close]}/>
 
-                    {user.permission <= 2 
+                    {hasPermission()
                         ? <ButtonSubmit value={!values || !values?.constant?"Cadastrar":"Salvar"} onPress={registerCity}  styles={[styles.btn]}/>
                         : <ButtonSubmit value={"Enviar Para Análise"} onPress={registerCity}  styles={[styles.btn]}/>
                     }

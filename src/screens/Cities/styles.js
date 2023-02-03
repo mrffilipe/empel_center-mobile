@@ -66,8 +66,8 @@ export default StyleSheet.create({
         padding:0,
         bottom:-1.5,
         text:{
-          color:colors.white,
-          top:-2,
+            color:colors.white,
+            top:-2,
         },
         select:{
             height:40,
@@ -82,5 +82,19 @@ export default StyleSheet.create({
             borderRadius:5
         }
         
+    },
+    container_length:{
+        ...container,
+        paddingHorizontal:25,
+        paddingVertical:0,
+        alignItems:"flex-start",
+    },
+    h2:{
+        color:colors.black,
+        fontSize:fontSize.p,
+        opacity:.5,
+        padding:0,
+        margin:0,
+        fontWeight:"bold",
     }
 })

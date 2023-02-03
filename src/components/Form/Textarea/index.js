@@ -14,7 +14,18 @@ export default function InputText({
   editable = true,
   name = null,
   onBlur = ()=>{},
+  limit = 255
 }) {
+
+  const addValue = (val,name) =>{
+    if(val.length > limit)
+      return;
+
+    if(name)
+      setValue(val,name);
+    else  
+      setValue(val);
+  }
 
   return (
     <View style={styles.input_Wrap}>
@@ -31,16 +42,17 @@ export default function InputText({
         value={value}
         onEndEditing={()=>onBlur()}
         placeholder={placeholder}
-        onChangeText={(text) => name?setValue(text,name):setValue(text)} //retorna o valor ao state
+        onChangeText={(text) => name?addValue(text,name):addValue(text)} //retorna o valor ao state
         keyboardType={keyboardType} //tipo de teclado
         autoFocus={focus} //focar o input
         editable={editable}
         multiline={true}
         textAlignVertical={"top"}
       />
+      <Text style={styles.limit_text}>{value.length}/{limit}</Text>
       {invalid 
-       ? <Text style={styles.invalid_alert}>{invalid}</Text>
-       : <></>
+        ? <Text style={styles.invalid_alert}>{invalid}</Text>
+        : <></>
       }
     </View> 
   )

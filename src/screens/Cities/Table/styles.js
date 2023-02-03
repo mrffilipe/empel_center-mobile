@@ -3,8 +3,7 @@ import {colors,fontSize,button} from "../../../styles/defount.json"
 
 export default StyleSheet.create({
     container:{
-        marginTop:20,
-        paddingTop:5,
+        marginTop:10,
         paddingBottom:20,
         paddingHorizontal:15,
         flex:1,
@@ -22,7 +21,7 @@ export default StyleSheet.create({
     },
     table_wrap:{
         width:"100%",
-       paddingHorizontal:7,
+        paddingHorizontal:7,
 
     },
     text_wrap:{
@@ -58,7 +57,7 @@ export default StyleSheet.create({
     },
     btn:{
         ...button,
-        backgroundColor:colors.red,
+        backgroundColor:colors.green,
         paddingTop:0,
         paddingBottom:4,
         minWidth:100,

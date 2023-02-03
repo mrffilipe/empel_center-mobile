@@ -6,7 +6,7 @@ import {useAuthContext} from "../../../contexts/authContext";
 import HistoryBeckup from "../../Modal/HistoryBeckup";
 import NotificationHeader from '../../Modal/NotificationHeader';
 export default function LogoTitle({tintColor,title}) {
-    const {DB} = useAuthContext([]);
+    const {tasksStoraged} = useAuthContext([]);
 
     const [isConnected, setIsConnected] = useState(false);
 
@@ -17,9 +17,9 @@ export default function LogoTitle({tintColor,title}) {
 
     unsubscribe();
 
-   
 
-    if(DB.length || !isConnected){
+
+    if(tasksStoraged.length || !isConnected){
         return (
             <View style={styles.container}>
                 <Text style={[styles.title,{color:tintColor}]}>{title}</Text>

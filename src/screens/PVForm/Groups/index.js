@@ -5,7 +5,7 @@ import InputMask from "../../../components/Form/InputMask";
 import InputText from "../../../components/Form/InputText";
 import Select from "../../../components/Form/Select";
 import Checkbox from "../../../components/Form/Checkbox";
-import selectOptions from "../../../enum/selectOptions.json";
+import selectOptions from "../../../data/selectOptions.json";
 import {View, Text, Pressable, Alert} from "react-native";
 
 const deleteOne = async(index, groups, setGroups , confirmDeleteGroup)=>{
@@ -75,7 +75,7 @@ export function UnitGroupB({key,groups, setGroups, invalid, confirmDeleteGroup})
             
             <InputMask
                 keyboardType="number-pad"
-                label="Média de consumo"
+                label="Média de consumo (kWh)"
                 invalid={invalid?.input === groups[key]["mediaConsumo"] ? invalid?.message : null}
                 value={groups[key]["mediaConsumo"]}
                 setValue={insertValue}
@@ -89,15 +89,6 @@ export function UnitGroupB({key,groups, setGroups, invalid, confirmDeleteGroup})
                 value={groups[key]["precoPorKWH"]}
                 setValue={insertValue}
                 name="precoPorKWH"
-            />
-
-            <Select
-                label="Fornecimento de energia"
-                invalid={invalid?.input === groups[key]["fornecimento"] ? invalid?.message : null}
-                value={groups[key]["fornecimento"]}
-                values={selectOptions?.instalationType}
-                setValue={insertValue}
-                name="fornecimento"
             />
 
         </View>

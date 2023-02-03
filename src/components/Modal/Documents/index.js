@@ -2,9 +2,8 @@ import Modal from "../";
 import styles from './styles.js';
 import ICheck from "../../../assets/icons/check";
 import IFile from "../../../assets/icons/file";
-import React, {useState, useEffect, useCallback} from "react";
+import React, {useState, useEffect} from "react";
 import BtnPlus from "../../Form/BtnPlus";
-import fileValues from "./values.json";
 import {View,TouchableOpacity, Text} from "react-native";
 import FilePicker from "../../Form/FilePicker";
 import ImageView from "../ViewImage";
@@ -21,6 +20,65 @@ export default function Documents({
     const [isOpenFileSelected, setIsOpenFileSelected] = useState(null);
     const [imageToView, setImageToView] = useState(null);
     const [isOpenModalDocuments, setIsOpenModalDocuments] = useState(false);
+
+    const fileValues = [
+        {
+            "label": "ART - ASSINADA PELO R.T E CLIENTE.pdf",
+            "value": {},
+            "accept":".pdf"
+        },
+        {
+            "label": "CERTIFICADO OU NUMERO DE REGISTRO DA CONCESSÃO DO INMETRO DOS INVERSORES.pdf",
+            "value": {},
+            "accept":".pdf"
+        },
+        {
+            "label": "COPIAS RG, CPF OU CPNJ.pdf",
+            "value": {},
+            "accept":".pdf"
+        },
+        {
+            "label": "DATASHEET INVERSOR.pdf",
+            "value": {},
+            "accept":".pdf"
+        },
+        {
+            "label": "DATASHEET MÓDULOS FOTOVOLTAICOS.pdf",
+            "value": {},
+            "accept":".pdf"
+        },
+        {
+            "label": "DIAGRAMA UNIFILIAR.pdf",
+            "value": {},
+            "accept":".pdf"
+        },
+        {
+            "label": "FORMULÁRIO DE DADOS PARA REGISTRO DE CENTRAL GERADORA.pdf",
+            "value": {},
+            "accept":".pdf"
+        },
+        {
+            "label": "FORMULÁRIO DE SOLICITAÇÃO DE ACESSO.pdf",
+            "value": {},
+            "accept":".pdf"
+        },
+        {
+            "label": "MEMORIAL DESCRITIVO.pdf",
+            "value": {},
+            "accept":".pdf"
+        },
+        {
+            "label": "PROCURAÇÃO.pdf",
+            "value": {},
+            "accept":".pdf"
+        },
+        {
+            "label": "OUTROS",
+            "value": [],
+            "accept":"",
+            "multiple": true
+        }
+    ]
 
     const handleSubmit = ()=>{
         submit();
@@ -76,7 +134,7 @@ export default function Documents({
         if(valueSaved){
             for(let i in valueSaved){
                 values = values.map((val)=> {
-                    if(valueSaved[i]?.label === val?.label) 
+                    if(decodeURIComponent(valueSaved[i]?.label).toLowerCase() === decodeURIComponent(val?.label).toLowerCase()) 
                         val.value = null;
 
                     return val;

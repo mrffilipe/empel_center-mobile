@@ -1,129 +1,143 @@
 import styles from "./styles";
 import React, {useState, useEffect} from "react";
-import {View, Text, ScrollView, TouchableOpacity} from "react-native";
+import {View, Text, ScrollView} from "react-native";
 import InputText from "../../components/Form/InputText";
 import InputMask from "../../components/Form/InputMask";
-import Button from "../../components/Form/ButtonSubmit";
 import TableA from "./TableA";
-import IHistory from "../../assets/icons/history";
-import Documents from "../../components/Modal/Documents";
-import IDownload from "../../assets/icons/download";
 import GenerateProposal from "./GenerateProposal";
-export default function BudgetDetail({navigation}) {
+import API from "../../services/api";
+import {formatDate} from "../../services/tools";
+import selectOptions from "../../data/selectOptions.json";
+import {useMainContext} from "../../contexts/mainContext";
+import { toMoney } from "../../services/tools";
+import Loading from "../../components/Loading";
+import Callback  from "../../components/Modal/Callback";
+import History from "./History";
+import Messages from "./Messages";
+import Files from "./Files";
+
+export default function BudgetDetail({route}) {
+    const {cities} = useMainContext();
+
+    const {id} = route.params;
+
+    const [data, setData] = useState([]);
     const [atualStatus, setAtualStatus] = useState("");
-    const [dataGroupA, setDataGroupA] = useState([]);
-    const [dataGroupB, setDataGroupB] = useState([]);
-    const [dataGenerate, setDataGenerate] = useState([])
-    const [isOpenModalHistory, setIsOpenModalHistory] = useState(false);
+    const [dataA, setDataA] = useState([]);
+    const [dataB, setDataB] = useState([]);
+    const [dataGenerator, setDataGenerator] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [callback, setCallback] = useState();
 
-    const [documents, setDocuments] = useState([])
-    const [files, setFiles] = useState([]);
+    const getBudget = async(load = true)=>{
+        if(load)
+            setLoading(true);
 
-    const handleSubmit = ()=>{
+        let res = await API.get("PVForm/"+id);
 
-    }
+        if(load)
+            setLoading(false);
 
-    const viewProposal = ()=>{
-
-    }
-
-    const data = [
-        {
-            group: 'A',
-            isGenerator:false,
-            id:1,
-            pontaKWH:20.22,
-            pontaRS:200.00,
-            foraPontaKWH:2000.00,
-            foraPontaRS:333,
-            horaKWH:4000,
-            horaRS:2000,
-            demandaKWH:200,
-            demandaRS:200,
-            desconto:1,
-        },
-        {
-            group: 'B',
-            isGenerator:false,
-            id:2,
-            medidaConsumo:1800.00+" kWh",
-            valorFinal:200.00 +" kWh",
-            fornecimento:"Mofásico",
-            precoPorKWH:"R$ 20,00"
-        },
-        {
-            group: 'B',
-            isGenerator:true,
-            id:3,
-            medidaConsumo:1800.00+" kWh",
-            valorFinal:200.00 +" kWh",
-            fornecimento:"Mofásico",
-            precoPorKWH:"R$ 20,00"
+        if(res.error){
+            return setCallback({
+                type: 0,
+                message:res?.error ? res.error : `Algo deu errado!`,
+                action:()=>getBudget(),
+                actionName:"Tentar Novamente",
+            })
         }
-    ]
+        setAtualStatus(res?.status);
+        setData(res)
+    }
 
-    const filesSaved = []
+    const getCitie = ()=>{
+        let city = dataGenerator?.address ? cities.filter(city => city.id === dataGenerator?.address)[0] : "";
+        return city?.citie ? city?.citie + " - " + city?.state : "";
+    }
+
+    const customerName = data?.customer? data?.customer?.firstName + " " + data?.customer?.lastName: "";
 
     useEffect(()=>{
-        setDataGroupA(data.filter(val => !val.isGenerator && val.group === "A"));
-        setDataGroupB(data.filter(val => !val.isGenerator && val.group === "B"));
-        setDataGenerate(data.filter(val => val.isGenerator));
+        getBudget();
     },[])
+
+    const statusNumberFinished = (statusNumber) =>{
+        return statusCode >= statusNumber ? 1 : 0;
+    }
 
     const statusData = [
-        {
-            name:"Formulario enviado!",
-            date:"04/08/2022",
-            finish:1
-        },
-        {
-            name:"Orçamento criado!",
-            date:"04/08/2022",
-            finish:1
-        },
-        {
-            name:"Proposta enviada!",
-            date:"04/08/2022",
-            finish:1
-        },
-        {
-            name:"Em negociação!",
-            date:"04/08/2022",
-            finish:0
-        },
-        {
-            name:"Finalizado!",
-            date:"04/08/2022",
-            finish:0
-        },
-    ];
-
+        "Orçamento criado!",
+        "Proposta Enviada!",
+        "Em negociação!",
+        "Finalizado!"
+    ]; 
+    
     useEffect(()=>{
-        statusData.map((val)=>{
-            if(val.finish === 1){
-                setAtualStatus(val.name);
-            }
-        })
-    },[])
+        if(data?.consumerUnits){
+            let formatData = data?.consumerUnits.map((val,key)=>{
+                return{
+                    id:key,
+                    generatorId:val?.reference,
+                    group:val?.group,
+                    isGenerator:val?.isGeneratingUnit,
+                    installLocation:val?.installationLocation ,
+                    fornecimento:val?.installationType ,
+                    pontaKWH:val?.tipPowerMonth ,
+                    pontaRS:val?.tipPricePowerMonth ,
+                    foraPontaKWH:val?.offTipPowerMonth ,
+                    foraPontaRS:val?.offTipPricePowerMonth ,
+                    horaKWH:val?.hourPowerMonth ,
+                    horaRS:val?.hourPricePowerMonth ,
+                    demandaKWH:val?.demandPowerMonth,
+                    demandaRS:val?.demandPricePowerMonth,
+                    desconto:val?.irrigationDiscount ,
+                    mediaConsumo:val?.powerMonth ,
+                    precoPorKWH:val?.powerPriceMonth ,
+                }
+            })
+
+            setDataA(formatData.filter(val => val.group === 0 && !val.isGenerator));
+            setDataB(formatData.filter(val => val.group === 1 && !val.isGenerator));
+
+            let unityGeneratorGroup = formatData.filter(val => val.isGenerator);
+        
+            setDataGenerator({
+                generatorId:data?.consumerUnits[0].reference,
+                taxaMinima:data?.lightRateValue,
+                extra:data?.extraProduction,
+                address:data?.idAddress,
+                unidade:unityGeneratorGroup,
+                installationLocation:data?.installationLocation,
+                workDistance:data?.workDistance,
+                greaterDemand:data?.greaterDemand,
+                averageDemand:data?.averageDemand,
+                installLocation:data?.installationLocation ,
+                instalationType:data?.installationType ,
+                note:data?.note
+            });
+        }
+    },[data])
 
     return (
         <ScrollView style={styles.budget_detail}>
-
+            {loading ? <Loading loading2={loading}/> : <></>}
+            {callback? <Callback params={callback} /> : <></>}
             <View style={styles.container}>
                 <View style={styles.main}>
                     <View>
                         <View style={[styles.actions_wrap_1,styles.margin]}>
                             <View style={[styles.actions_wrap,styles.actions_wrap_2]}>
                                 <Text style={styles.category}>Fotovoltaica</Text>
-                                <Text style={atualStatus === "Finalizado!"?[styles.status,styles.green]:[styles.status]}>{atualStatus}</Text>
+                                <Text style={atualStatus === 3?[styles.status,styles.green]:[styles.status]}>{statusData[atualStatus]}</Text>
                             </View>
 
                             <View style={[styles.actions_wrap]}>
-                                <GenerateProposal/>
+                                
+                                <GenerateProposal id={id} customerName={customerName}/>
                                 {/* <Button styles={[styles.btn,styles.btn_send]} value={"Enviar Proposta"} /> */}
-                                <TouchableOpacity style={[styles.btn_history]} onPress={()=>setIsOpenModalHistory(!isOpenModalHistory)}>
+                                {/* <TouchableOpacity style={[styles.btn_history]} onPress={()=>setIsOpenModalHistory(!isOpenModalHistory)}>
                                     <IHistory style={styles.icon_history}/>
-                                </TouchableOpacity>
+                                </TouchableOpacity> */}
                             </View>
                         </View>
 
@@ -132,7 +146,7 @@ export default function BudgetDetail({navigation}) {
                             <View style={styles.info_single}>
                                 <InputText
                                     label="Data de envio"
-                                    value={"03/08/2022"}
+                                    value={data?.createdAt?formatDate(data?.createdAt,false, true):""}
                                     editable={false}
                                 />  
                             </View>
@@ -141,7 +155,7 @@ export default function BudgetDetail({navigation}) {
                                 <InputText
                                     label="Vendedor"
                                     editable={false}
-                                    value={"Bruno"}
+                                    value={data?.consultant? data?.consultant.user.firstName + " " + data?.consultant.user.lastName:""}
                                 />
                             </View>
                             
@@ -149,30 +163,32 @@ export default function BudgetDetail({navigation}) {
                                 <InputText
                                     label="Cliente"
                                     editable={false}
-                                    value={"Felipe"}
+                                    value={customerName}
                                 />
                             </View>
-                          
+
                             <View style={styles.info_single}>
                                 <InputMask
-                                    label="CPF / CNPJ do Cliente"
-                                    value={"999.999.999-99"}
+                                    label={data?.customer? `${selectOptions.documents[data.customer.document.documentType]} do clinete` : "Documento do cliente"}
+                                    value={data?.customer? data?.customer.document.record:""}
                                     editable={false}
+                                    mask={data?.customer? selectOptions.documents[data.customer.document.documentType].toLocaleUpperCase() : "CPF"}
                                 />
                             </View>
-                           
+
                             <View style={styles.info_single}>
                                 <InputMask
                                     label="Telefone"
-                                    value={"(99) 99999-9999"}
+                                    value={data?.customer? data?.customer?.telephones[0].number:""}
                                     editable={false}
+                                    mask="BRL_PHONE"
                                 />  
                             </View>
                             
                             <View style={styles.info_single}>
-                               <InputMask
+                                <InputMask
                                     label="E-mail"
-                                    value={"felipe@gmail.comkjgf"}
+                                    value={data?.customer? data?.customer?.email:""}
                                     editable={false}
                                 /> 
                             </View>                        
@@ -184,7 +200,7 @@ export default function BudgetDetail({navigation}) {
                             <View style={styles.info_single}>
                                 <InputMask
                                     label="ID da unidade/Referencia"
-                                    value={"#1238378"}
+                                    value={dataGenerator?.generatorId}
                                     editable={false}
                                 />  
                             </View>
@@ -192,9 +208,9 @@ export default function BudgetDetail({navigation}) {
                             
                             <View style={styles.info_single}>
                                 <InputText
-                                    label="Taxa de luz minima (kWh)"
+                                    label="Taxa de luz minima"
+                                    value={dataGenerator?.taxaMinima? dataGenerator?.taxaMinima+" kWh":""}
                                     editable={false}
-                                    value={"1,22"}
                                 />
                             </View>
 
@@ -203,7 +219,7 @@ export default function BudgetDetail({navigation}) {
                                 <InputText
                                     label="Produção extra"
                                     editable={false}
-                                    value={"2%"}
+                                    value={dataGenerator?.extra !== undefined? toMoney(dataGenerator?.extra)+" kWh":""}
                                 />
                             </View>
 
@@ -211,60 +227,89 @@ export default function BudgetDetail({navigation}) {
                                 <InputText
                                     label="Endereço de instalação"
                                     editable={false}
-                                    value={"Pires do Rio"}
+                                    value={getCitie()}
                                 />
                             </View>
 
-                            <View style={styles.info_single}>
-                                <InputText
-                                    label="Zona"
-                                    editable={false}
-                                    value={"Urbana"}
-                                />
-                            </View>
+                            {dataGenerator?.addressType ?
+                                <View style={styles.info_single}>
+                                    <InputText
+                                        label="Zona"
+                                        editable={false}
+                                        value={selectOptions.addressType[dataGenerator?.addressType]}
+                                    />
+                                </View>
+                                :<></>
+                            }
 
                             <View style={styles.info_single}>
                                 <InputText
                                     label="Local da instalação"
                                     editable={false}
-                                    value={"Telhado"}
+                                    value={selectOptions.instalationLocation[dataGenerator?.installationLocation]}
                                 />
                             </View>
 
                             <View style={styles.info_single}>
                                 <InputText
-                                    label="transformador existente"
+                                    label="Distancia"
+                                    value={dataGenerator?.workDistance? dataGenerator?.workDistance+" Km" :""}
                                     editable={false}
-                                    value={"2 kVA"}
-                                />
+                                /> 
                             </View>
+
+                            {dataGenerator?.transformer ?
+                                <View style={styles.info_single}>
+                                    <InputText
+                                        label="transformador existente"
+                                        editable={false}
+                                        value={dataGenerator?.transformer+" kVA"}
+                                    />
+                                </View>
+                                :<></>
+                            }
+
+                            <View style={styles.info_single}>
+                                <InputText
+                                    label="Maior demanda"
+                                    value={toMoney(dataGenerator?.greaterDemand)}
+                                    readonly={true}
+                                    open={true}
+                                />  
+                            </View>
+
+                            <View style={styles.info_single}>
+                                <InputText
+                                    label="Demanda média"
+                                    value={toMoney(dataGenerator?.averageDemand)}
+                                    readonly={true}
+                                    open={true}
+                                />  
+                            </View>
+
+                            <View style={styles.info_single}>
+                                <InputText
+                                    label="Fornecimento"
+                                    value={selectOptions.instalationType[dataGenerator?.instalationType]}
+                                    readonly={true}
+                                    open={true}
+                                />  
+                            </View>
+
                         </View>
-                        <TableA data={dataGenerate} title={"Grupo "+dataGenerate[0]?.group}/>
+                        <TableA data={dataGenerator?.unidade? dataGenerator?.unidade : []} group={dataGenerator?.unidade && dataGenerator?.unidade[0]?.group? dataGenerator?.unidade[0]?.group : 0}/>
 
                         <Text style={styles.h2}>Unidades consumidoras</Text>
                         
-                        <TableA data={dataGroupA} title="Grupo A"/>
-                        <TableA data={dataGroupB} title="Grupo B"/>
+                        <TableA data={dataA} group={0}/>
+                        <TableA data={dataB}group={1}/>
 
-                        <Text style={styles.h2}>Documentos ({filesSaved.length})</Text>
-
-                        <View style={styles.files_wrap}>
-                            {filesSaved.map((val,key)=>{
-                                // arquivos para downsload
-                                return (
-                                    <View key={key} style={styles.file_single}>
-                                        <TouchableOpacity>
-                                            <IDownload style={styles.icon_download} />
-                                        </TouchableOpacity>
-                                        <Text style={styles.p}>{val.label}</Text>
-                                    </View>
-                                )
-                            })}
-                        </View>
+                        <Files data={data} getBudget={getBudget} />
                         
-                    </View>
+                        <History data={[]}/>
 
-                    {/* <AsideHistory/> */}
+                        <Messages data={[]} />
+                    </View>
 
                 </View>
             </View>

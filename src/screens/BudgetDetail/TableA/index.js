@@ -3,14 +3,21 @@ import styles2 from "./styles";
 import React from "react";
 import {View, Text} from "react-native";
 import AllClear from "../../../components/AllClear";
-export default function Table({data = [], title}) {
+import SelectOptions from "../../../data/selectOptions.json";
+import { toMoney } from "../../../services/tools";
+
+export default function Table({data = [], group}) {
+    const fildExists = (val)=>{
+        return val !== undefined && val !== "";
+    }
     return (
         <View style={[styles.container,styles2.container]}>
-            <Text style={styles2.title}>{title}</Text>
+            <Text style={styles2.title}>{group === 0 ? "Grupo A" : "Grupo B"}</Text>
 
             <View style={[styles.list,styles2.list]}>
                 {data.length ?
                     data.map((value,key)=>{
+                        
                         return(
                             <View
                             key={key} 
@@ -19,94 +26,110 @@ export default function Table({data = [], title}) {
                                 <View style={[styles.info]}>
                                     <View style={styles2.table_wrap}>
                                         {/* GRUPO A */}
+                                        {   group === 0?
+                                            <>
+                                                {fildExists(value.pontaKWH) ? 
+                                                    <View style={styles2.text_wrap}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>TIPO: </Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.black]}>kWh/Mês</Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right,styles2.black]}>R$/kWh</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
 
-                                        {value.pontaKWH && 
-                                            <View style={styles2.text_wrap}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>TIPO: </Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.black]}>KWH/MÊS</Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right,styles2.black]}>R$/KWH</Text>
-                                            </View>
-                                        }
+                                                {fildExists(value.pontaKWH) ? 
+                                                    <View style={styles2.text_wrap}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>PONTA: </Text>
+                                                        <Text style={[styles.h5,styles2.h5]}>{toMoney(value.pontaKWH)}</Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right]}>{toMoney(value.pontaRS)}</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
+                                                {fildExists(value.foraPontaKWH) ? 
+                                                    <View style={styles2.text_wrap}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>FORA PONTA:</Text>
+                                                        <Text style={[styles.h5,styles2.h5]}>{toMoney(value.foraPontaKWH)}</Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right]}>{toMoney(value.foraPontaRS)}</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
+                                                {fildExists(value.horaKWH)  ? 
+                                                    <View style={styles2.text_wrap}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>HORA: </Text>
+                                                        <Text style={[styles.h5,styles2.h5]}>{toMoney(value.horaKWH)}</Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right]}>{toMoney(value.horaRS)}</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
+                                                {fildExists(value.demandaKWH) ? 
+                                                    <View style={styles2.text_wrap}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>DEMANDA: </Text>
+                                                        <Text style={[styles.h5,styles2.h5]}>{toMoney(value.demandaKWH)}</Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right]}>{toMoney(value.demandaRS)}</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
+                                                {fildExists(value.desconto) ? 
+                                                    <View style={[styles2.text_wrap,styles2.marginTop]}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content,styles2.flex1]}>DESCONTO IRRIGANTE: </Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.desconto?"Sim":"Não"}</Text>
+                                                        {/* <Text style={[styles.h5,styles2.h5,styles2.right]}></Text> */}
+                                                    </View>
+                                                    :<></>
+                                                }
+                                            </>
+                                            :
+                                            <>
+                                                {/* GRUPO B */}
 
-                                        {value.pontaKWH && 
-                                            <View style={styles2.text_wrap}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>Ponta: </Text>
-                                                <Text style={[styles.h5,styles2.h5]}>{value.pontaKWH.toFixed(2).replace(".",",")}</Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.pontaRS.toFixed(2).replace(".",",")}</Text>
-                                            </View>
-                                        }
-                                        {value.foraPontaKWH && 
-                                            <View style={styles2.text_wrap}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>Fora Ponta:</Text>
-                                                <Text style={[styles.h5,styles2.h5]}>{value.foraPontaKWH.toFixed(2).replace(".",",")}</Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.foraPontaRS.toFixed(2).replace(".",",")}</Text>
-                                            </View>
-                                        }
-                                        {value.horaKWH && 
-                                            <View style={styles2.text_wrap}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>Hora: </Text>
-                                                <Text style={[styles.h5,styles2.h5]}>{value.horaKWH.toFixed(2).replace(".",",")}</Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.horaRS.toFixed(2).replace(".",",")}</Text>
-                                            </View>
-                                        }
-                                        {value.demandaKWH && 
-                                            <View style={styles2.text_wrap}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>Demanda: </Text>
-                                                <Text style={[styles.h5,styles2.h5]}>{value.demandaKWH.toFixed(2).replace(".",",")}</Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.demandaRS.toFixed(2).replace(".",",")}</Text>
-                                            </View>
-                                        }
-                                        {value.desconto !== undefined && 
-                                            <View style={[styles2.text_wrap,styles2.marginTop]}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content,styles2.flex1]}>DESCONTO IRRIGANTE: </Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.desconto?"Sim":"Não"}</Text>
-                                                {/* <Text style={[styles.h5,styles2.h5,styles2.right]}></Text> */}
-                                            </View>
-                                        }
+                                                {fildExists(value?.mediaConsumo) ? 
+                                                    <View style={[styles2.text_wrap]}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>MEDIDA DE CONSUMO: </Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right]}>{toMoney(value.mediaConsumo)} kWh</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
+                                                {fildExists(value?.valorFinal) ? 
+                                                    <View style={[styles2.text_wrap]}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>VALOR FINAL: </Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.valorFinal}</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
+                                                {fildExists(value?.precoPorKWH) ? 
+                                                    <View style={[styles2.text_wrap]}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>PREÇO: </Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right]}>{toMoney(value.precoPorKWH)} R$/kWh</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
 
-                                        {/* GRUPO B */}
+                                                {fildExists(value?.fornecimento) ? 
+                                                    <View style={[styles2.text_wrap]}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>FORNECIMENTO: </Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right]}>{SelectOptions.instalationType[value?.fornecimento]}</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
 
-                                        {value?.medidaConsumo !== undefined && 
-                                            <View style={[styles2.text_wrap]}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>MEDIDA DE CONSUMO: </Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.medidaConsumo}</Text>
-                                            </View>
-                                        }
-                                        {value?.valorFinal !== undefined && 
-                                            <View style={[styles2.text_wrap]}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>VALOR FINAL: </Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.valorFinal}</Text>
-                                            </View>
-                                        }
-                                        {value?.precoPorKWH !== undefined && 
-                                            <View style={[styles2.text_wrap]}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>PREÇO POR kWh: </Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.precoPorKWH}</Text>
-                                            </View>
-                                        }
+                                                {/* VALORES ADICIONAIS */}
 
-                                        {value?.fornecimento !== undefined && 
-                                            <View style={[styles2.text_wrap]}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>FORNECIMENTO: </Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.fornecimento}</Text>
-                                            </View>
+                                                {fildExists(value.description) ? 
+                                                    <View style={[styles2.text_wrap]}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>DESCRIÇÃO: </Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right,styles2.flex1]}>{value.description}</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
+                                                {fildExists(value.value) ? 
+                                                    <View style={[styles2.text_wrap]}>
+                                                        <Text style={[styles2.h5,styles.h5,styles.h5_content]}>VALOR: </Text>
+                                                        <Text style={[styles.h5,styles2.h5,styles2.right]}>R$ {toMoney(value.value)}</Text>
+                                                    </View>
+                                                    :<></>
+                                                }
+                                                </>
                                         }
-
-                                        {/* VALORES ADICIONAIS */}
-
-                                        {value.description !== undefined && 
-                                            <View style={[styles2.text_wrap]}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>DESCRIÇÃO: </Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right,styles2.flex1]}>{value.description}</Text>
-                                            </View>
-                                        }
-                                        {value.value !== undefined && 
-                                            <View style={[styles2.text_wrap]}>
-                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>VALOR: </Text>
-                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>R$ {value.value.toFixed(2).replace(".",",")}</Text>
-                                            </View>
-                                        }
-
                                     </View>
 
                                 </View>

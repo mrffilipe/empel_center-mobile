@@ -18,7 +18,7 @@ export default function CustomerGroup({
 }){
     return(
         <View>
-           <Text style={[styles.subtitle,styles.subtitle_first]}>Cliente</Text>
+            <Text style={[styles.subtitle,styles.subtitle_first]}>Cliente</Text>
 
             <InputText
                 label="Nome"

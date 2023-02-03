@@ -27,10 +27,11 @@ export default function Select({
     const [modalVisible, setModalVisible] = useState(false);
 
     const setSelect = (val,key)=>{
-        if(name !== undefined)
+        if(name !== undefined && name !== null)
             setValue(val,name)
         else
             setValue(getValue? val :val?.id ? val.id : key);
+
         setModalVisible(false);
     }
 
@@ -57,7 +58,7 @@ export default function Select({
             transparent={true}
             
             visible={modalVisible}>
-               
+            
                 <ScrollView style={styles.options} contentContainerStyle={{ flexGrow: 1, justifyContent: 'center' }}>
                     <Pressable onPress={()=>setModalVisible(false)} style={styles.overlay}></Pressable>
                     <View style={styles.options_wrap}>
@@ -67,12 +68,12 @@ export default function Select({
                                     <Pressable 
                                     onPress={()=>setSelect(val,key)}
                                     android_ripple={{ color: "rgba(0, 0, 0, 0.25)"}} 
-                                    style={val === value
+                                    style={val === value || val?.name === value
                                         ?[styles.option,styles.optionSelected]
                                         :[styles.option]} key={key} >
                                         <Text 
                                         style={styles.optionText}>
-                                            {val}
+                                            {val?.name ? val?.name : val}
                                         </Text>
                                     </Pressable>
                                 )

@@ -1,5 +1,6 @@
 import * as RNFS from 'react-native-fs';
 import {Platform} from 'react-native';
+import VMasker from 'vanilla-masker';
 
 export const validateEmail = (email) => { //validar email
     var reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/
@@ -78,7 +79,7 @@ export const deleteFile = (file = fileProps)=>{
 export const formatDate = (date = new Date(),dateTime = false, full = false)=>{
     date = new Date(date);
     let year = date.getFullYear().toString();
-    let formatedDate = `${leftPad(date.getDate(),2)}/${leftPad(date.getMonth(),2)}/${ full? year :year[2]+year[3]}` 
+    let formatedDate = `${leftPad(date.getDate(),2)}/${leftPad(date.getMonth() + 1,2)}/${ full? year :year[2]+year[3]}` 
     let time = `${date.getHours()}:${leftPad(date.getMinutes(),2)}`;
 
     if(dateTime)
@@ -132,4 +133,63 @@ export const limitText = (value = "",limit = 20) =>{
         return value.substring(0,limit - 3)+"...";
 
     return value;  
+}
+
+export const toNumber = (val = "") =>{
+    val = val.toString();
+    let res = parseFloat(val.replace(/\./g,"").replace(/,/g,"."));
+    
+    return res ? res : 0;
+}
+
+export const toMoney = (val,fixed = 2, defoultResponse = "")=>{
+    if(typeof val === "number"){
+        return VMasker.toMoney(val.toFixed(fixed));
+    }else{
+        return defoultResponse;
+    }
+} 
+
+export const toBrNumberFormat = (val,fixed = 0, defoultResponse = "")=>{
+    if(typeof val === "number"){
+        return fixed? val.toFixed(fixed).replace(".",',') : val.toString().replace(".",',');
+    }else{
+        return defoultResponse;
+    }
+} 
+
+export const splitName = (fullName)=>{
+    var firstName =  fullName.split(" ")[0];
+    var lastName = fullName.split(firstName)[1];
+
+    if(lastName[0] === " "){
+        lastName = lastName.replace(" ","");
+    }
+
+    return {firstName, lastName};
+}
+
+export const renameFile = ({file, newName})=> {
+    return {
+        name: encodeURIComponent(newName),
+        filename: encodeURIComponent(newName),
+        uri: file.uri,
+        type: file.type
+    }
+}
+
+export const updateProgress = ({bites,fileName, setProgress})=>{
+
+    if(!bites.total)
+        return;
+    let percentage = (bites.loaded / bites.total) * 100;
+
+    if(typeof percentage === "number"){
+        setProgress(
+            {
+                name:fileName,
+                progress:parseInt(percentage),
+            }
+        );
+    }
 }

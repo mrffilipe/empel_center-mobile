@@ -1,11 +1,12 @@
 import React, {useState, useRef, useEffect} from 'react';
 import {View, ScrollView, Alert} from "react-native"; 
 import styles from "./styles";
+import VMasker from "vanilla-masker";
 import ButtonSubmit from "../../components/Form/ButtonSubmit";
 import API from "../../services/api";
 import {useAuthContext} from "../../contexts/authContext";
 import {useMainContext} from "../../contexts/mainContext";
-import {verifyFildsClient} from "../../services/tools";
+import {verifyFildsClient, toNumber, splitName} from "../../services/tools";
 import AddCity from '../../components/Modal/AddCity';
 import  FormProgressSingle from "./FormProgressSingle";
 import ConsumerUnity from "./ConsumerUnity";
@@ -13,17 +14,19 @@ import { UnitGroupA, UnitGroupB } from "./Groups";
 import GeneratorUnity from "./GeneratorUnity";
 import CustomerGroup from "./CustomerGroup";
 import Extras from "./Extras";
-export default function PVForm() {
-    const {setDB, DB} = useAuthContext();
+export default function PVForm({navigation, route}) {
+    const {setTasksStoraged, tasksStoraged, setCallback, user, setLoading} = useAuthContext();
     const {cities} = useMainContext();
 
+    const routeParams = route.params;
+    
     const formProgressStatus = useRef();
 
     const [formStatusNow, setFormStatusNow] = useState(0);
 
     const [groups, setGroups] = useState([]);
     // const [costs, setCosts] = useState([costsModel]);
-    const [name, setName] = useState("");
+    const [name, setName] = useState();
     const [cpfCnpj, setCpfCnpj] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [email, setEmail] = useState("");
@@ -33,10 +36,11 @@ export default function PVForm() {
     const [installLocation,setInstallLocation] = useState("");
     const [distance, setDistance] = useState("");
 
-    const [extra, setExtra] = useState("");
+    const [extra, setExtra] = useState("0");
     const [minRate, setMinRate] = useState("10,00");
+    const [installationType, setInstallationType] = useState("");
 
-    const [observation, setObservation] = useState([]);
+    const [observation, setObservation] = useState("");
     const [demand, setDemand] = useState([""]);
     const [customizedDemand, setCustomizedDemand] = useState(true);
 
@@ -53,6 +57,11 @@ export default function PVForm() {
         "Extra"
     ];
 
+    const documentType = ()=>{
+        let cpfCnpjUnmask = cpfCnpj.replace(/\./g,"").replace(/\//g,"").replace(/-/g,"");
+        return cpfCnpjUnmask.length == 11? 0 : 1;
+    }
+
     const handleSubmit = async()=>{
         setInvalid(null)
 
@@ -68,36 +77,130 @@ export default function PVForm() {
         if(!verifyConsumer())
             return setFormStatusNow(2);
 
-        const firstName =  name.split(" ")[0];
-        const lastName = name.split(firstName)[1];
+        if(!user?.idConsultant)
+            return alert("Este usuário não é válido");
+
+        const {firstName, lastName} = splitName(name);
 
         let params = {
-            name, 
-            cpf_cnpj:cpfCnpj,
-            phone:phoneNumber,
-            email,
+            "lightRateValue": toNumber(minRate),
+            "workDistance": toNumber(distance),
+            "extraProduction": toNumber(extra),
+            "pvDemand": {
+                "isCustom": customizedDemand,
+                "demands": demand.map(val=>toNumber(val))
+            },
+            "note": observation,
+            "installationLocation": toNumber(installLocation),//solo/telhado
+            "installationType":toNumber(installationType),/// monofasico, bi, tri
+            "idConsultant": user?.idConsultant,
+            "idAddress": toNumber(address) ,
+            "customer": {
+                "firstName": firstName,
+                "lastName": lastName,
+                "company": null,
+                "document": {
+                    "record": VMasker.toNumber(cpfCnpj),
+                    "documentType": documentType()
+                },
+                "email": email,
+                "isLead": true,
+                "leadOrigin": 0,
+                "telephones": [
+                    {
+                    "number": VMasker.toNumber(phoneNumber),
+                    "isWhatsapp": true
+                    }
+                ]
+            },
+            "consumerUnits":groups.map((val) =>{
+                return{
+                        "reference":generatorId,
+                        "group": val?.groupA? 0 : 1,
+                        "isGeneratingUnit": val?.isGenerator,
+                        "tipPowerMonth": toNumber(val?.pontaKWH),
+                        "tipPricePowerMonth": toNumber(val?.pontaRS),
+                        "offTipPowerMonth": toNumber(val?.foraPontaKWH),
+                        "offTipPricePowerMonth": toNumber(val?.foraPontaRS),
+                        "hourPowerMonth": toNumber(val?.horaKWH),
+                        "hourPricePowerMonth": toNumber(val?.horaRS),
+                        "demandPowerMonth": toNumber(val?.demandaKWH),
+                        "demandPricePowerMonth": toNumber(val?.demandaRS),
+                        "irrigationDiscount": val?.desconto? val.desconto : false,
+                        "powerMonth": toNumber(val?.mediaConsumo), //confirmar
+                        "powerPriceMonth": toNumber(val?.precoPorKWH),
+                    }
+            }),
+            "costs": [
+                {
+                    "description": "string",
+                    "value": 0
+                }
+            ]
         }
-        
-        try{
-            let register = await API.post({route:"PVForm",body:params});
-            
 
-            let arr = [...DB];
-            arr.push({
-                title:"Formulario fotovoltaico",
-                route:"PVForm",
-                params,
-                status:register.error?0:1,
-                date: new Date(),
+        setLoading(true)
+        let res = await API.post("PVForm",params).catch(e => e);
+
+        setLoading(false);
+
+        if(res?.error || res?.status !== 200){
+            const tryAgain = () => {
+                setCallback(null);
+                handleSubmit()
+            }
+
+            return setCallback({
+                type: 0,
+                message:res?.error ? res?.error : "Error: "+res?.status,
+                action:tryAgain,
+                actionName:"Tentar novamente!",
+                close:()=>setCallback(null)
             })
-            
-            setDB(arr)
-            if(!register.error)
-                alert("register")
+        }
 
-        }catch(e){console.log(e)}
+        setCallback({
+            type: 1,
+            message:"Formulário enviado com sucesso",
+            action:()=>{
+                navigation.navigate("Orçamentos",{
+                    screen:"Detalhes do orçamento",
+                    initial: false,
+                    params:{
+                        id:res?.data.id
+                    }
+                });
+                setCallback(null)},
+            actionName:"Ir para orçamento!",
+            close:()=>setCallback(null)
+        })
+
+        clearForm();
     }
 
+    const clearForm = ()=>{
+        setFormStatusNow(0)
+        setGroups([]);
+        setName("");
+        setCpfCnpj("");
+        setPhoneNumber("");
+        setEmail("");
+        setGeneratorId("");
+        setAddress("");
+        setAddressType(1);
+        setInstallLocation("");
+        setTransformer("");
+        setInvalid(null);
+        setExtra("0");
+        setMinRate("10,00");
+        setDistance("");
+        setInstallationType("");
+        setDemand([""]);
+        setCustomizedDemand(true);
+        setObservation("");
+    }
+    
+    
     const confirmDeleteGroup = (title,message)=>{
         return new Promise((resolve)=>{
 
@@ -123,14 +226,6 @@ export default function PVForm() {
         })
     }
 
-    const clearGroups = async() => {
-        if(!await confirmDeleteGroup(`Deletar todos as unidade Consumidoras?`))
-            return;
-
-        let arr = [...groups];
-        arr = arr.filter(val => val.isGenerator);
-        setGroups(arr);
-    }
 
     const verifyClient = ()=>{
 
@@ -153,15 +248,15 @@ export default function PVForm() {
     }
 
     const verifyGenerator = ()=>{
-        if(generatorId === "" || address === "" || addressType === "" || installLocation === "" || minRate === "" || extra === "" || distance === ""){
+        if(generatorId === "" || address === "" || addressType === "" || installLocation === "" || minRate === "" || distance === ""){
             setInvalid({input:"",message:"Campo obrigatório!"});
             return false;
         }
         
-        if(addressType === 0 && transformer === ""){
-            setInvalid({input:"",message:"Campo obrigatório!"});
-            return false;
-        }
+        // if(addressType === 0 && transformer === ""){
+        //     setInvalid({input:"",message:"Campo obrigatório!"});
+        //     return false;
+        // }
 
         if(groups.filter(val => val.isGenerator).length === 0){
             alert("Adicione um grupo a unidade geradora!");
@@ -182,10 +277,10 @@ export default function PVForm() {
     }
 
     const verifyConsumer = ()=>{
-        if(groups.filter(val => !val.isGenerator).length === 0){
-            alert("Adicione pelo menos uma unidade consumidora!");
-            return false;
-        }
+        // if(groups.filter(val => !val.isGenerator).length === 0){
+        //     alert("Adicione pelo menos uma unidade consumidora!");
+        //     return false;
+        // }
         
         for(const i in groups){
             for(const keys of Object.keys(groups[i])){
@@ -256,6 +351,18 @@ export default function PVForm() {
     }
 
     useEffect(()=>{
+        console.log(routeParams)
+        if(routeParams?.name && !name){
+            let obj = routeParams;
+
+            setName(obj.name);
+            setEmail(obj.email);
+            setPhoneNumber(obj.phone ? VMasker.toPattern(obj.phone,"(99) 99999-9999") : "");
+            setCpfCnpj(obj.cpfCnpj ? VMasker.toPattern(obj.cpfCnpj,"99.999.999/9999-99") : "");
+        }
+    },[routeParams])
+
+    useEffect(()=>{
         if(customizedDemand){
             let d = [...demand];
             d.length = 1;
@@ -263,7 +370,7 @@ export default function PVForm() {
             setDemand([...d]);
         }
     },[customizedDemand])
-  
+
     return (
         <ScrollView>
             <View style={styles.container}>
@@ -329,6 +436,8 @@ export default function PVForm() {
                                     UnitGroupB,
                                     confirmDeleteGroup,
                                     setAddressType,
+                                    setInstallationType,
+                                    installationType
                                 })
                             :formStatusNow === 2 ?
                                 ConsumerUnity({
@@ -374,3 +483,5 @@ export default function PVForm() {
         </ScrollView>
     )
 }
+
+

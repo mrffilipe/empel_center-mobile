@@ -1,11 +1,12 @@
 import React from 'react';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import {View} from "react-native";
+import {View, Alert} from "react-native";
 import styles from './styles/global';
 const Drawer = createDrawerNavigator();
 
 import HeaderTask from "./components/Headers/HeaderTask";
 import HeaderHome from "./components/Headers/HeaderHome";
+import HeaderAddService from "./screens/ServicesOffered/HeaderAddService";
 import MenuIcons from './components/MenuIcons';
 
 import HomeScreen from "./screens/Home";
@@ -16,6 +17,11 @@ import BudgetDetailScreen from "./screens/BudgetDetail";
 import UsersScreen from "./screens/Users";
 import CitiesScreen from "./screens/Cities";
 import ProposalsScreen from "./screens/Proposals";
+import UserScreen from "./screens/User";
+import CustomerScreen from "./screens/Customer";
+import ProfileScreen from "./screens/User";
+import ServicesActivedScreen from "./screens/ServicesActived";
+import ServicesOfferedScreen from "./screens/ServicesOffered";
 // import PlanningScreen from "./screens/Planning";
 import {colors} from "./styles/defount.json";
 
@@ -26,7 +32,7 @@ const Stack = createNativeStackNavigator();
 import { CommonActions } from '@react-navigation/native';
 
 const Routes = () => {
-    const {signed,loggout} = useAuthContext();
+    const {signed,logout} = useAuthContext();
 
     const options = ({ route }) => ({
         drawerIcon: ({ color, focused }) => {
@@ -68,8 +74,49 @@ const Routes = () => {
                     component={UsersScreen} />
 
                 <Stack.Screen 
-                    name="Gerenciar cidades" 
+                    name="Gerenciar Atividades" 
+                    component={UsersScreen} />
+
+                <Stack.Screen 
+                    name="Atividades" 
+                    component={UsersScreen} />
+
+                <Stack.Screen 
+                    name="Cofre de Arquivos" 
+                    component={UsersScreen} />
+
+                <Stack.Screen 
+                    name="Serviços Oferecidos" 
+                    component={ServicesOfferedScreen} 
+                    options={{ headerTitle: (props) => <HeaderAddService {...props} title="Serviços Oferecidos" /> }} />
+
+                <Stack.Screen 
+                    name="Serviços Ativos" 
+                    component={ServicesActivedScreen} />
+
+                <Stack.Screen 
+                    name="Gerenciar Cidades" 
                     component={CitiesScreen} />
+
+                <Stack.Screen 
+                    name="Cidades Cadastradas" 
+                    component={CitiesScreen} />
+
+                <Stack.Screen 
+                    name="Clientes" 
+                    component={CitiesScreen} />
+
+                <Stack.Screen 
+                    name="Cliente" 
+                    component={CitiesScreen} />
+
+                <Stack.Screen 
+                    name="Fornecedor Fotovoltaico" 
+                    component={CitiesScreen} />
+
+                <Drawer.Screen
+                    name="Perfil"
+                    component={UserScreen} />
 
             </Stack.Navigator>
         );
@@ -94,6 +141,14 @@ const Routes = () => {
                     name="Proposta" 
                     component={ProposalsScreen} />
 
+                <Stack.Screen 
+                    name="Cliente" 
+                    component={CustomerScreen} />
+
+                <Stack.Screen 
+                    name="Lead" 
+                    component={CustomerScreen} />
+
             </Stack.Navigator>
         );
     }
@@ -116,13 +171,19 @@ const Routes = () => {
                         <Drawer.Screen 
                             name="Orçamentos" 
                             component={BudgetStack} />
-{/* 
+
+
+                        <Drawer.Screen 
+                            name="Perfil" 
+                            component={ProfileScreen} />
+
+                        {/* 
                         <Drawer.Screen 
                             name="Planejamento" 
                             component={PlanningScreen} /> */}
 
                         {/* <Drawer.Screen 
-                            name="Configurações" 
+                            name="Configurar" 
                             component={HomeScreen} /> */}
                         
 
@@ -141,9 +202,29 @@ const Routes = () => {
                                         })
                                     );
                                     
-                                    loggout();
+                                    Alert.alert(
+                                        "Sair",
+                                        "Deseja sair da conta?",
+                                        [
+                                            {
+                                                text:"Não",
+                                                onPress:()=> {},
+                                                type:"default"
+                                            },
+                                            {
+                                                text:"Sim",
+                                                onPress:()=> logout()
+                                            }
+                                        ],
+                                        {
+                                            cancelable: true,
+                                            onDismiss:()=> {}
+                                        }
+                                    )
+                                    
                                 }
-                            })}/>
+                            }
+                        )}/>
 
                     </>
                 }

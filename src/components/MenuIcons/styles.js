@@ -26,6 +26,6 @@ export default StyleSheet.create({
         alignItems:"center",
     },
     sair:{
-        transform:[{rotate:"-90deg"}]
+        
     }
 });

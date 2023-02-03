@@ -9,5 +9,8 @@ export default StyleSheet.create({
         color:"#fff",
         fontSize:fontSize.label,
         fontWeight:"bold",
+    },
+    button_disabled:{
+        opacity:.6
     }
 })

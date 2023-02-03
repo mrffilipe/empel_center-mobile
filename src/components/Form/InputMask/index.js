@@ -32,7 +32,7 @@ export default function InputText({
   })
 
   Masks["BRL_CURRENCY"] = dollarMask;
-  Masks["KWH"] = Masks.CPF = [/\d/, ",", /\d/, /\d/, /\d/];
+  Masks["KWH"] = [/\d/, ",", /\d/, /\d/, /\d/];
 
   Masks.Number = [/\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/];//maskara para apenas numeros
   Masks.Percent = [value.length === 3? '1' : /[\d]/, value.length === 3? '0' : /\d/, value.length === 3? '0' : /\d/];//maskara para porcentagem maximo 100%
@@ -45,15 +45,24 @@ export default function InputText({
   Masks.CPF = [/\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "-", /\d/, /\d/, /\d/];
   Masks.CNPJ = [/\d/, /\d/, ".", /\d/, /\d/, /\d/, ".", /\d/, /\d/, /\d/, "/", /\d/, /\d/, /\d/, /\d/, "-", /\d/, /\d/];
 
+  // Masks["percent_only"] = [/[0-9]/,/[0-9]/,/[0-0]/];
+
+  // console.log(value)
 
   const addValue = (val)=>{
       if(mask === "percent"){
         if(val.includes(",")){
           val = val;
         }else{
-          val = parseInt(val)
+          val = parseInt(val);
           val = val < 0 ? "" : val;
         }
+      }
+
+      if(mask === "percent_only"){
+        
+        val = parseInt(val);
+        val = val > 100 ? 100 : val < 0 ? 0 : val ? val : 0;
       }
 
       return !name? setValue(val): setValue(val,name);
@@ -65,7 +74,7 @@ export default function InputText({
 
       <MaskInput
         style={!invalid ? [styles.input] : [styles.input,styles.input_invalid]}
-        value={value}
+        value={value.toString()}
         onEndEditing={()=>onBlur()}
         mask={Masks[mask]}
         placeholder={placeholder}
