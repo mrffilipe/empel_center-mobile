@@ -6,8 +6,8 @@ import { useMainContext } from '../../contexts/mainContext';
 import API from "../../services/api";
 import InputText from '../../components/Form/InputText';
 import InputDate from '../../components/Form/InputDate';
-import { TouchableOpacity, View, Text} from 'react-native';
-import { formatDate } from '../../services/tools';
+import { TouchableOpacity, View, Text, ScrollView} from 'react-native';
+import { formatDate, isInDateRange } from '../../services/tools';
 
 import Loading from '../../components/Loading';
 import Callback from '../../components/Modal/Callback';
@@ -73,19 +73,7 @@ export default function ServicesActived() {
         
         let dataFiltered = dataMain.filter(item => {
             let res = true;
-            let createdAtTime = new Date(item.updatedAt.split("T")[0]);
-
-            if(initialDate){
-                let initialTime = new Date(initialDate);
-                if(createdAtTime < initialTime)
-                    res = false;
-            }
-
-            if(finalDate){
-                let finalTime = new Date(finalDate);
-                if(createdAtTime > finalTime)
-                    res = false;
-            }
+            res = isInDateRange(item.createdAt, initialDate,finalDate);
 
             if(service && permissionTypesFilter()[service] !== item.service)
                 res = false;
@@ -124,64 +112,66 @@ export default function ServicesActived() {
     },[])
 
     return (
-        <View style={styles.container}>
-            <Loading loading2={loading} />
-            <Callback params={callback} />
+        <ScrollView>
+            <View style={styles.container}>
+                <Loading loading2={loading} />
+                <Callback params={callback} />
 
-            <View style={styles.form}>
-                
-                <View style={[styles.input_single]}>
-                    <InputDate
-                        label="Do dia"
-                        value={initialDate}
-                        setValue={setInitialDate}
-                    />
-                </View>
-                <View style={styles.input_single}>
-                    <InputDate
-                        label="Até dia"
-                        value={finalDate}
-                        setValue={setFinalDate}
-                    />
+                <View style={styles.form}>
+                    
+                    <View style={[styles.input_single]}>
+                        <InputDate
+                            label="Do dia"
+                            value={initialDate}
+                            setValue={setInitialDate}
+                        />
+                    </View>
+                    <View style={styles.input_single}>
+                        <InputDate
+                            label="Até dia"
+                            value={finalDate}
+                            setValue={setFinalDate}
+                        />
+                    </View>
+
+                    <View style={[styles.input_single]}>
+                        <Select
+                            value={permissionTypesFilter()[service]}
+                            values={permissionTypesFilter()}
+                            setValue={setService}
+                            label={"Serviço"}
+                            labelTop={true}
+                        />
+                    </View>
+
+                    <View style={[styles.input_single]}>
+                        <InputText
+                            label="Buscar"
+                            value={search}
+                            setValue={setSearch}
+                            // type="search"
+                        />
+                    </View>
                 </View>
 
-                <View style={[styles.input_single]}>
-                    <Select
-                        value={permissionTypesFilter()[service]}
-                        values={permissionTypesFilter()}
-                        setValue={setService}
-                        label={"Serviço"}
-                        labelTop={true}
-                    />
+                <View style={styles.form_filter}>
+                    <View style={styles.form_group}>
+                        <TouchableOpacity onPress={clearFilter} style={[styles.btn, styles.btn_red]} >
+                            <Text  style={styles.btn_text}>Limpar</Text>
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
-                <View style={[styles.input_single]}>
-                    <InputText
-                        label="Buscar"
-                        value={search}
-                        setValue={setSearch}
-                        // type="search"
-                    />
+
+                <View style={styles.table_wrap}>
+                    <TableManager
+                        data={data} 
+                        setData={setData} 
+                        getData={getData}
+                        setCallback={setCallback}
+                        setLoading={setLoading}/>
                 </View>
             </View>
-
-            <View style={styles.form_filter}>
-                <View style={styles.form_group}>
-                    <TouchableOpacity onPress={clearFilter} style={[styles.btn, styles.btn_red]} >
-                        <Text  style={styles.btn_text}>Limpar</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-
-
-            <View style={styles.table_wrap}>
-                <TableManager
-                    data={data} 
-                    setData={setData} 
-                    getData={getData}
-                    setCallback={setCallback}
-                    setLoading={setLoading}/>
-            </View>
-        </View>
+        </ScrollView>
     )
 }

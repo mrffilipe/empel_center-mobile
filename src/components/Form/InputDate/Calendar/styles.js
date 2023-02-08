@@ -1,11 +1,6 @@
 import { StyleSheet } from "react-native";
 import {colors, fontSize, modal} from "../../../../styles/defount.json";
 export default StyleSheet.create({
-
-    modal: {
-        ...modal,
-        backgroundColor: "rgba(0, 0, 0, 0.6)",
-    },
     calendarWrap: {
         width: "100%",
         paddingBottom: 20,
@@ -19,7 +14,7 @@ export default StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         paddingHorizontal: 40,
-        paddingTop:50,
+        marginTop:30,
         paddingBottom:0,
     },
     submit: {

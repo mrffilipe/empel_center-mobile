@@ -1,5 +1,5 @@
 import {StyleSheet} from "react-native";
-import {colors,fontSize,button} from "../../styles/defount.json"
+import {colors,fontSize,button} from "../../../styles/defount.json"
 
 export default StyleSheet.create({
     container:{

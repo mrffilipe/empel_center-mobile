@@ -26,7 +26,7 @@ export default function PVForm({navigation, route}) {
 
     const [groups, setGroups] = useState([]);
     // const [costs, setCosts] = useState([costsModel]);
-    const [name, setName] = useState();
+    const [name, setName] = useState("");
     const [cpfCnpj, setCpfCnpj] = useState("");
     const [phoneNumber, setPhoneNumber] = useState("");
     const [email, setEmail] = useState("");

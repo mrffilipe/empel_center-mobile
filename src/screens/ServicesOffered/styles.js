@@ -4,6 +4,7 @@ import {colors,fontSize,container, button} from "../../styles/defount.json"
 export default StyleSheet.create({
     container:{
         paddingHorizontal:15,
+        paddingBottom:50
     },
     form_filter:{
         flexDirection:"row",

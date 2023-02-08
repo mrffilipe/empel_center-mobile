@@ -51,7 +51,7 @@ export default function Calendars({ setModalVisible, setSave, select = {} }) {
                     }}
                     style={{
                         borderRadius: 10,
-                        height: 300
+                        paddingBottom:10,
                     }}
                     theme={{
                         backgroundColor: '#F3F3F3',

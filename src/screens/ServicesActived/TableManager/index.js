@@ -1,7 +1,7 @@
 import React from "react";
 import API from "../../../services/api";
 import {Alert} from "react-native";
-import Table from "../../../components/Table";
+import Table from "../../../components/Tables/Table";
 import { useNavigation } from '@react-navigation/native';
 
 export default function TableServices({data = [], setData, getData, onCustome = false, setLoading, setCallback}) {
@@ -80,7 +80,7 @@ export default function TableServices({data = [], setData, getData, onCustome = 
         {
             name:"Remover",
             onPress:removeService,
-            onPressReturn:"customerName",
+            onPressReturn:"service",
             onPressReturn2:"id",
             color:"red"
         }

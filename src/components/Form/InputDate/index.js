@@ -1,15 +1,23 @@
 import React, {useState} from 'react';
-import {View, Text, Pressable, Modal} from "react-native"; 
+import {View, Text, Pressable} from "react-native"; 
 import styles from "../InputText/styles";
+import styles2 from "./styles";
 import ICalendar from "../../../assets/icons/calendar";
 import Calendar from "./Calendar";
+import Select from '../Select';
+import Modal from '../../Modal';
+import ButtonSubmit from '../ButtonSubmit';
 export default function InputDate({
-  label = "",
-  value = {},
-  setValue = Function,
+    label = "",
+    value = {},
+    setValue = Function,
+    dateTime = false,
 }) {
 
     const [isOpenCalendar, setIsOpenCalendar] = useState(false);
+    const [isOpenTime, setIsOpenTime] = useState(false);
+    const [timeHours, setTimeHours] = useState("00");
+    const [timeMinutes, setTimeMinutes] = useState("00");
 
     const openCalendar = ()=>{
         setIsOpenCalendar(true);
@@ -27,14 +35,78 @@ export default function InputDate({
         }
     }
 
+    const saveDate = (val)=>{
+        setValue(val);
+        if(dateTime){
+            setIsOpenTime(true);
+        }
+    }
+
+    const saveTime = ()=>{
+        setIsOpenCalendar(false);
+        setIsOpenTime(false);
+        value.time = timeHours + ':' + timeMinutes;
+        setValue(value);
+    }
+
+    const hours = ()=>{
+        let d = [];
+        for(let i = 0;i < 24; i++){
+            let j = i < 10 ? "0"+i : ""+i;
+
+            d.push(j);
+        }
+
+        return d;
+    }
+
+    const minutes = ()=>{
+        let d = [];
+        for(let i = 0;i < 60; i++){
+            let j = i < 10 ? "0"+i : ""+i;
+
+            d.push(j);
+        }
+
+        return d;
+    }
     return (
         <View style={styles.input_Wrap}>
-             <Modal
-            style={styles.modal}
-            animationType="fade"
-            transparent={true}
-            visible={isOpenCalendar}>
-                <Calendar setModalVisible={setIsOpenCalendar} setSave={setValue} select={value} />
+            <Modal
+                isOpen={isOpenCalendar}>
+                <Calendar setModalVisible={setIsOpenCalendar} setSave={saveDate} select={value} />
+            </Modal>
+
+            <Modal
+                title={"Horário"}
+                isOpen={isOpenTime}>
+
+                    <View style={styles2.time_wrap}>
+                        <View style={styles2.select_wrap}>
+                            <Select 
+                                label="Hora"
+                                value={timeHours}
+                                labelTop={true}
+                                setValue={setTimeHours}
+                                values={hours()}
+                                getValue={true}
+                            />
+                        </View>
+                        <Text style={styles2.dots}>:</Text>
+                        <View style={styles2.select_wrap}>
+                            <Select 
+                                label="Minutos"
+                                value={timeMinutes}
+                                labelTop={true}
+                                setValue={setTimeMinutes}
+                                values={minutes()}
+                                getValue={true}
+                            />
+                        </View>
+                    </View>
+
+
+                <ButtonSubmit onPress={saveTime} value={"Salvar"} />
             </Modal>
 
             <Pressable onPress={openCalendar} android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}>
@@ -46,6 +118,7 @@ export default function InputDate({
                 </View>
                 <Text style={[styles.input]}>
                     {formatData(Object.keys(value)[0])}
+                    {value.time? " "+value.time : ""}
                 </Text>
             </Pressable>
         </View>

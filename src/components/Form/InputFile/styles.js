@@ -31,4 +31,27 @@ export default StyleSheet.create({
         fontSize:14,
         marginLeft:10,
     },
+
+    files_single:{
+        borderBottomWidth:1,
+        borderColor:colors.accent_dark,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        alignItems: "center",
+        marginTop:10,
+        width:"100%"
+    },
+    remove_file:{
+        color:colors.red,
+        fontWeight:"bold",
+        padding:3,
+        fontSize:fontSize.p
+    },
+    file_name:{
+        color:colors.accent_dark,
+        fontSize:fontSize.p,
+    },
+    submit_wrap:{
+        marginTop:30,
+    },
 })

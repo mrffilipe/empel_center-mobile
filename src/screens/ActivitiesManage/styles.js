@@ -5,24 +5,22 @@ export default StyleSheet.create({
     container:{
         ...container,
         paddingRight:0,
-        alignItems:"flex-start",
+        alignItems:"stretch",
+        paddingTop:0,
+        paddingBottom:200,
     },
     form:{
         flexDirection: 'row',
         flexWrap: 'wrap',
-        alignItems:"flex-end"
+        alignItems:"flex-end",
     },
     input_single:{
         flex:1,
         minWidth:180,
         marginRight:15,
-
     },
-    
-    btn:{
-        ...button,
-        minWidth:130,
-        marginRight:15,
+    form_group:{
+        paddingRight:15,
     },
     btn_text:{
         fontSize:fontSize.label,
@@ -30,10 +28,12 @@ export default StyleSheet.create({
         fontWeight:"bold",
     },
     form_filter:{
-        justifyContent:"flex-start",
         flexDirection:"row",
         flexWrap:"wrap",
         marginTop:15,
+        flex:1,
+        justifyContent:"space-between",
+        alignItems:"flex-end"
     },
     btn_red:{
         backgroundColor:colors.orange

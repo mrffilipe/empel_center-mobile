@@ -76,16 +76,24 @@ export const deleteFile = (file = fileProps)=>{
 }
 
 
-export const formatDate = (date = new Date(),dateTime = false, full = false)=>{
-    date = new Date(date);
+export const formatDate = (date = new Date(),dateTime = false, full = false, UTC = true)=>{
+    if(UTC)
+        date = new Date(date+ "Z");
+    else
+        date = new Date(date);
+
     let year = date.getFullYear().toString();
     let formatedDate = `${leftPad(date.getDate(),2)}/${leftPad(date.getMonth() + 1,2)}/${ full? year :year[2]+year[3]}` 
     let time = `${date.getHours()}:${leftPad(date.getMinutes(),2)}`;
 
     if(dateTime)
-        return formatedDate+" "+time
+        return formatedDate+" - "+time
 
     return formatedDate
+}
+
+export const convertDateToUTC = (date) =>{ 
+    return new Date(date.getUTCFullYear(), date.getUTCMonth(), date.getUTCDate(), date.getUTCHours(), date.getUTCMinutes(), date.getUTCSeconds()); 
 }
 
 const verifyFildsClientProps = {
@@ -192,4 +200,22 @@ export const updateProgress = ({bites,fileName, setProgress})=>{
             }
         );
     }
+}
+
+export const isInDateRange = (createdAt,initialDate,finalDate)=>{
+    let createdAtTime = new Date(createdAt.split("T")[0]);
+    let res = true;
+    if(initialDate){
+        let initialTime = new Date(Object.keys(initialDate)[0]);
+        if(createdAtTime < initialTime)
+            res = false;
+    }
+
+    if(finalDate){
+        let finalTime = new Date(Object.keys(finalDate)[0]);
+        if(createdAtTime > finalTime)
+            res = false;
+    }
+
+    return res;
 }

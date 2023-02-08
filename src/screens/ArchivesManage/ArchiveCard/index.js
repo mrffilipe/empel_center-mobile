@@ -1,35 +1,31 @@
 import React, {useEffect, useState} from 'react'
 import {useAuthContext} from "../../../contexts/authContext";
-import {useMainContext} from "../../../contexts/mainContext";
 import API from "../../../services/api";
 import Loading from "../../../components/Loading";
 import Callback from "../../../components/Modal/Callback";
-import TableList from "../../../components/Tables/TableList";
+import TableList from '../../../components/Tables/TableList';
 import { Alert } from 'react-native';
 
-export default function ArchiveCard({data = []}) {
+export default function ArchiveCard({data, setData}) {
     const {hasPermission} = useAuthContext();
-    const {setServices, services} = useMainContext(); 
-
     const [loading, setLoading] = useState(false);
     const [callback, setCallback] = useState(null);
 
-    const removeService = async(id,name)=>{
-        if(!hasPermission())
-            return
+    const [loading2, setLoading2] = useState(false);
 
+    const deleteArchive = async(id,name)=>{
         const confirmed = async()=>{
             try{
-                setLoading(true);
-                let res = await API.deletar(`ServiceOffered/${id}`).catch(err => err);
-                setLoading(false);
+                setLoading2(true);
+                let res = await API.deletar(`StoredFile/${id}`).catch(err => err);
+                setLoading2(false);
                 if(res?.error)
                     throw new Error(res.error);
 
-                let arr = [...services];
+                let arr = [...data];
                 arr = arr.filter(val => val.id !== id);
-                
-                setServices(arr);
+
+                setData(arr);
             }catch(e){
                 setLoading(false);
                 setCallback({
@@ -41,7 +37,7 @@ export default function ArchiveCard({data = []}) {
         }
 
         let title = "Deletar";
-        let message = `Deletar o serviço "${name}"?`;
+        let message = `Deletar arquivo "${name}"?`
         Alert.alert(
             title,
             message,
@@ -61,35 +57,51 @@ export default function ArchiveCard({data = []}) {
                 onDismiss:()=> {}
             }
         )
+
     }
 
     const filds = [
         {
             label:"Nome",
             key:"name",
-            labelMinWidth:80,
+            labelMinWidth:150,
         },
         {
-            label:"Ativo",
-            key:"state",
-            labelMinWidth:80,
+            label:"Extenção",
+            key:"extension",
+            labelMinWidth:150,
         },
         {
-            label:"Criado em",
+            label:"Enviado Por",
+            key:"sendedBy",
+            labelMinWidth:150,
+        },
+        {
+            label:"Enviado em",
             key:"created",
-            labelMinWidth:80,
+            labelMinWidth:150,
         },
         {
-            label:"Descrição",
-            key:"description",
-            labelMinWidth:80,
+            label:"Nome do arquivo",
+            key:"filename",
+            labelMinWidth:150,
+        },
+        {
+            label:"Nivel de permissão",
+            key:"permission",
+            labelMinWidth:150,
+        },
+        {
+            label:"Nota",
+            key:"note",
+            labelMinWidth:150,
         }
     
     ]
 
     const actions = hasPermission() ? [
         {
-            onPress:removeService,
+            onPress:deleteArchive,
             onPressReturn2:"name",
             onPressReturn:"id",
             color:"red"
@@ -100,7 +112,10 @@ export default function ArchiveCard({data = []}) {
         <>
             <Loading loading2={loading} />
             <Callback params={callback} />
-            <TableList data={data} filds={filds} actions={actions}/>
+            {loading2 ? <Loading loading2={loading2} animation="delete" /> :<></>}
+
+            <TableList data={data} actions={actions} filds={filds} />
         </>
+
     )
 }

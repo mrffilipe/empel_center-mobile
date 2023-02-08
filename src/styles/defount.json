@@ -16,7 +16,8 @@
         "green_opacity":"rgba(24, 179, 58,.08)",
         "blue_opacity":"rgba(3, 10, 140,.08)",
         "red_opacity":"rgba(255, 51, 0,.08)",
-        "orange_opacity":"rgba(250, 123, 5,.08)"
+        "orange_opacity":"rgba(250, 123, 5,.08)",
+        "yellow_opacity":"rgba(255, 153, 0,.08)"
     },
     "fontSize":{
         "p":17,

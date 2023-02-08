@@ -1,7 +1,7 @@
 import styles from "./styles";
 import React from "react";
 import {View, Text, TouchableOpacity} from "react-native";
-import AllClear from "../AllClear";
+import AllClear from "../../AllClear";
 import ITrash from "icons/trash";
 
 const fildsProps = [

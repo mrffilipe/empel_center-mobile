@@ -39,16 +39,16 @@ export default function Login() {
 
 
     return (
-        <ScrollView>
-            <View style={styles.container}>
+    
+        <View style={styles.container}>
 
-                <Image
-                    style={styles.tinyLogo}
-                    source={Logo}/>
+            <Image
+                style={styles.tinyLogo}
+                source={Logo}/>
 
-                
-                <View style={styles.form}>
-
+            
+            <View style={styles.form}>
+                <ScrollView>
                     <Text style={styles.text}>Login</Text>
 
                     <InputText
@@ -70,9 +70,8 @@ export default function Login() {
                     <View style={styles.btn_wrap}>
                         <ButtonSubmit value={"Entrar"} onPress={signIn} styles={styles.btn_submit}/>
                     </View>
-
-                </View>
+                </ScrollView>
             </View>
-        </ScrollView>
+        </View>
     )
 }

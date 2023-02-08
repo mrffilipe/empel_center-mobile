@@ -273,7 +273,7 @@ export default function Documents({
                             : <View style={styles.icon_wrap}><ICheck style={styles.check} /></View>
                         }
 
-                           <Text style={styles.label}>{label}</Text>  
+                        <Text style={styles.label}>{label}</Text>  
                     </TouchableOpacity>
                 </View>
             </View>

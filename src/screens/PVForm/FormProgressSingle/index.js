@@ -2,7 +2,7 @@ import React, {useRef, useEffect} from 'react';
 import styles from '../styles';
 import {View, Text} from "react-native";
 import * as Animatable from 'react-native-animatable';
-import {colors, fontSize, container, limitSize, button} from "../../../styles/defount.json"
+import {colors} from "../../../styles/defount.json"
 export default function FormProgressSingle({val,key, formStatus, formStatusNow}) {
     const booletRef = useRef(null);
     const lineRef = useRef(null);

@@ -8,6 +8,8 @@ import HeaderTask from "./components/Headers/HeaderTask";
 import HeaderHome from "./components/Headers/HeaderHome";
 import HeaderAddService from "./screens/ServicesOffered/HeaderAddService";
 import MenuIcons from './components/MenuIcons';
+import HeaderArchive from "./screens/ArchivesManage/HeaderArchive";
+import HeaderActivities from "./screens/ActivitiesManage/HeaderActivities";
 
 import HomeScreen from "./screens/Home";
 import LoginScreen from "./screens/Login";
@@ -22,6 +24,10 @@ import CustomerScreen from "./screens/Customer";
 import ProfileScreen from "./screens/User";
 import ServicesActivedScreen from "./screens/ServicesActived";
 import ServicesOfferedScreen from "./screens/ServicesOffered";
+import ArchivesManageScreen from "./screens/ArchivesManage";
+import ActivitiesManage from './screens/ActivitiesManage';
+import Activities from './screens/Activities';
+import NotificationsScreen from './screens/Notifications';
 // import PlanningScreen from "./screens/Planning";
 import {colors} from "./styles/defount.json";
 
@@ -75,15 +81,18 @@ const Routes = () => {
 
                 <Stack.Screen 
                     name="Gerenciar Atividades" 
-                    component={UsersScreen} />
+                    component={ActivitiesManage} 
+                    options={{ headerTitle: (props) => <HeaderActivities {...props} title="Gerenciar Atividades" /> }} />
 
                 <Stack.Screen 
                     name="Atividades" 
-                    component={UsersScreen} />
+                    component={Activities}
+                    options={{ headerTitle: (props) => <HeaderActivities {...props} title="Atividades" myActivities={true}/> }}  />
 
                 <Stack.Screen 
                     name="Cofre de Arquivos" 
-                    component={UsersScreen} />
+                    component={ArchivesManageScreen}
+                    options={{ headerTitle: (props) => <HeaderArchive {...props} title="Cofre de Arquivos" /> }} />
 
                 <Stack.Screen 
                     name="Serviços Oferecidos" 
@@ -170,12 +179,14 @@ const Routes = () => {
 
                         <Drawer.Screen 
                             name="Orçamentos" 
-                            component={BudgetStack} />
+                            component={BudgetStack} 
+                            options={{ headerTitle: (props) => <HeaderHome {...props} title={"Orçamentos"} /> }} />
 
 
                         <Drawer.Screen 
                             name="Perfil" 
-                            component={ProfileScreen} />
+                            component={ProfileScreen} 
+                            options={{ headerTitle: (props) => <HeaderHome {...props} title={"Perfil"} /> }} />
 
                         {/* 
                         <Drawer.Screen 
@@ -185,7 +196,14 @@ const Routes = () => {
                         {/* <Drawer.Screen 
                             name="Configurar" 
                             component={HomeScreen} /> */}
-                        
+                        <Drawer.Screen
+                            name="Notificações"
+                            component={NotificationsScreen}
+                            options={{
+                                drawerItemStyle: { height: 0 },
+                                drawerItemStyle: { display: 'none' },
+                                headerTitle: (props) => <HeaderHome {...props} title={"Notificações"} /> 
+                            }}/>
 
                         <Drawer.Screen 
                             name="Sair" 

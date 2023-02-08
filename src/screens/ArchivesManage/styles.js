@@ -5,12 +5,12 @@ export default StyleSheet.create({
     container:{
         ...container,
         paddingRight:0,
-        alignItems:"flex-start",
+        alignItems:"stretch",
     },
     form:{
         flexDirection: 'row',
         flexWrap: 'wrap',
-        alignItems:"flex-end"
+        alignItems:"flex-end",
     },
     input_single:{
         flex:1,
@@ -30,10 +30,12 @@ export default StyleSheet.create({
         fontWeight:"bold",
     },
     form_filter:{
-        justifyContent:"flex-start",
         flexDirection:"row",
         flexWrap:"wrap",
         marginTop:15,
+        flex:1,
+        justifyContent:"space-between",
+        marginRight:15,
     },
     btn_red:{
         backgroundColor:colors.orange

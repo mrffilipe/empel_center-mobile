@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react'
 import styles from "./styles";
 import InputText from '../../components/Form/InputText';
 import { useMainContext } from '../../contexts/mainContext';
-import { Text, View } from 'react-native';
-
+import { ScrollView, View } from 'react-native';
+import ServiceCard from "./ServiceCard";
 export default function ArchivesManage({router}) {
     const idService = router?.params;
     const {getServices, services} = useMainContext();
@@ -13,7 +13,8 @@ export default function ArchivesManage({router}) {
     const [data, setData] = useState([]);
 
     const filterSearch = (idFilter)=>{ //pesquisar filtrar
-        
+
+
         let dataFiltered = services.filter(item => {
             let res = true;
             let searchLower = search.toLowerCase();
@@ -28,7 +29,7 @@ export default function ArchivesManage({router}) {
             
             return res;
         });
-
+        
         setData(dataFiltered);
     }
 
@@ -44,11 +45,12 @@ export default function ArchivesManage({router}) {
     },[]);
 
     useEffect(()=>{
-        filterSearch(idService?.id);
+        if(idService?.id)
+            filterSearch(idService?.id);
     },[idService, services]);
 
     return (
-        <View>
+        <ScrollView>
             <View style={styles.container}>
 
                 <View style={styles.form_filter}>
@@ -63,10 +65,10 @@ export default function ArchivesManage({router}) {
                 </View>
 
                 <View style={styles.amount_data}>
-                    <Text style={"count"}>Resultados <Text>({data.length})</Text></Text>
+                    <ServiceCard data={data}/>
                 </View>
 
             </View>
-        </View>
+        </ScrollView>
     )
 }

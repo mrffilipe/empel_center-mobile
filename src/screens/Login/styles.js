@@ -4,9 +4,9 @@ import {StyleSheet} from "react-native";
 export default StyleSheet.create({
     container:{
         display: 'flex',
-        paddingTop:50,
         alignItems: 'center',
-        flex:1
+        flex:1,
+        justifyContent: 'center',
     },
     form:{
         width:"100%",

@@ -1,6 +1,7 @@
 import React, { useState, useContext, createContext, useEffect } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import Loading from "../components/Loading";
+import Callback  from "../components/Modal/Callback";
 import API from "../services/api";
 
 const AuthContextData = {
@@ -26,7 +27,7 @@ const AuthContextData = {
 const AuthContext = createContext(AuthContextData);
 
 export const AuthProvider = ({ children }) => {
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
     const [tasksStoraged,setTasksStoraged] = useState([]);
     const [user,setUser] = useState(null);
     const [accessData, setAccessData] = useState(null);
@@ -36,8 +37,10 @@ export const AuthProvider = ({ children }) => {
         try {
             let data = await AsyncStorage.getItem("@dataAccessUser");
             data = JSON.parse(data);
-
-            if(!data) return logout();
+            setLoading(false);
+            if(!data){
+                return logout();
+            }
 
             API.setAccessToken(data?.accessToken);
             data.user.name = data?.user?.firstName + " " + data?.user?.lastName;
@@ -45,7 +48,9 @@ export const AuthProvider = ({ children }) => {
             data.user = null;
             
             setAccessData(data);
-        }catch(e) {}
+        }catch(e) {
+            setLoading(false);
+        }
     }
 
     const login = async({email, password}) => {
@@ -184,6 +189,8 @@ export const AuthProvider = ({ children }) => {
             setCallback,
             hasPermission
         }}>
+            <Loading loading2={loading}/>
+            <Callback params={callback}/>
             {children}
         </AuthContext.Provider>
     )

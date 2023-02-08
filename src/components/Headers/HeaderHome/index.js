@@ -4,7 +4,7 @@ import {View, Text} from 'react-native';
 import NetInfo from "@react-native-community/netinfo";
 import {useAuthContext} from "../../../contexts/authContext";
 import HistoryBeckup from "../../Modal/HistoryBeckup";
-import NotificationHeader from '../../Modal/NotificationHeader';
+import NotificationHeader from '../HeaderNotification';
 export default function LogoTitle({tintColor,title}) {
     const {tasksStoraged} = useAuthContext([]);
 

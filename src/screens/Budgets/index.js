@@ -13,6 +13,7 @@ import API from "../../services/api";
 import {useAuthContext} from "../../contexts/authContext";
 import { useMainContext } from "../../contexts/mainContext";
 import States from "../../data/selectOptions.json";
+import {isInDateRange} from '../../services/tools';
 
 export default function Budgets({navigation}) {
     const {setCallback, callback, loading} = useAuthContext();
@@ -55,19 +56,7 @@ export default function Budgets({navigation}) {
     const filterSearch = ()=>{ //pesquisar filtrar
         let dataFiltered = budgets.filter(item => {
             let res = true;
-            let createdAtTime = new Date(item.createdAt.split("T")[0]);
-
-            if(initialDate){
-                let initialTime = new Date(Object.keys(initialDate)[0]);
-                if(createdAtTime < initialTime)
-                    res = false;
-            }
-
-            if(finalDate){
-                let finalTime = new Date(Object.keys(finalDate)[0]);
-                if(createdAtTime > finalTime)
-                    res = false;
-            }
+            res = isInDateRange(item.createdAt, initialDate,finalDate);
 
             if(search && !item.customerName.toLowerCase().includes(search.toLowerCase()) && !item.seller.toLowerCase().includes(search.toLowerCase()))
                 res = false;
