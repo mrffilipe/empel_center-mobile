@@ -10,17 +10,23 @@ import HeaderAddService from "./screens/ServicesOffered/HeaderAddService";
 import MenuIcons from './components/MenuIcons';
 import HeaderArchive from "./screens/ArchivesManage/HeaderArchive";
 import HeaderActivities from "./screens/ActivitiesManage/HeaderActivities";
+import HeaderUsers from "./screens/Users/HeaderAddUser";
+import HeaderSupllier from "./screens/Supplier/HeaderAddSupplier";
+import HeaderAddServiceActived from "./screens/ServicesActived/HeaderAddServiceActived";
+import HeaderAddCustomer from "./screens/Customers/HeaderAddCustomers";
 
 import HomeScreen from "./screens/Home";
+import Supplier from "./screens/Supplier";
 import LoginScreen from "./screens/Login";
 import PVFormScreen from './screens/PVForm';
 import BudgetsScreen from "./screens/Budgets";
 import BudgetDetailScreen from "./screens/BudgetDetail";
 import UsersScreen from "./screens/Users";
-import CitiesScreen from "./screens/Cities";
+// import CitiesScreen from "./screens/Cities";
 import ProposalsScreen from "./screens/Proposals";
 import UserScreen from "./screens/User";
 import CustomerScreen from "./screens/Customer";
+import CustomersScreen from "./screens/Customers";
 import ProfileScreen from "./screens/User";
 import ServicesActivedScreen from "./screens/ServicesActived";
 import ServicesOfferedScreen from "./screens/ServicesOffered";
@@ -77,7 +83,8 @@ const Routes = () => {
 
                 <Stack.Screen 
                     name="Gerenciar usuários" 
-                    component={UsersScreen} />
+                    component={UsersScreen}
+                    options={{ headerTitle: (props) => <HeaderUsers {...props} title="Gerenciar usuários" /> }} />
 
                 <Stack.Screen 
                     name="Gerenciar Atividades" 
@@ -101,27 +108,23 @@ const Routes = () => {
 
                 <Stack.Screen 
                     name="Serviços Ativos" 
-                    component={ServicesActivedScreen} />
-
-                <Stack.Screen 
-                    name="Gerenciar Cidades" 
-                    component={CitiesScreen} />
-
-                <Stack.Screen 
-                    name="Cidades Cadastradas" 
-                    component={CitiesScreen} />
+                    component={ServicesActivedScreen} 
+                    options={{ headerTitle: (props) => <HeaderAddServiceActived {...props} title="Serviços Ativos" /> }} />
 
                 <Stack.Screen 
                     name="Clientes" 
-                    component={CitiesScreen} />
+                    component={CustomersScreen}
+                    options={{ headerTitle: (props) => <HeaderAddCustomer {...props} title="Clientes" /> }} />
+
 
                 <Stack.Screen 
                     name="Cliente" 
-                    component={CitiesScreen} />
+                    component={CustomerScreen} />
 
                 <Stack.Screen 
                     name="Fornecedor Fotovoltaico" 
-                    component={CitiesScreen} />
+                    component={Supplier}
+                    options={{ headerTitle: (props) => <HeaderSupllier {...props} title="Fornecedor Fotovoltaico" /> }} />
 
                 <Drawer.Screen
                     name="Perfil"
@@ -154,9 +157,9 @@ const Routes = () => {
                     name="Cliente" 
                     component={CustomerScreen} />
 
-                <Stack.Screen 
+                {/* <Stack.Screen 
                     name="Lead" 
-                    component={CustomerScreen} />
+                    component={CustomerScreen} /> */}
 
             </Stack.Navigator>
         );

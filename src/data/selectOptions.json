@@ -1,12 +1,24 @@
 {
-    "instalationLocation":["Solo","Telhado"],
+    "instalationLocation":["Telhado Metalico","Telhado Cerâmico","Telhado Fibrocimento","Laje","Solo"],
     "instalationType":["Monofásico","Bifásico","Trifásico"],
     "leadOrigin":["Site","Vendedor","Radio","Facebook","Instalação","WhatsApp","Outros"],
     "addressType":["Rural","Urbano"],
     "typeAccess":["Administrador","Vendedor"],
     "documents":["CPF", "CNPJ"],
     "activityStatus":["Pendente","Concluido","Atraso"],
-
+    "taskCode":["Chamado","Visita"],
+    "activityCode":[
+        "Jogar Lixo Fora",
+        "Outro"
+    ],
+    "supplier":[
+        "Solar Livre",
+        "WEG"
+    ],
+    "tasksPvForm": [
+        "Ligar",
+        "Visitar"
+    ],
     "budgetsStatus":[
         {
             "key":0,
@@ -31,15 +43,10 @@
             "name":"Finalizado",
             "color":"green",
             "amount":0
-        },
-        {
-            "key":4,
-            "name":"Cancelado",
-            "color":"red",
-            "amount":0
         }
     ],
-    "planingStates":[
+    
+    "activeServiceStatus":[
         {
             "key":0,
             "name":"Homologação",

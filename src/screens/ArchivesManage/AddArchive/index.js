@@ -68,12 +68,14 @@ export default function AddArchive({isOpen, close, getData}) {
             setCallback({
                 message:"Arquivo salvo!",
                 actionName:"Ok!",
-                action:()=>setCallback(null),
+                action:()=>{
+                    setCallback(null);
+                    clearFilds();
+                },
                 type:1
             });
             
-            getData(false);
-            clearFilds(false);
+            getData(true);
         }catch(e){
             setCallback({
                 message:e.message,

@@ -14,9 +14,10 @@ import Callback from '../../components/Modal/Callback';
 
 export default function ServicesActived() {
     const getAll = "Todos";
-    const {services} = useMainContext();    
+    const {services, servicesActives, getServicesActives} = useMainContext();    
     // const {setCallback, setLoading} = useAuthContext();
     const [loading, setLoading] = useState(false);
+    const [loading2, setLoading2] = useState(false);
     const [callback, setCallback] = useState(null);
 
     const [initialDate, setInitialDate] = useState("");
@@ -24,43 +25,7 @@ export default function ServicesActived() {
     const [service, setService] = useState(0);
     const [search, setSearch] = useState("");
 
-    const [dataMain, setDataMain] = useState([]);
     const [data, setData] = useState([]);
-
-    const getData = async(load = true) => {
-
-        try{
-            if(load)
-                setLoading(true);
-
-            let res = await API.get("ActiveService").catch(err => err);
-            if(load)
-                setLoading(false);
-
-            if(res?.error)
-                throw new Error(res.error);
-
-        
-
-            res = res.map((val) =>{
-                val.customerName = val?.customer?.firstName ? val?.customer?.firstName + " " + val?.customer?.lastName : "";
-                val.service = val?.serviceOffered.name;
-                val.updatedAt = formatDate(val?.updatedAt, true, true);
-                val.customerId = val?.customer?.id;
-                val.serviceId = val?.serviceOffered?.id;
-                return val;
-            })
-
-            setDataMain(res);
-
-        }catch(e){
-            setCallback({
-                message:e.message,
-                actionName:"Ok!",
-                action:()=>setCallback(null),
-            });
-        }
-    }
 
 
     const permissionTypesFilter = ()=>{
@@ -71,7 +36,7 @@ export default function ServicesActived() {
 
     const filterSearch = (idFilter)=>{ //pesquisar filtrar
         
-        let dataFiltered = dataMain.filter(item => {
+        let dataFiltered = servicesActives.filter(item => {
             let res = true;
             res = isInDateRange(item.createdAt, initialDate,finalDate);
 
@@ -99,22 +64,23 @@ export default function ServicesActived() {
     const clearFilter = ()=>{
         setInitialDate("");
         setFinalDate("");
-        setSearch("");;
-        setService(getAll);
+        setSearch("");
+        setService(0);
     }
 
     useEffect(()=>{
         filterSearch();
-    },[search, dataMain, service, initialDate, finalDate])
+    },[search, servicesActives, service, initialDate, finalDate])
 
     useEffect(()=>{
-        getData(true);   
-    },[])
+        getServicesActives(true);   
+    },[]);
 
     return (
         <ScrollView>
             <View style={styles.container}>
-                <Loading loading2={loading} />
+                <Loading loading2={loading2} />
+                <Loading loading2={loading} animation="delete" />
                 <Callback params={callback} />
 
                 <View style={styles.form}>
@@ -167,7 +133,7 @@ export default function ServicesActived() {
                     <TableManager
                         data={data} 
                         setData={setData} 
-                        getData={getData}
+                        getData={getServicesActives}
                         setCallback={setCallback}
                         setLoading={setLoading}/>
                 </View>

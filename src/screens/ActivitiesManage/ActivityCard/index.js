@@ -39,7 +39,7 @@ export default function ActivityCard({data, setData}) {
         }
 
         let title = "Deletar";
-        let message = `Deletar Atividade?`
+        let message = "Excluir Atividade?"
         Alert.alert(
             title,
             message,
@@ -97,9 +97,6 @@ export default function ActivityCard({data, setData}) {
             key:"note",
         },
         {
-            label:"",
-        },
-        {
             label:"Responsavel",
             key:"responsible",
         },
@@ -108,18 +105,12 @@ export default function ActivityCard({data, setData}) {
             key:"expiresIn",
         },
         {
-            label:"",
-        },
-        {
             label:"Criado por",
             key:"createdBy",
         },
         {
             label:"Criado Em",
             key:"createdAt",
-        },
-        {
-            label:"",
         },
         {
             label:"Finalizado em",
@@ -143,7 +134,16 @@ export default function ActivityCard({data, setData}) {
             condiction:(val)=> val.activityStatus !== 1,
             
         }
-    ] : [];
+    ] : [
+        {
+            icon:ICheck,
+            onPress:markConcluded,
+            onPressReturn:"id",
+            color:"green",
+            condiction:(val)=> val.activityStatus !== 1,
+            
+        }
+    ];
 
     return (
         <>

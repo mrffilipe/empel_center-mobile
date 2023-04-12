@@ -6,6 +6,7 @@ import ActivityCard from '../ActivitiesManage/ActivityCard';
 import selectOptions from "../../data/selectOptions.json";
 import InputDate from '../../components/Form/InputDate';
 import { useMainContext } from '../../contexts/mainContext';
+import { useAuthContext } from '../../contexts/authContext.js';
 import ButtonSubmit from '../../components/Form/ButtonSubmit';
 import ButtonClear from '../../components/Form/ButtonClear';
 import {isInDateRange} from '../../services/tools';
@@ -13,7 +14,7 @@ import {View, ScrollView} from "react-native";
 
 export default function ActivitiesManage({navigation}) {
     const {getMyActivities, myActivities} = useMainContext();
-
+    const {hasPermission} = useAuthContext();
     const getAll = "Tudo";
 
     const [statusNow, setStatusNow] = useState(0);
@@ -107,10 +108,14 @@ export default function ActivitiesManage({navigation}) {
                     <View style={styles.form_group}>
                         <ButtonClear onPress={clearFilter} />
                     </View>
-
-                    <View style={styles.form_group}>
-                        <ButtonSubmit onPress={()=>navigation.navigate("Gerenciar Atividades")}  value={"Gerenciar Atividades"} />
-                    </View>
+                    
+                    {
+                        hasPermission() ?
+                        <View style={styles.form_group}>
+                            <ButtonSubmit onPress={()=>navigation.navigate("Gerenciar Atividades")}  value={"Gerenciar Atividades"} />
+                        </View>
+                        :<></>
+                    }
                 </View>
 
                 <ActivityCard data={data} setData={setData}/>

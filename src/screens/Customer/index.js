@@ -36,7 +36,7 @@ export default function Customer({route,navigation}) {
             if(load)
                 setLoading(true);
 
-            let res = await API.get(`ActiveService/findAllByIDCustomer/${id}`).catch(err => err);
+            let res = await API.get(`Customer/${id}`).catch(err => err);
             if(load)
                 setLoading(false);
 

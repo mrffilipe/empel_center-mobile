@@ -1,0 +1,45 @@
+
+.form_Address h3{
+    margin-top: 10px;
+}
+
+.input_group{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.flex1{
+    flex: 1;
+}
+
+.select_wrap{
+    display: flex;
+    gap: 10px;
+}
+
+.select_wrap > div{
+    max-width: 100px;
+}
+
+.select_wrap > div select{
+    min-width: 100px !important;
+}
+
+
+.btn_local{
+    background-color: var(--blue_dark_opacity);
+    border-radius: 5px;
+    color: var(--accent-color-dark);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-weight: bold;
+    padding: 5px 10px;
+}
+
+.btn_local svg{
+    font-size: 1.2rem;
+}
+

@@ -39,7 +39,7 @@ export default function Table({data = [], filds = [], actions = []} = props) {
                 </Text>
             </View>
             <View style={[styles.list]}>
-                {data.length ?
+                {
                     data.map((val,key)=>{
                         return(
                             <View
@@ -93,7 +93,6 @@ export default function Table({data = [], filds = [], actions = []} = props) {
                             </View>
                         )
                     })
-                    :<AllClear msg={"Sem informações aqui!"}/>
                 }
 
             </View>

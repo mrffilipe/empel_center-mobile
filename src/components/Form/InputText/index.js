@@ -14,6 +14,7 @@ export default function InputText({
   editable = true,
   name = null,
   onBlur = ()=>{},
+  required = false,
 }) {
 
   return (
@@ -21,7 +22,7 @@ export default function InputText({
 
       <View style={styles.label_wrap}>
         <Text style={styles.label}>
-          {label}
+          {label}{required ? "*" : ""}
         </Text>
       </View>
 

@@ -5,7 +5,7 @@ import InputMask from "../../../components/Form/InputMask";
 import Select from "../../../components/Form/Select";
 import styles from "./styles";
 import ButtonSubmit from "../../../components/Form/ButtonSubmit";
-import {verifyFildsClient} from "../../../services/tools";
+import {verifyFildsClient, documentType} from "../../../services/tools";
 import optionsSelect from "../../../data/selectOptions.json";
 import api from "../../../services/api";
 import VMasker from 'vanilla-masker';
@@ -52,7 +52,7 @@ export default function AddUser({isOpen, close, updateUsers} = props) {
             lastName,
             document: {
                 record: VMasker.toNumber(cpfCnpj),
-                documentType: 0
+                documentType: documentType(cpfCnpj),
             },
             email,
             typeAccess:parseInt(access)
@@ -60,12 +60,12 @@ export default function AddUser({isOpen, close, updateUsers} = props) {
         
         try{
             setLoading(true);
-            let res = await api.post("Auth/register",params).catch(e => e);
+            let res = await api.post("User/register",params).catch(e => e);
             setLoading(false);
-
+            console.log(res);
             if(res?.error || res.status !== 200){
                 return setCallback({
-                    message:res.error? res.error : res.status === 204? "E-mail ou documento já cadastrado" : res.status,
+                    message:res.status === 204? "E-mail ou documento já cadastrado" : "Verifique se o documento não está cadastrado",
                     close:()=>setCallback(null),
                     action:()=>setCallback(null),
                     actionName:"Ok!"
@@ -135,6 +135,7 @@ export default function AddUser({isOpen, close, updateUsers} = props) {
                                 value={fullName}
                                 setValue={setFullName}
                                 onBlur={checkIsValid}
+                                required={true}
                                 invalid={invalid?.input === fullName ? invalid?.message : null}
                             />
 
@@ -142,6 +143,7 @@ export default function AddUser({isOpen, close, updateUsers} = props) {
                                 type="email"
                                 label="E-mail"
                                 value={email}
+                                required={true}
                                 setValue={setEmail}
                                 invalid={invalid?.input === email ? invalid?.message : null}
                                 onBlur={checkIsValid}
@@ -151,6 +153,7 @@ export default function AddUser({isOpen, close, updateUsers} = props) {
                                 label="CPF/CNPJ"
                                 value={cpfCnpj}
                                 setValue={setCpfCnpj}
+                                required={true}
                                 mask={cpfCnpj.replace(/\D+/g, "").length <= 11
                                     ? "CPF"
                                     : "CNPJ"
@@ -163,6 +166,7 @@ export default function AddUser({isOpen, close, updateUsers} = props) {
                             <View style={styles.select_wrap}>
                                 <Select
                                     label="Cargo: "
+                                    required={true}
                                     value={optionsSelect?.typeAccess[parseInt(access)]}
                                     setValue={setAccess}
                                     values={optionsSelect?.typeAccess}

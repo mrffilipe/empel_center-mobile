@@ -15,28 +15,28 @@ const setLogoutApi = (logout)=>{
 }
 
 const handleError = (res = Object)=>{
-    console.log(res);
-
-    if(!res.response || res.response.data === undefined)
-        return {error:"Verifique sua conexão e tente novamete"};
 
     if(res.response.status === 404)
         return {error:"Endereço não encontrado"};
 
-    if(res.response.status === 500)
-        return {error:"Erro interno do servidor"};
-        
-    if(res.response.status === 401){
-        LogoutApi();
-        return {error:res.response.status};
-    }
-    
-    if(res.response?.data.title)
-        return {error:res.response.data.title};
+    if(res.response.status === 400)
+        return {error:res.response};
 
-    return {error:res.message};
+    if(res.response.status === 413)
+        return {error:"Arquivo muito grande"};
+
+    if(res.response.status === 500)
+        return {error:"O servidor não pode resolver a requisição"};
+        
+    if(res.response.statusText === "Unauthorized")
+        LogoutApi();
+
+    if(!res.response || res.response.data === undefined)
+        return {error:"Verifique sua conexão e tente novamete"};
     
+    return {error:"Erro Inesperado"};
 }
+
 
 
 

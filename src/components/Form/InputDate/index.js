@@ -12,6 +12,7 @@ export default function InputDate({
     value = {},
     setValue = Function,
     dateTime = false,
+    required = false,
 }) {
 
     const [isOpenCalendar, setIsOpenCalendar] = useState(false);
@@ -74,7 +75,7 @@ export default function InputDate({
         <View style={styles.input_Wrap}>
             <Modal
                 isOpen={isOpenCalendar}>
-                <Calendar setModalVisible={setIsOpenCalendar} setSave={saveDate} select={value} />
+                <Calendar setModalVisible={setIsOpenCalendar} setSave={saveDate} select={value ? value : {}} />
             </Modal>
 
             <Modal
@@ -112,7 +113,7 @@ export default function InputDate({
             <Pressable onPress={openCalendar} android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}>
                 <View style={styles.label_wrap}>
                     <Text style={styles.label}>
-                    {label}
+                    {label}{required ? "*" : ""}
                     </Text>
                     <ICalendar style={styles.icon}/>
                 </View>

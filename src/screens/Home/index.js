@@ -49,11 +49,16 @@ export default function Home({navigation}) {
                                     <INetworkChart style={styles.ico}/>
                                     <Text style={styles.btn_text}>Gerenciar Atividades</Text>
                                 </Pressable>
+
+                                <Pressable onPress={()=>navigation.navigate("Fornecedor Fotovoltaico")} style={styles.btn_option} android_ripple={android_ripple}>
+                                    <ILink style={styles.ico}/>
+                                    <Text style={styles.btn_text}>Fornecedor Fotovoltaico</Text>
+                                </Pressable>
                             </>
                             :<>
                                 <Pressable onPress={()=>navigation.navigate("Atividades")} style={styles.btn_option} android_ripple={android_ripple}>
                                     <INetworkChart style={styles.ico}/>
-                                    <Text style={styles.btn_text}>Gerenciar Atividades</Text>
+                                    <Text style={styles.btn_text}>Minhas Atividades</Text>
                                 </Pressable>
                             </>
                         }
@@ -73,25 +78,20 @@ export default function Home({navigation}) {
                             <Text style={styles.btn_text}>Serviços Ativos</Text>
                         </Pressable>
 
-                        <Pressable onPress={()=>navigation.navigate("Gerenciar Cidades")} style={styles.btn_option} android_ripple={android_ripple}>
+                        {/* <Pressable onPress={()=>navigation.navigate("Gerenciar Cidades")} style={styles.btn_option} android_ripple={android_ripple}>
                             <IMarkMap style={styles.ico}/>
                             <Text style={styles.btn_text}>{hasPermission() ? "Gerenciar Cidades" : "Cidades Cadastradas"}</Text>
-                        </Pressable>
+                        </Pressable> */}
 
                         <Pressable onPress={()=>navigation.navigate("Clientes")} style={styles.btn_option} android_ripple={android_ripple}>
                             <IGroup style={styles.ico}/>
                             <Text style={styles.btn_text}>Clientes</Text>
                         </Pressable>
 
-                        <Pressable onPress={()=>navigation.navigate("Fornecedor Fotovoltaico")} style={styles.btn_option} android_ripple={android_ripple}>
-                            <ILink style={styles.ico}/>
-                            <Text style={styles.btn_text}>Fornecedor Fotovoltaico</Text>
-                        </Pressable>
-
-                        <Pressable onPress={()=>setIsOpenAddLeads(true)} style={styles.btn_option} android_ripple={android_ripple}>
+                        {/* <Pressable onPress={()=>setIsOpenAddLeads(true)} style={styles.btn_option} android_ripple={android_ripple}>
                             <IMagnetic style={[styles.ico]}/>
                             <Text style={styles.btn_text}>Cadastrar leads</Text>
-                        </Pressable>
+                        </Pressable> */}
                     </View>
                 </View>
             </ScrollView>

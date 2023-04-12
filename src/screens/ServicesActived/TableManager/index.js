@@ -72,7 +72,7 @@ export default function TableServices({data = [], setData, getData, onCustome = 
         },
         {
             label:"Ultima atualização",
-            key:"updatedAt",
+            key:"updated",
         }
     ]
 

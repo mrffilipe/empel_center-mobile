@@ -19,7 +19,7 @@ export default function AddActivity({isOpen, close}) {
     const {hasPermission, user} = useAuthContext();
 
     const [idReceivingUser, setIdReceivingUser] = useState("");
-    const [activityCode, setActivityCode] = useState("");
+    // const [activityCode, setActivityCode] = useState("");
     const [note, setNote] = useState("");
     const [completionDate, setCompletionDate] = useState("");
 
@@ -31,13 +31,13 @@ export default function AddActivity({isOpen, close}) {
         try{
             setInvalid(null);
 
-            if(activityCode === "" || idReceivingUser === "" || completionDate === ""){
+            if(!idReceivingUser || !completionDate || !note){
                 setInvalid({input:"",message:"Campo obrigatório!"});
                 return;
             }
 
             var params = {
-                activityCode:parseInt(activityCode),
+                activityCode:0,
                 note,
                 activityStatus:0,
                 completionDate: convertDateToUTC(new Date(Object.keys(completionDate)[0]+"T"+completionDate?.time)),
@@ -74,7 +74,7 @@ export default function AddActivity({isOpen, close}) {
 
     const clearFilds = (closeTo = true)=>{
         setIdReceivingUser("");
-        setActivityCode("");
+        // setActivityCode("");
         setNote("");
         setCompletionDate("");
 
@@ -103,15 +103,6 @@ export default function AddActivity({isOpen, close}) {
                 <View style={styles.form}>
 
                     <View style={styles.form_group}>
-                        <Select 
-                            label={"Tipo de atividade"}
-                            value={activityCode}
-                            setValue={setActivityCode}
-                            labelTop={true}
-                            values={["0","1"]}
-                            required={true}
-                            invalid={invalid?.input === activityCode ? invalid?.message : null}
-                        />
 
                         <Select 
                             label={"Responsável"}
@@ -131,15 +122,18 @@ export default function AddActivity({isOpen, close}) {
                             setValue={setCompletionDate}
                             label={"Prazo"}
                             dateTime={true}
+                            required={true}
                             invalid={invalid?.input === completionDate ? invalid?.message : null}
                         />
                     </View>
 
                     <View style={styles.form_group}>
                         <Textarea 
+                            required={true}
                             label={"Nota"}
                             value={note}
                             setValue={setNote}
+                            invalid={invalid?.input === note ? invalid?.message : null}
                         />
                     </View>
 

@@ -41,13 +41,19 @@ export default StyleSheet.create({
         borderColor:colors.red
     },
     invalid_alert:{
-        position:"absolute",
-        bottom:-20,
+        // position:"absolute",
+        // bottom:-20,
         color:colors.red
     },
     limit_text:{
         color:colors.black,
         opacity:.8,
         textAlign:"right"
+    },
+    botton_info_wrap:{
+        display:"flex",
+        alignItems:"flex-start",
+        flexDirection:"row",
+        justifyContent:"space-between",
     }
 })

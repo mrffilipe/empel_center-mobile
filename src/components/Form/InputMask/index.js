@@ -17,6 +17,7 @@ export default function InputText({
     editable = true,
     name = null,
     onBlur = ()=>{},
+    required = false,
 }) {
 
   const dollarMask = createNumberMask({
@@ -70,7 +71,7 @@ export default function InputText({
 
   return (
     <View style={styles.input_Wrap}>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label}>{label}{required ? "*" : ""}</Text>
 
       <MaskInput
         style={!invalid ? [styles.input] : [styles.input,styles.input_invalid]}

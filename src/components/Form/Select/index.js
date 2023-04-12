@@ -23,6 +23,7 @@ export default function Select({
     style2 = {},
     invalid = null,
     getValue = false,
+    required = false,
     } = props) {
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -37,7 +38,7 @@ export default function Select({
 
     return (
         <View style={labelTop?[styles.formSelect,styles.column, style2]:[styles.formSelect, style2]}>
-            {label ?<Text style={styles.label}>{label}</Text>:<></>}
+            {label ?<Text style={styles.label}>{label}{required ? "*" : ""}</Text>:<></>}
 
             <Pressable 
             style={labelTop?[styles.select,styles.select_w100,invalid ? styles.input_invalid:{}]:[styles.select,invalid ? styles.input_invalid:{},style2.select]} 

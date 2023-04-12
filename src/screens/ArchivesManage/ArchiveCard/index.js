@@ -64,37 +64,30 @@ export default function ArchiveCard({data, setData}) {
         {
             label:"Nome",
             key:"name",
-            labelMinWidth:150,
         },
         {
             label:"Extenção",
             key:"extension",
-            labelMinWidth:150,
         },
         {
             label:"Enviado Por",
             key:"sendedBy",
-            labelMinWidth:150,
         },
         {
             label:"Enviado em",
             key:"created",
-            labelMinWidth:150,
         },
         {
             label:"Nome do arquivo",
             key:"filename",
-            labelMinWidth:150,
         },
         {
-            label:"Nivel de permissão",
+            label:"Permissão",
             key:"permission",
-            labelMinWidth:150,
         },
         {
             label:"Nota",
             key:"note",
-            labelMinWidth:150,
         }
     
     ]

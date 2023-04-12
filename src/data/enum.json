@@ -1,0 +1,46 @@
+{
+    "typeAccess":{"Admin":0,"Seller":1},
+    "activityStatus":{ "InProgress":0,"Concluded":1,"Overdue":2},
+    "taskCode":{"Call":0,"Visit":1},
+    "activityCode":{
+        "JogarLixoFora":0,
+        "Testar":1
+    },
+    "instalationLocation":{
+        "MetallicRoof":0,
+        "CeramicRoof":1,
+        "FiberCementRoof":2, 
+        "Slab":3,
+        "Ground":4
+    },
+    "leadOrigin":{
+        "Site":0,
+        "Vendedor":1,
+        "Rádio":2,
+        "Facebook":3,
+        "Instagram":4,
+        "Whatsapp":5,
+        "Outros":6
+    },
+    "installationType":
+    {
+        "SinglePhase":0,
+        "Biphasic":1,
+        "triphasic":2
+    },
+    "supplier":{
+        "SolarLivre":0,
+        "WEG":1
+    },
+    "tasksPvForm":{
+        "Call":0,
+        "Visit":1
+    },
+    "activeServiceStatus":{
+        "Homologacao":0,
+        "Receber":1,
+        "Financiamento":2,
+        "Separacao":3,
+        "Instalacao":4
+    }
+}

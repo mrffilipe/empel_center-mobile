@@ -6,7 +6,7 @@ import ButtonSubmit from "../../components/Form/ButtonSubmit";
 import API from "../../services/api";
 import {useAuthContext} from "../../contexts/authContext";
 import {useMainContext} from "../../contexts/mainContext";
-import {verifyFildsClient, toNumber, splitName} from "../../services/tools";
+import {verifyFildsClient, toNumber, splitName, documentType} from "../../services/tools";
 import AddCity from '../../components/Modal/AddCity';
 import  FormProgressSingle from "./FormProgressSingle";
 import ConsumerUnity from "./ConsumerUnity";
@@ -57,11 +57,6 @@ export default function PVForm({navigation, route}) {
         "Extra"
     ];
 
-    const documentType = ()=>{
-        let cpfCnpjUnmask = cpfCnpj.replace(/\./g,"").replace(/\//g,"").replace(/-/g,"");
-        return cpfCnpjUnmask.length == 11? 0 : 1;
-    }
-
     const handleSubmit = async()=>{
         setInvalid(null)
 
@@ -101,7 +96,7 @@ export default function PVForm({navigation, route}) {
                 "company": null,
                 "document": {
                     "record": VMasker.toNumber(cpfCnpj),
-                    "documentType": documentType()
+                    "documentType": documentType(cpfCnpj),
                 },
                 "email": email,
                 "isLead": true,

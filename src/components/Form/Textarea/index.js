@@ -14,7 +14,8 @@ export default function InputText({
   editable = true,
   name = null,
   onBlur = ()=>{},
-  limit = 255
+  limit = 255,
+  required = false,
 }) {
 
   const addValue = (val,name) =>{
@@ -32,7 +33,7 @@ export default function InputText({
 
       <View style={styles.label_wrap}>
         <Text style={styles.label}>
-          {label}
+          {label}{required ? "*" : ""}
         </Text>
       </View>
 
@@ -49,11 +50,13 @@ export default function InputText({
         multiline={true}
         textAlignVertical={"top"}
       />
-      <Text style={styles.limit_text}>{value.length}/{limit}</Text>
-      {invalid 
-        ? <Text style={styles.invalid_alert}>{invalid}</Text>
-        : <></>
-      }
+      <View style={styles.botton_info_wrap}>
+        {invalid 
+          ? <Text style={styles.invalid_alert}>{invalid}</Text>
+          : <View/>
+        }
+        <Text style={styles.limit_text}>{value.length}/{limit}</Text>
+      </View>
     </View> 
   )
 }

@@ -11,7 +11,7 @@ const props = {
     setValue:Function,
     getValue:Boolean //retornar o valor nao o id ou a key
 }
-export default function InputRadio({values, label, setValue, value, name, invalid, getValue = false}= props) {
+export default function InputRadio({values, label, setValue,required = false, value, name, invalid, getValue = false}= props) {
   
     const setSelect = (val,key)=>{
         if(name !== undefined)
@@ -46,23 +46,23 @@ export default function InputRadio({values, label, setValue, value, name, invali
 
     return (
         <View style={styles.input_wrap}>
-              <Text style={styles.label}>{label}</Text>
+            <Text style={styles.label}>{label}{required ? "*" : ""}</Text>
 
-              <View style={styles.options_wrap}>
-                  {values.map((val,key)=>{
-                      return (
-                          <View key={key} style={styles.option_single} >
-                              {Option(val,key)}
-                              <Text style={styles.label}>{val}</Text>
-                          </View>
-                      )
-                  })}
-              </View>
+            <View style={styles.options_wrap}>
+                {values.map((val,key)=>{
+                    return (
+                        <View key={key} style={styles.option_single} >
+                            {Option(val,key)}
+                            <Text style={styles.label}>{val}</Text>
+                        </View>
+                    )
+                })}
+            </View>
 
-              {invalid 
-                  ? <Text style={styles.invalid_alert}>{invalid}</Text>
-                  : <></>
-              }
+            {invalid 
+                ? <Text style={styles.invalid_alert}>{invalid}</Text>
+                : <></>
+            }
         </View>
     )
 }

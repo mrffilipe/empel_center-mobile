@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import Loading from "../components/Loading";
 import Callback  from "../components/Modal/Callback";
 import API from "../services/api";
-
+import enumData from "../data/enum.json";
 const AuthContextData = {
     loading:Boolean,
     setLoading:Function,
@@ -112,7 +112,8 @@ export const AuthProvider = ({ children }) => {
     }
 
     const hasPermission = (permission = 0)=>{
-        return user?.typeAccess <= permission;
+        // return false;
+        return enumData.typeAccess[user?.typeAccess] <= permission;
     }
 
     const verifyRefreshToken = async()=>{
@@ -130,9 +131,6 @@ export const AuthProvider = ({ children }) => {
 
     const refreshToken = async()=>{
         let res = await API.post("auth/refresh",accessData).catch(e=> e);
-        console.log(res);
-        console.log(accessData.accessToken);
-        
     }
 
     const getStorageData = async()=>{//pegar 

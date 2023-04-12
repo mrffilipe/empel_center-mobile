@@ -38,13 +38,15 @@ export default function AddService({isOpen, close, getData}) {
             }
 
             setCallback({
-                message:"Serviço criado!",
+                message:"Serviço Criado!",
                 actionName:"Ok!",
-                action:()=>setCallback(null),
+                action:()=>{
+                    setCallback(null);
+                    clearFilds();
+                },
                 type:1
             });
-            getData(false);
-            clearFilds(false);
+            getData(true);
         }catch(e){
             setCallback({
                 message:e.message,

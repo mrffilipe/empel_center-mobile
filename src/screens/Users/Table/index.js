@@ -8,6 +8,8 @@ import { limitText } from "../../../services/tools";
 import Loading from "../../../components/Loading";
 import RegisterConsultant from "../RegisterConsultant";
 import API from "../../../services/api";
+import enumData from "../../../data/enum.json";
+
 const props = {
     data:[{
         id:Number,
@@ -99,66 +101,59 @@ export default function Table({data, getData} = props) {
             {loading ? <Loading loading2={loading} /> : <></>}
             <RegisterConsultant params={registerNewConsultant} setParams={setRegisterNewConsultant} />
             <View style={[styles.list]}>
-                {data.length ?
-                    data.map((val,key)=>{
-                        var fullName = val?.firstName ? val?.firstName + " " + val?.lastName : "";
-                        const isActive = val.consultant && val?.consultant.active;
-                        const idActive = val?.consultant ? val?.consultant.id : val?.id;
-                        const isConsultant = val?.consultant !== undefined;
-                        return(
-                            <View
-                            key={key} 
-                            style={isActive ?[styles.info]:[styles.info,styles.info_desabled]}>
+                {
+                data.map((val,key)=>{
+                    var fullName = val?.firstName ? val?.firstName + " " + val?.lastName : "";
+                    const isActive = val.consultant && val?.consultant.active;
+                    const idActive = val?.consultant ? val?.consultant.id : val?.id;
+                    const isConsultant = val?.consultant !== undefined;
+                    return(
+                        <View
+                        key={key} 
+                        style={isActive ?[styles.info]:[styles.info,styles.info_desabled]}>
 
-                                
-                                    <View style={styles.table_wrap}>
-                                        {/* GRUPO A */}
+                            
+                                <View style={styles.table_wrap}>
+                                    {/* GRUPO A */}
 
-                                        <View style={styles.text_wrap}>
-                                            <Text style={[styles.h5]}>Nome: </Text>
-                                            <TouchableOpacity style={styles.content_wrap} onPress={()=>navigation.navigate("Perfil",{id:val?.id})}>
-                                                <Text style={[styles.h5,styles.h5_content,styles.right]}>{fullName}</Text>
-                                            </TouchableOpacity>
-                                        </View>
-
-                                        <View style={styles.text_wrap}>
-                                            <Text style={[styles.h5]}>Email: </Text>
-                                            <TouchableOpacity style={styles.content_wrap} onPress={()=>link({url:"mailto:"+val.email})}>
-                                                <Text style={[styles.h5,styles.h5_content,styles.right]}>{limitText(val.email,28)}</Text>
-                                            </TouchableOpacity>
-                                        </View>
-
-                                        <View style={styles.text_wrap}>
-                                            <Text style={[styles.h5]}>Cargo: </Text>
-
-                                            {isActive ?
-                                                <Text style={[styles.h5,styles.h5_content,styles.right,styles.not_link]}>{optionsSelect?.typeAccess[val.typeAccess]}</Text>
-                                                :
-                                                <Text style={[styles.h5,styles.h5_content,styles.right,styles.not_link]}>{"Nenhuma"}</Text>
-                                            }
-                                        </View>
-
-                                        <View style={styles.text_wrap}>
-                                            {isActive
-                                                ? 
-                                                <TouchableOpacity style={styles.btn} onPress={()=>desableAcess(fullName, idActive)}>
-                                                    <Text style={styles.btn_text}>{"Desativar Acesso"}</Text>
-                                                </TouchableOpacity>
-                                                : 
-                                                <TouchableOpacity style={[styles.btn,styles.btn_activete]} onPress={()=>activateAcess(fullName, idActive, isConsultant)}>
-                                                    <Text style={styles.btn_text}>{"Ativar acesso"}</Text>
-                                                </TouchableOpacity>
-                                            }
-                                        </View>
-
+                                    <View style={styles.text_wrap}>
+                                        <Text style={[styles.h5]}>Nome: </Text>
+                                        <TouchableOpacity style={styles.content_wrap} onPress={()=>navigation.navigate("Perfil",{id:val?.id})}>
+                                            <Text style={[styles.h5,styles.h5_content,styles.right]}>{fullName}</Text>
+                                        </TouchableOpacity>
                                     </View>
 
-                            </View>
-                        )
-                    })
-                    :<AllClear msg={"Sem informações aqui!"}/>
-                }
+                                    <View style={styles.text_wrap}>
+                                        <Text style={[styles.h5]}>Email: </Text>
+                                        <TouchableOpacity style={styles.content_wrap} onPress={()=>link({url:"mailto:"+val.email})}>
+                                            <Text style={[styles.h5,styles.h5_content,styles.right]}>{limitText(val.email,28)}</Text>
+                                        </TouchableOpacity>
+                                    </View>
 
+                                    <View style={styles.text_wrap}>
+                                        <Text style={[styles.h5]}>Cargo: </Text>
+
+                                        <Text style={[styles.h5,styles.h5_content,styles.right,styles.not_link]}>{optionsSelect?.typeAccess[enumData.typeAccess[val.typeAccess]]}</Text>
+                                            
+                                    </View>
+
+                                    <View style={styles.text_wrap}>
+                                        {isActive
+                                            ? 
+                                            <></>
+                                            : 
+                                            <TouchableOpacity style={[styles.btn,styles.btn_activete]} onPress={()=>activateAcess(fullName, idActive, isConsultant)}>
+                                                <Text style={styles.btn_text}>{"Ativar conta"}</Text>
+                                            </TouchableOpacity>
+                                        }
+                                    </View>
+
+                                </View>
+
+                        </View>
+                    )
+                })
+            }
             </View>
         </View>
     )

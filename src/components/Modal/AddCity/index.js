@@ -5,7 +5,7 @@ import InputMask from "../../Form/InputMask";
 import Select from "../../Form/Select";
 import styles from "./styles";
 import ButtonSubmit from "../../Form/ButtonSubmit";
-import Cityes from "../../../data/cityes.json";
+import Cities from "../../../data/cities.json";
 import countries from "../../../data/countries.json";
 import Modal from "../";
 import {useMainContext} from "../../../contexts/mainContext";
@@ -173,7 +173,7 @@ export default function AddCity({isOpen,close, values = null} = props) {
                             getValue={true}
                             setValue={setName}
                             valid={invalid !== name}
-                            values={Cityes[country]? Cityes[country].estados.filter(val => val.sigla === state)[0]?.cidades:[]}
+                            values={Cities[country]? Cities[country].estados.filter(val => val.sigla === state)[0]?.cidades:[]}
                             labelTop={true}
                         />
                     :
@@ -197,12 +197,12 @@ export default function AddCity({isOpen,close, values = null} = props) {
                     <View style={styles.select_single}>
                     {!values?
                         <>
-                            {Cityes[country] ?
+                            {Cities[country] ?
                                 <Select
                                     label="Estado"
                                     value={state}
                                     setValue={setState}
-                                    values={Cityes[country]? Cityes[country].estados.map(val => val.sigla).sort():[]}
+                                    values={Cities[country]? Cities[country].estados.map(val => val.sigla).sort():[]}
                                     labelTop={true}
                                     getValue={true}
                                 />

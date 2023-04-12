@@ -158,9 +158,9 @@ export const toMoney = (val,fixed = 2, defoultResponse = "")=>{
     }
 } 
 
-export const toBrNumberFormat = (val,fixed = 0, defoultResponse = "")=>{
+export const toBrNumberFormat = (val,fixed = 2, defoultResponse = "")=>{
     if(typeof val === "number"){
-        return fixed? val.toFixed(fixed).replace(".",',') : val.toString().replace(".",',');
+        return fixed? val.toFixed(fixed) : val.toString().replace(".",',');
     }else{
         return defoultResponse;
     }
@@ -218,4 +218,9 @@ export const isInDateRange = (createdAt,initialDate,finalDate)=>{
     }
 
     return res;
+}
+
+export const documentType = (cpfCnpj)=>{
+    let cpfCnpjUnmask = cpfCnpj.replace(/\./g,"").replace(/\//g,"").replace(/-/g,"");
+    return cpfCnpjUnmask.length === 11? 0 : 1;
 }
