@@ -3,9 +3,10 @@ import API from "../../../services/api";
 import {Alert} from "react-native";
 import Table from "../../../components/Tables/Table";
 import { useNavigation } from '@react-navigation/native';
-
+import { useMainContext } from '../../../contexts/mainContext';
 export default function TableServices({data = [], setData, getData, onCustome = false, setLoading, setCallback}) {
     const navigation = useNavigation();
+    const {getServicesActives} = useMainContext();  
 
     const removeService = (name,id)=>{
         const confirmed = async()=>{
@@ -20,7 +21,12 @@ export default function TableServices({data = [], setData, getData, onCustome = 
 
                 let arr = [...data];
                 arr = arr.filter(obj => obj.id !== id);
-                setData(arr);
+                if(!onCustome){
+                    setData(arr);
+                }else{
+                    getData(true);
+                    getServicesActives(false);
+                }
             }catch(e){
                 
                 getData(true);
@@ -71,10 +77,14 @@ export default function TableServices({data = [], setData, getData, onCustome = 
             onPressReturn: "customerId"
         },
         {
+            label:"Status",
+            key:"status",
+        },
+        {
             label:"Ultima atualização",
             key:"updated",
         }
-    ]
+    ];
 
     const actions = [
         {
@@ -90,7 +100,7 @@ export default function TableServices({data = [], setData, getData, onCustome = 
         <>
             <Table 
                 data={data}
-                filds={filds}
+                filds={filds.filter((val,key) => key != 1 || !onCustome)}
                 actions={actions}
             />
         </>

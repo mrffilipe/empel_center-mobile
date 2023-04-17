@@ -1,4 +1,4 @@
-import  React, {useState} from 'react';
+import  React, {useEffect, useState} from 'react';
 import {ScrollView ,View, Text, Image} from "react-native";
 import styles from "./styles";
 import InputText from "../../components/Form/InputText";
@@ -6,7 +6,7 @@ import ButtonSubmit from "../../components/Form/ButtonSubmit";
 import Logo from "../../assets/images/logoempel.png";
 import {validateEmail} from "../../services/tools";
 import {useAuthContext} from "../../contexts/authContext";
-
+import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function Login() {
 
     const {login, setCallback} = useAuthContext();
@@ -16,16 +16,21 @@ export default function Login() {
     const [invalid, setInvalid] = useState(null);
 
     const signIn = async()=>{
+
         if(!validateEmail(email))
-            return setInvalid({input:email,message:"E-mail invalido!"});
+            return setInvalid({input:email,message:"E-mail inválido!"});
+
+        if(!password)
+            return setInvalid({input:password,message:"Senha inválida!"});
             
+        await AsyncStorage.setItem("@email",email);
         let res = await login({email,password}).catch(e => e);
 
         if(res !== 200){
             setCallback({
                 action:()=>setCallback(null),
                 actionName:"Ok",
-                message:res === "Unauthorized"? "E-mail ou senha inválido" : res,
+                message:res === 204 ? "E-mail ou senha inválido!" : res,
                 type:0,
                 close: ()=>setCallback(null)
             })
@@ -34,9 +39,19 @@ export default function Login() {
 
     const checkIsValid = ()=>{
         if(!validateEmail(email) && email !== "")
-                return setInvalid({input:email,message:"E-mail invalido!"});
+                return setInvalid({input:email,message:"E-mail inválido!"});
     };
 
+    const verifiEmailSaved = async()=>{
+        let mail = await AsyncStorage.getItem("@email");
+        if(mail){
+            setEmail(mail);
+        }
+    }
+
+    useEffect(()=>{
+        verifiEmailSaved();
+    },[]);
 
     return (
     

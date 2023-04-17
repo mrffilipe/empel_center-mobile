@@ -17,7 +17,6 @@ export default function ServicesActived() {
     const {services, servicesActives, getServicesActives} = useMainContext();    
     // const {setCallback, setLoading} = useAuthContext();
     const [loading, setLoading] = useState(false);
-    const [loading2, setLoading2] = useState(false);
     const [callback, setCallback] = useState(null);
 
     const [initialDate, setInitialDate] = useState("");
@@ -29,7 +28,7 @@ export default function ServicesActived() {
 
 
     const permissionTypesFilter = ()=>{
-        return ["Todos",...services.map(val =>{
+        return [getAll,...services.map(val =>{
             return val.name;
         })]
     }
@@ -79,7 +78,6 @@ export default function ServicesActived() {
     return (
         <ScrollView>
             <View style={styles.container}>
-                <Loading loading2={loading2} />
                 <Loading loading2={loading} animation="delete" />
                 <Callback params={callback} />
 

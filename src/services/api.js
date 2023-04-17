@@ -112,7 +112,16 @@ const downloadPDF = async({
     });
 }
 
+const getCityByCep = async(cep)=>{
+    
+    try{
+        let res = await axios(`https://viacep.com.br/ws/${cep}/json/`);
+        return res.data;
+    }catch(err) {
+        return handleError(err);
+    }
 
+}
 
 export default {
     setAccessToken,
@@ -121,5 +130,6 @@ export default {
     put,
     deletar,
     downloadPDF,
-    setLogoutApi
+    setLogoutApi,
+    getCityByCep,
 }

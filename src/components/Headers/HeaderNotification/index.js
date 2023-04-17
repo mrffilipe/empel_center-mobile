@@ -31,12 +31,12 @@ export default function NotificationHeader() {
 
     return (
         <View style={styles.container}>
-            <TouchableOpacity onPress={()=>navigation.navigate("Notificações",{
+            {/* <TouchableOpacity onPress={()=>navigation.navigate("Notificações",{
                 notifications
             })}>
                 <Text style={styles.amount}>{amountNotifications}</Text>
                 <IBell style={styles.bell}/>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }

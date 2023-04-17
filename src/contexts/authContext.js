@@ -4,10 +4,32 @@ import Loading from "../components/Loading";
 import Callback  from "../components/Modal/Callback";
 import API from "../services/api";
 import enumData from "../data/enum.json";
+
+const userProps = {
+    id: "",
+    name: String,
+    lastName: String,
+    lastName: String,
+    email: String,
+    typeAccess:Number,
+    idConsultant:Number,
+    commissionInPercentage:Number
+}
+
+const accessDataProps = {
+    authenticated: Boolean,
+    accessToken: String,
+    refreshToken: String,
+    created: Date,
+    expiration: Date
+}
+
+
 const AuthContextData = {
     loading:Boolean,
     setLoading:Function,
     user:Object || null,
+    setUser:Function,
     signed:Boolean,
     login:()=> new Promise,
     loggout:Function,
@@ -45,9 +67,9 @@ export const AuthProvider = ({ children }) => {
             API.setAccessToken(data?.accessToken);
             data.user.name = data?.user?.firstName + " " + data?.user?.lastName;
             setUser(data?.user);
-            data.user = null;
+            // data.user = null;
             
-            setAccessData(data);
+            setAccessData(data?.token);
         }catch(e) {
             setLoading(false);
         }
@@ -63,7 +85,6 @@ export const AuthProvider = ({ children }) => {
                 return;
             }
             let data = response?.data;
-
             storageAcess(data);
             resolve(200);
         }) 
@@ -74,7 +95,6 @@ export const AuthProvider = ({ children }) => {
             if(!!user){
                 setLoading(true);
                 let res = await API.get('Auth/revoke').catch(e => e);
-                console.log(res);
                 setLoading(false);
             }
             
@@ -88,13 +108,8 @@ export const AuthProvider = ({ children }) => {
     const storageAcess = async(data)=>{
         try{
             API.setAccessToken(data?.accessToken);
-            let consultant = await API.get("Consultant/details/"+data.user.id).catch(e => e);
             setLoading(false);
-            if(!consultant?.error && consultant){
-                data.user.idConsultant = consultant?.id;
-                data.user.commissionInPercentage = consultant?.commissionInPercentage;
-            }
-
+            data.user.typeAccess = enumData.typeAccess[data.user?.typeAccess];
             data.user.name = data?.user?.firstName + " " + data?.user?.lastName;
             setUser(data?.user);
 
@@ -104,33 +119,38 @@ export const AuthProvider = ({ children }) => {
                 jsonData
             );
 
-            data.user = null;
-            setAccessData(data);    
+            // data.user = null;
+            setAccessData(data?.token);    
         }catch(e){
             return;
         }
     }
 
     const hasPermission = (permission = 0)=>{
-        // return false;
-        return enumData.typeAccess[user?.typeAccess] <= permission;
+        return user?.typeAccess <= permission;
     }
 
     const verifyRefreshToken = async()=>{
         let nowDate = new Date();
         let expiresInDate = new Date(accessData?.expiration);
-        let treeMinuts = 1000 * 60 * 3;
-        let treeMinutsInMilliseconds = 180000;
+        
+        let miliseconds = expiresInDate.getTime() - nowDate.getTime();
 
-        // setInterval(()=>{
-        //     if(nowDate.getTime() > expiresInDate.getTime() - treeMinutsInMilliseconds){
-                // refreshToken()
-        //     }
-        // },treeMinuts);
+        setTimeout(()=>{
+            refreshToken()
+        },miliseconds);
     }
 
     const refreshToken = async()=>{
-        let res = await API.post("auth/refresh",accessData).catch(e=> e);
+        try{
+        let res = await API.post("Auth/refresh",{accessToken:accessData?.accessToken, refreshToken: accessData?.refreshToken}).catch(e=> e);
+        if(res.error)
+            throw new Error("logout");
+        }catch(error){
+            if(error.message === "logout"){
+                logout();
+            }
+        }
     }
 
     const getStorageData = async()=>{//pegar 
@@ -178,6 +198,7 @@ export const AuthProvider = ({ children }) => {
             loading,
             setLoading,
             user,
+            setUser,
             signed:!!user,
             login,
             logout,

@@ -10,42 +10,46 @@ import IUser from "../../assets/icons/user";
 import {View, Text, ScrollView} from "react-native";
 import API from '../../services/api';
 import { useAuthContext } from '../../contexts/authContext';
+import { useMainContext } from '../../contexts/mainContext';
 import Loading from "../../components/Loading";
 export default function User({route}) {
     const roteId = route?.params;
-    const {setCallback, user} = useAuthContext();
+    const {setCallback, user, hasPermission} = useAuthContext();
+    const {users} = useMainContext();
     const [data, setData] = useState({});
     const [loading, setLoading] = useState(false);
+    const id = roteId?.id ? roteId.id : user.id;
 
-    const getUser = async () => {
+    const getUserInList = async () => {
+        let arr = [...users];
+        console.log(roteId);
         try{
-            let id = roteId?.id ? roteId.id : user.id;
-            setLoading(true);
-            let userRes = await API.get(`Consultant/details/${id}`).catch((e) => e);
-            setLoading(false);
+            let userRes = arr.filter((val) => val.id === parseInt(id))[0];
             
-            if(userRes.error || !user)
-                throw new Error(userRes.error ? userRes.error : "Usuario não encontrado.");
+            if(!userRes)
+                throw new Error("Usuario não encontrado!");
             
-
-            userRes.username = userRes.user ? userRes.user.firstName + ' ' + userRes.user.lastName : "";
-            userRes.permission = userRes.user? userRes.user.typeAccess : "";
-
             setData(userRes);
         }catch(e){
+            // getUsers(false);
             return setCallback({
                 message:e.message,
                 type: 0,
                 close:()=>setCallback(null),
-                action:()=>{getUser();setCallback(null)},
-                actionName:"Tentar novamente!",
+                action:()=>{setCallback(null)},
+                actionName:"Ok!",
             })
         };
     }
 
     useEffect(()=>{
-        getUser();
-    },[])
+        if(users.length)
+            getUserInList();
+    },[users]);
+
+    // useEffect(()=>{
+    //     getUsers(false);
+    // },[]);
 
     return (
         <ScrollView style={styles.user}>
@@ -60,7 +64,7 @@ export default function User({route}) {
                             </View>
                         }
 
-                        <Text style={styles.name}>{data?.username}</Text>
+                        <Text style={styles.name}>{data?.fullName}</Text>
                     </View>
 
                     <View style={styles.form}>
@@ -69,7 +73,7 @@ export default function User({route}) {
                             <View style={styles.info_single_wrap}>
                                 <InputText
                                     label="E-mail"
-                                    value={ data?.user ? data?.user.email : ""}
+                                    value={data?.email}
                                     editable={false}
                                 />
                             </View>
@@ -77,15 +81,17 @@ export default function User({route}) {
 
                         <View>
                             <View style={styles.info_single_wrap}>
-                                <Role roleValue={data?.permission} />
+                                <Role roleValue={data?.typeAccess} />
                             </View>
                         </View>
-
-                        <View>
-                            <View style={styles.info_single_wrap}>
-                                <Commission commissionValue={data?.commissionInPercentage}/>
+                        {hasPermission() || user.id === parseInt(id)?
+                            <View>
+                                <View style={styles.info_single_wrap}>
+                                    <Commission id={id} consultantId={data?.consultant?.id} commissionValue={data?.consultant?.commissionInPercentage}/>
+                                </View>
                             </View>
-                        </View>
+                        :<></>
+                        }
                     </View>
                 </View>
             </View>

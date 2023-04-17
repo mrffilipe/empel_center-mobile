@@ -15,8 +15,10 @@ export default StyleSheet.create({
         ...limitSize,
         backgroundColor:colors.white,
         paddingHorizontal:15,
-        paddingVertical:25,
         borderRadius:10,
+    },
+    modal_wrap:{
+        paddingVertical:25,
     },
     select_wrap:{
         maxWidth:250,
@@ -35,5 +37,11 @@ export default StyleSheet.create({
     btn_close:{
         backgroundColor:colors.red,
         marginRight:30,
+    },
+    btn_after:{
+        marginRight:30,
+    },
+    btn_submit:{
+        backgroundColor:colors.secondary,
     }
 })

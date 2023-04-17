@@ -12,8 +12,8 @@ export default StyleSheet.create({
         paddingHorizontal:10,
     },
     icon:{
-        height:40,
-        width:40,
+        height:35,
+        width:35,
         color: colors.white,
     },
     title: {
@@ -62,6 +62,9 @@ export default StyleSheet.create({
         width:50,
         flex:1,
     },
+    iconTimer:{
+        color:colors.orange
+    },
     task_single:{
         borderBottomWidth:1,
         borderColor:colors.accent,
@@ -70,20 +73,21 @@ export default StyleSheet.create({
         borderStyle:"dotted",
         display: "flex",
         flexDirection: "row",
-        alignItems: "center",
+        alignItems: "flex-end",
         justifyContent: "space-between",
         marginTop:10,
     },
     text_date:{
-        fontSize:fontSize.label,
+        fontSize:fontSize.p,
         color:colors.black,
         opacity:0.7,
         marginBottom:2,
         height:30,
     },
     text:{
-        color:colors.black,
-        fontSize:fontSize.p
+        color:colors.accent_dark,
+        fontSize:fontSize.label,
+        fontWeight:"bold"
     },
     text_wrap:{
         flex:1,

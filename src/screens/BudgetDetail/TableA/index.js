@@ -10,12 +10,17 @@ export default function Table({data = [], group}) {
     const fildExists = (val)=>{
         return val !== undefined && val !== "";
     }
+
+    if(!data.length){
+        return <></>;
+    } 
+
     return (
         <View style={[styles.container,styles2.container]}>
             <Text style={styles2.title}>{group === 0 ? "Grupo A" : "Grupo B"}</Text>
 
             <View style={[styles.list,styles2.list]}>
-                {data.length ?
+                {
                     data.map((value,key)=>{
                         
                         return(
@@ -25,9 +30,11 @@ export default function Table({data = [], group}) {
 
                                 <View style={[styles.info]}>
                                     <View style={styles2.table_wrap}>
+
                                         {/* GRUPO A */}
                                         {   group === 0?
                                             <>
+
                                                 {fildExists(value.pontaKWH) ? 
                                                     <View style={styles2.text_wrap}>
                                                         <Text style={[styles2.h5,styles.h5,styles.h5_content]}>TIPO: </Text>
@@ -130,13 +137,20 @@ export default function Table({data = [], group}) {
                                                 }
                                                 </>
                                         }
+
+                                        {fildExists(value.reference) ? 
+                                            <View style={[styles2.text_wrap,styles2.marginTop]}>
+                                                <Text style={[styles2.h5,styles.h5,styles.h5_content]}>NOME / REFERENCIA: </Text>
+                                                <Text style={[styles.h5,styles2.h5,styles2.right]}>{value.reference}</Text>
+                                            </View>
+                                            :<></>
+                                        }
                                     </View>
 
                                 </View>
                             </View>
                         )
                     })
-                    :<AllClear msg={"Sem informações aqui!"}/>
                 }
 
             </View>

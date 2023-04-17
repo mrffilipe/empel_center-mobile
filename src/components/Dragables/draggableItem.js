@@ -29,12 +29,14 @@ export default function Drgables({
     scrollRef,
     data,
     backgroundColor,
+    notDragable,
+    toDeleteId,
+    setToDeleteId 
 } = props) {
     const window = useWindowDimensions();
     const [pan] = useState(new Animated.ValueXY())
     const [panResponder, setPanResponder] = useState(PanResponder.create({}))
     const [dropStyle, setDropStyle] = useState({})
-    const notDragable = [3,4];
 
     const allowDrag = (state)=>{
         for(let i in notDragable){
@@ -100,8 +102,9 @@ export default function Drgables({
                         params: { id: value.id },
                             // merge: true,
                     })
+                }else{
+                    setToDeleteId(null);
                 }
-                
             },
             onPanResponderEnd : (e, gesture)=>{
                 setDropStyle({}); 
@@ -165,7 +168,7 @@ export default function Drgables({
         {...panResponder.panHandlers}
         teste={"teste"}
         style={[panStyle]}>
-            <View style={[styles.list_wrap, styles.list_wrap_draggable, dropStyle, backgroundColor]}>
+            <View style={[styles.list_wrap, styles.list_wrap_draggable, dropStyle, backgroundColor, toDeleteId === value.id ? { borderColor:"rgba(252, 48, 3,0.3)"}:{}]}>
                 {allowDrag(value?.status) 
                     ? <IMove style={styles.ico_move}/>
                     :<></>

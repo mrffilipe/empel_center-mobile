@@ -34,7 +34,7 @@ export default function Extras({
     return(
         <View>
             
-            <View style={styles2.demand}>
+            {/* <View style={styles2.demand}>
                 <Text style={[styles.subtitle,styles.subtitle_first]}>Demanda</Text>
 
                 <Checkbox
@@ -85,7 +85,7 @@ export default function Extras({
 
                     :<></>
                 }
-            </View>
+            </View> */}
 
             <View style={styles2.observation_wrap}>
                 <Text style={[styles.subtitle,styles.subtitle_first]}>Observação</Text>

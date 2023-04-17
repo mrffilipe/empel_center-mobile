@@ -55,7 +55,7 @@ export default function Table({data = [], filds = [], actions = []} = props) {
                                                     {value.onPress ?
                                                         <>
                                                             <Text style={[styles.h5]}>{value?.label}: </Text>
-                                                            <TouchableOpacity style={styles.content_wrap} onPress={()=>value.onPress(value?.onPressReturn)}>
+                                                            <TouchableOpacity style={styles.content_wrap} onPress={()=>value.onPress(val[value?.onPressReturn])}>
                                                                 <Text style={[styles.h5,styles.h5_content,styles.right]}>{val[value.key]}</Text>
                                                             </TouchableOpacity>
                                                         </>

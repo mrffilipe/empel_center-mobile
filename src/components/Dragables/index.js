@@ -1,10 +1,11 @@
 import styles from "./styles";
 import React, {useState, useEffect, useRef} from "react";
-import {View, Text, ScrollView, Pressable} from "react-native";
+import {View, Text, ScrollView, Pressable, TouchableOpacity} from "react-native";
 import {colors} from "../../styles/defount.json"
 import DraggableItem from "./draggableItem";
-
-
+// import deleteAnimation from "../../assets/animation/delete.json";
+// import Lottie from "lottie-react-native";
+import IDelete from "../../assets/icons/trash"; 
 const props = {
     data:Array,
     setData:Function,
@@ -12,13 +13,25 @@ const props = {
     navigate:Function,
     changeStatus:Function,
 }
-export default function Drgables({data = [], setData, status = [], navigate, children, changeStatus} = props) {
+export default function Drgables({
+    data = [], 
+    setData, 
+    status = [], 
+    navigate, 
+    children, 
+    changeStatus, 
+    notDragable = [3,4],
+    handleDelete
+} = props) {
 
     const [dropZoneValues, setDropZoneValues] = useState([]);
     const [scrollValue, setScrollValue] = useState(0);
     const [isDragIn, setIsDragIn] = useState(false);
+    // const [onDragId, setOnDragId] = useState(null);
+    const [toDeleteId, setToDeleteId] = useState(null);
 
     const scrollRef = useRef(null);
+    const lottieRef = useRef();
 
     const setDropZoneValue = (e,statusKey) => {      //Step 1
         
@@ -45,10 +58,36 @@ export default function Drgables({data = [], setData, status = [], navigate, chi
         setScrollValue(val);
     }
 
+    const handleDeleteSend = ()=>{
+        if(toDeleteId){
+            handleDelete(toDeleteId);
+            setToDeleteId(null);
+        }
+    }
+
+    const addDeleteId = (obj)=>{
+        let objId = obj.params.id; 
+        setToDeleteId(objId);
+    }
+
+    const handleNavigate = (obj)=>{
+        if(!handleDelete){
+            return navigate(obj);
+        }
+        return addDeleteId(obj);
+    }
 
     return (
 
         <>
+            {handleDelete
+                ? <TouchableOpacity 
+                    onPress={handleDeleteSend}
+                    style={styles.delete}>
+                        <IDelete style={toDeleteId ? styles.icon_delete : styles.icon_delete_opacity}/>
+                </TouchableOpacity>
+                :<></>
+            }
             <ScrollView ref={scrollRef} onScroll={(e)=>onScrollHandler(e.nativeEvent.contentOffset.x)}  horizontal={true}>
                 <View style={[styles.container,styles.draggables]}>
                     {children}
@@ -79,11 +118,14 @@ export default function Drgables({data = [], setData, status = [], navigate, chi
                                                     index={index}
                                                     scrollValue={scrollValue}
                                                     setIsDragIn={setIsDragIn}
-                                                    navigate={navigate}
+                                                    navigate={handleNavigate}
                                                     scrollRef={scrollRef}
                                                     data={data}
                                                     value={value} 
+                                                    notDragable={notDragable}
                                                     backgroundColor={styles[val?.color+"_opacity"]}
+                                                    toDeleteId={toDeleteId}
+                                                    setToDeleteId={setToDeleteId}
                                                 />
                                             )
 

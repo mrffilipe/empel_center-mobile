@@ -3,9 +3,9 @@ import {colors,fontSize,container, button} from "styles/defount.json"
 
 export default StyleSheet.create({
     container: {
-        marginVertical: 50,
+        // marginVertical: 50,
         textAlign: "center",
-        paddingBottom:80
+        paddingBottom:80,
     },
 
     info_single_wrap:{
@@ -13,7 +13,9 @@ export default StyleSheet.create({
         maxWidth:375,
         paddingRight:15,
     },
-
+    info_wrap_text:{
+        paddingLeft:15,
+    },
     info_wrap :{
         display: "flex",
         alignItems: "center",
@@ -41,11 +43,12 @@ export default StyleSheet.create({
         fontSize:fontSize.subtitle,
         color:colors.black,
         fontWeight:"bold",
-        marginBottom:25
+        marginBottom:25,
+        marginTop:35,
     },
     actions: {
         display: "flex",
-        alignItems: "center",
+        alignItems:"stretch",
         justifyContent:"center",
         flexWrap: "wrap",
         flexDirection: "row",
@@ -54,8 +57,9 @@ export default StyleSheet.create({
         backgroundColor:colors.secondary,
         paddingVertical:10,
         paddingHorizontal:10,
-        minWidth:100,
-        height:100,
+        width:100,
+        // height:100,
+        // maxWidth:120,
         alignItems: "center",
         borderRadius:10,
         marginRight:15,

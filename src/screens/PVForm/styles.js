@@ -137,14 +137,15 @@ export default StyleSheet.create({
     history_wrap:{
         flexDirection: "row",
         justifyContent: "space-between",
-        maxWidth:400,
+        // maxWidth:500,
         width:"100%",
     },
     progress_form_text:{
         color:colors.black,
         fontWeight:"bold",
-        minWidth:90,
+        minWidth:75,
         textAlign: "center",
+        fontSize:14,
     },
     history_line:{
         width:"100%",
@@ -152,7 +153,7 @@ export default StyleSheet.create({
         top:-10,
         backgroundColor:colors.gray,
         height:3,
-        right:-45,
+        right:-40,
         justifyContent:"center",
     },
     history_line_last:{

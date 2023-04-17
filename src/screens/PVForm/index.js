@@ -1,24 +1,24 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {View, ScrollView, Alert} from "react-native"; 
+import {View, ScrollView, Alert, Text} from "react-native"; 
 import styles from "./styles";
 import VMasker from "vanilla-masker";
 import ButtonSubmit from "../../components/Form/ButtonSubmit";
 import API from "../../services/api";
 import {useAuthContext} from "../../contexts/authContext";
-import {useMainContext} from "../../contexts/mainContext";
 import {verifyFildsClient, toNumber, splitName, documentType} from "../../services/tools";
 import AddCity from '../../components/Modal/AddCity';
 import  FormProgressSingle from "./FormProgressSingle";
 import ConsumerUnity from "./ConsumerUnity";
 import { UnitGroupA, UnitGroupB } from "./Groups";
 import GeneratorUnity from "./GeneratorUnity";
-import CustomerGroup from "./CustomerGroup";
+import CustomerForm from "../../components/Form/Customer";
+import AddressForm from "../../components/Form/Address";
 import Extras from "./Extras";
+import enumData from "../../data/enum.json";
 export default function PVForm({navigation, route}) {
     const {setTasksStoraged, tasksStoraged, setCallback, user, setLoading} = useAuthContext();
-    const {cities} = useMainContext();
 
-    const routeParams = route.params;
+    const routeData = route.params;
     
     const formProgressStatus = useRef();
 
@@ -28,30 +28,44 @@ export default function PVForm({navigation, route}) {
     // const [costs, setCosts] = useState([costsModel]);
     const [name, setName] = useState("");
     const [cpfCnpj, setCpfCnpj] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
     const [email, setEmail] = useState("");
-    const [generatorId, setGeneratorId] = useState("");
-    const [address, setAddress] = useState("");
+    const [origin, setOrigin] = useState("");
+    const [company, setCompany] = useState("");
+    const [phones, setPhones] = useState([
+        {
+            number:"",
+            isWhatsapp:true,
+        }
+    ]);
+
+    const [postalCode, setPostalCode] = useState("");
+    const [citie, setCitie] = useState("");
+    const [state, setState] = useState("GO");
+    const [country, setCountry] = useState("BR");
+    const [neighborhood, setNeighborhood] = useState("");
+    const [street, setStreet] = useState("");
+    const [number, setNumber] = useState("");
+    const [conplement, setConplement] = useState("");
+    const [coordinates, setCoordinates] = useState({latitude: "", longitude: ""});
+    
     const [addressType, setAddressType] = useState(1);
     const [installLocation,setInstallLocation] = useState("");
-    const [distance, setDistance] = useState("");
-
+    const [transformer, setTransformer] = useState(""); //não esta sendo usado
+    const [invalid, setInvalid] = useState(null);
     const [extra, setExtra] = useState("0");
     const [minRate, setMinRate] = useState("10,00");
-    const [installationType, setInstallationType] = useState("");
+    const [distance, setDistance] = useState("");
+    // const [installationType, setInstallationType] = useState("");
 
-    const [observation, setObservation] = useState("");
     const [demand, setDemand] = useState([""]);
     const [customizedDemand, setCustomizedDemand] = useState(true);
-
-    const [transformer, setTransformer] = useState("");
-
-    const [invalid, setInvalid] = useState({});
+    const [observation, setObservation] = useState("");
 
     const [isOpenAddCity, setIsOpenAddCity] = useState(false);
 
     const formStatus = [
         "Cliente",
+        "Endereço",
         "Geradora",
         "Consumidora",
         "Extra"
@@ -60,20 +74,20 @@ export default function PVForm({navigation, route}) {
     const handleSubmit = async()=>{
         setInvalid(null)
 
-        if(!verifyDemand())
-            return setFormStatusNow(3);
+        // if(!verifyDemand())
+        //     return setFormStatusNow(4);
 
         if(!verifyClient())
             return setFormStatusNow(0);
 
         if(!verifyGenerator())
-            return setFormStatusNow(1);
-
-        if(!verifyConsumer())
             return setFormStatusNow(2);
 
+        if(!verifyConsumer())
+            return setFormStatusNow(3);
+
         if(!user?.idConsultant)
-            return alert("Este usuário não é válido");
+            return alert("Seu cadastro não foi finalizado!");
 
         const {firstName, lastName} = splitName(name);
 
@@ -87,31 +101,43 @@ export default function PVForm({navigation, route}) {
             },
             "note": observation,
             "installationLocation": toNumber(installLocation),//solo/telhado
-            "installationType":toNumber(installationType),/// monofasico, bi, tri
+            // "installationType":toNumber(installationType),/// monofasico, bi, tri
             "idConsultant": user?.idConsultant,
-            "idAddress": toNumber(address) ,
             "customer": {
                 "firstName": firstName,
                 "lastName": lastName,
-                "company": null,
+                "company": company,
                 "document": {
                     "record": VMasker.toNumber(cpfCnpj),
-                    "documentType": documentType(cpfCnpj),
+                    "documentType": documentType(cpfCnpj)
                 },
                 "email": email,
-                "isLead": true,
-                "leadOrigin": 0,
+                "leadOrigin": origin,
+                "address": {
+                    "postalCode": postalCode,
+                    "city": citie,
+                    "state": state,
+                    "country": country,
+                    "neighborhood": neighborhood,
+                    "street": street,
+                    "number":toNumber(number),
+                    "complement": conplement,
+                    "coordinates": {
+                        "latitude": coordinates.latitude.toString(),
+                        "longitude": coordinates.longitude.toString(),
+                    }
+                },
                 "telephones": [
                     {
-                    "number": VMasker.toNumber(phoneNumber),
+                    "number": VMasker.toNumber(phones[0].number),
                     "isWhatsapp": true
                     }
                 ]
             },
             "consumerUnits":groups.map((val) =>{
                 return{
-                        "reference":generatorId,
-                        "group": val?.groupA? 0 : 1,
+                        "reference":val.name,
+                        "group": val?.groupA? "A" : "B",
                         "isGeneratingUnit": val?.isGenerator,
                         "tipPowerMonth": toNumber(val?.pontaKWH),
                         "tipPricePowerMonth": toNumber(val?.pontaRS),
@@ -132,7 +158,7 @@ export default function PVForm({navigation, route}) {
                     "value": 0
                 }
             ]
-        }
+        };
 
         setLoading(true)
         let res = await API.post("PVForm",params).catch(e => e);
@@ -178,10 +204,15 @@ export default function PVForm({navigation, route}) {
         setGroups([]);
         setName("");
         setCpfCnpj("");
-        setPhoneNumber("");
+        setPhones([
+            {
+                number:"",
+                isWhatsapp:true,
+            }
+        ]);
         setEmail("");
-        setGeneratorId("");
-        setAddress("");
+        // setGeneratorId("");
+        // setAddress("");
         setAddressType(1);
         setInstallLocation("");
         setTransformer("");
@@ -189,7 +220,7 @@ export default function PVForm({navigation, route}) {
         setExtra("0");
         setMinRate("10,00");
         setDistance("");
-        setInstallationType("");
+        // setInstallationType("");
         setDemand([""]);
         setCustomizedDemand(true);
         setObservation("");
@@ -204,14 +235,14 @@ export default function PVForm({navigation, route}) {
                 message,
                 [
                     {
-                        text:"Sim",
-                        onPress:()=> resolve(true)
-                    },
-                    {
                         text:"Não",
                         onPress:()=> resolve(false),
                         type:"default"
-                    }
+                    },
+                    {
+                        text:"Sim",
+                        onPress:()=> resolve(true)
+                    },
                 ],
                 {
                     cancelable: true,
@@ -224,26 +255,26 @@ export default function PVForm({navigation, route}) {
 
     const verifyClient = ()=>{
 
-        if(name === "" || cpfCnpj === "" || phoneNumber === "" || email === ""){
-                setInvalid({input:"",message:"Campo obrigatório!"});
-                return false;
+        if(name === "" || cpfCnpj === "" || phones[0].number === "" || email === "" || origin === ""){
+            setInvalid({input:"",message:"Campo obrigatório!"});
+            return false;
         }
 
-            if(!verifyFildsClient({
-                setInvalid, 
-                name, 
-                cpfCnpj,
-                phoneNumber,
-                email,
-            })){
-                return false;
-            }
+        if(!verifyFildsClient({
+            setInvalid, 
+            name, 
+            cpfCnpj,
+            phoneNumber:phones[0].number,
+            email,
+        })){
+            return false;
+        }
             
         return true;
     }
 
     const verifyGenerator = ()=>{
-        if(generatorId === "" || address === "" || addressType === "" || installLocation === "" || minRate === "" || distance === ""){
+        if(addressType === "" || installLocation === "" || minRate === "" || distance === ""){
             setInvalid({input:"",message:"Campo obrigatório!"});
             return false;
         }
@@ -311,13 +342,18 @@ export default function PVForm({navigation, route}) {
         }
 
         if(formStatusNow === 1){
-            if(!verifyGenerator())
+            if(!verifyAddress())
                 return setFormStatusNow(1);
         }
 
         if(formStatusNow === 2){
-            if(!verifyConsumer())
+            if(!verifyGenerator())
                 return setFormStatusNow(2);
+        }
+
+        if(formStatusNow === 3){
+            if(!verifyConsumer())
+                return setFormStatusNow(3);
         }
 
         if(formStatusNow < formStatus.length - 1)
@@ -330,15 +366,13 @@ export default function PVForm({navigation, route}) {
             setFormStatusNow(formStatusNow - 1);
     }
 
-    const checkIsValid = ()=>{
-        setInvalid(null);
-        verifyFildsClient({
-            setInvalid, 
-            name, 
-            cpfCnpj,
-            phoneNumber,
-            email,
-        })
+    const verifyAddress = ()=>{
+
+        if(street === "" || number === "" || postalCode === "" || citie === ""|| state === ""|| country === "" || neighborhood === ""){
+                setInvalid({input:"",message:"Campo obrigatório!"});
+                return false;
+        }
+        return true;
     }
 
     const closeAddCity = ()=>{
@@ -346,16 +380,38 @@ export default function PVForm({navigation, route}) {
     }
 
     useEffect(()=>{
-        console.log(routeParams)
-        if(routeParams?.name && !name){
-            let obj = routeParams;
+        // console.log(routeData.data.fullName);
+        if(routeData?.data?.email && !name){
+            let customer =  routeData.data;
 
-            setName(obj.name);
-            setEmail(obj.email);
-            setPhoneNumber(obj.phone ? VMasker.toPattern(obj.phone,"(99) 99999-9999") : "");
-            setCpfCnpj(obj.cpfCnpj ? VMasker.toPattern(obj.cpfCnpj,"99.999.999/9999-99") : "");
+            if(!customer) return;
+
+            setName(customer?.fullName ?? "");
+            setEmail(customer?.email ?? "");
+            setCompany(customer?.company);
+            setPhones([
+                {
+                    number:customer?.phone ? VMasker.toPattern(customer?.phone,"(99) 99999-9999") : "",
+                    isWhatsapp:true,
+                }
+            ]);
+            // enumData.origin
+            setOrigin(customer?.leadOrigin ? enumData.leadOrigin[customer?.leadOrigin] : "");
+            setCpfCnpj(customer?.document ? VMasker.toPattern(customer?.document?.record ?? "",customer?.document?.documentType === 0 ? "999.999.999-99" :"99.999.999/9999-99") : "");
+            setStreet(customer?.address?.city ?? "");
+            setCitie(customer?.address?.city);
+            setState(customer?.address?.state);
+            setCountry(customer?.address?.country);
+            setNeighborhood(customer?.address?.neighborhood);
+            setConplement(customer?.address?.complement);
+            setPostalCode(customer?.address?.postalCode);
+            setNumber(customer?.address?.number);
+            setCoordinates({
+                latitude: customer?.address?.coordinates.latitude, 
+                longitude: customer?.address?.coordinates.longitude
+            });
         }
-    },[routeParams])
+    },[routeData])
 
     useEffect(()=>{
         if(customizedDemand){
@@ -391,31 +447,63 @@ export default function PVForm({navigation, route}) {
 
                         
 
-                        {
+                    {
                             formStatusNow === 0 ?
-                                CustomerGroup({
-                                    name,
-                                    setName,
-                                    cpfCnpj,
-                                    setCpfCnpj,
-                                    phoneNumber,
-                                    setPhoneNumber,
-                                    email,
-                                    setEmail,
-                                    invalid,
-                                    checkIsValid
-                                })
-                            :formStatusNow === 1 ?              
+                                <>
+                                    <Text style={[styles.subtitle,styles.subtitle_first]}>Cliente</Text>
+                                    <CustomerForm
+                                        fullName={name}
+                                        setFullName={setName}
+                                        email={email}
+                                        setEmail={setEmail}
+                                        cpfCnpj={cpfCnpj}
+                                        setCpfCnpj={setCpfCnpj}
+                                        invalid={invalid}
+                                        setInvalid={setInvalid}
+                                        origin={origin}
+                                        setOrigin={setOrigin}
+                                        company={company}
+                                        setCompany={setCompany}
+                                        phones={phones}
+                                        setPhones={setPhones}
+                                    />
+                                </>
+                            :formStatusNow === 1 ?    
+                                <>
+                                    <Text style={[styles.subtitle,styles.subtitle_first]}>Endereço</Text>
+                                    <AddressForm 
+                                        postalCode={postalCode}
+                                        setPostalCode={setPostalCode}
+                                        citie={citie}
+                                        setCitie={setCitie}
+                                        state={state}
+                                        setState={setState}
+                                        country={country}
+                                        setCountry={setCountry}
+                                        neighborhood={neighborhood}
+                                        setNeighborhood={setNeighborhood}
+                                        street={street}
+                                        setStreet={setStreet}
+                                        number={number}
+                                        setNumber={setNumber}
+                                        conplement={conplement}
+                                        setConplement={setConplement}
+                                        coordinates={coordinates}
+                                        setCoordinates={setCoordinates}
+                                        invalid={invalid}
+                                    />
+                                </>
+                            :formStatusNow === 2 ?              
                                 GeneratorUnity({
-                                    generatorId,
-                                    setGeneratorId,
+                                    // generatorId,
+                                    // setGeneratorId,
                                     minRate,
                                     setMinRate,
                                     extra,
                                     setExtra,
-                                    address,
-                                    setAddress,
-                                    cities,
+                                    // address,
+                                    // setAddress,
+                                    // cities,
                                     addressType,
                                     groups,
                                     setGroups,
@@ -426,15 +514,15 @@ export default function PVForm({navigation, route}) {
                                     installLocation,
                                     setInstallLocation,
                                     invalid,
-                                    setIsOpenAddCity,
+                                    // setIsOpenAddCity,
                                     UnitGroupA,
                                     UnitGroupB,
                                     confirmDeleteGroup,
                                     setAddressType,
-                                    setInstallationType,
-                                    installationType
+                                    // setInstallationType,
+                                    // installationType
                                 })
-                            :formStatusNow === 2 ?
+                            :formStatusNow === 3 ?
                                 ConsumerUnity({
                                     groups, 
                                     setGroups, 
@@ -460,7 +548,7 @@ export default function PVForm({navigation, route}) {
                         
                             <View style={styles.btn_wrap}>
                                 <ButtonSubmit onPress={prevStap} value={"Voltar"} styles={[styles.btn_submit,styles.btn_goBack]}/>
-                                <ButtonSubmit onPress={handleSubmit} value={"Enviar para análise"} styles={styles.btn_submit}/>
+                                <ButtonSubmit onPress={handleSubmit} value={"Enviar Para Análise"} styles={styles.btn_submit}/>
                             </View>
 
                         :

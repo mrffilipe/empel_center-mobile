@@ -88,7 +88,7 @@ export default function InputText({
         editable={editable}
       />
 
-      {invalid && mask !== "percent"
+      {invalid && mask !== "percent" && required
         ? <Text style={styles.invalid_alert}>{invalid}</Text>
         : <></>
       }

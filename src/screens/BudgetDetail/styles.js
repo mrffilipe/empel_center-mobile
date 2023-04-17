@@ -109,6 +109,16 @@ export default StyleSheet.create({
     },
     add_document:{
         marginTop:30,
+    },
+    note:{
+        backgroundColor: "#fff",
+        minHeight: 120,
+        paddingHorizontal:15,
+        paddingVertical:5,
+        color:colors.black,
+        fontSize:fontSize.label,
+        // font-size: .94rem;
+        whiteSpace:"pre-wrap",
     }
 
 })

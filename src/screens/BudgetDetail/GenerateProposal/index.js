@@ -1,7 +1,6 @@
 import styles from "./styles";
-import React, {createRef, useState} from "react";
+import React, {useState} from "react";
 import Modal from "../../../components/Modal";
-import InputText from "../../../components/Form/InputText";
 import InputMask from "../../../components/Form/InputMask";
 import Checkbox from "../../../components/Form/Checkbox";
 import API from "../../../services/api";
@@ -14,25 +13,24 @@ import Loading from "../../../components/Loading";
 import Callback from "../../../components/Modal/Callback";
 import Share from "react-native-share";
 import FileViewer from 'react-native-file-viewer';
-
+import Select from "../../../components/Form/Select";
 import FileSystem from "react-native-fs";
-
+import selectOptions from "../../../data/selectOptions.json";
+import Textarea from "../../../components/Form/Textarea";
 export default function GenerateProposal({id,customerName}) {
 
     const [hasProposalId, setHasProposalId] = useState(null);
     const [isOpenGenerateProposal, setIsOpenGenerateProposal] = useState(false);
 
-    const [inverterBrand, setInverterBrand] = useState("");
-    const [moduleBrand, setModuleBrand] = useState("");
-    const [modulePower_kWp, setModulePower_kWp] = useState("0");
-    const [structureBrand, setStructureBrand] = useState("");
-    const [materialCost, setMaterialCost] = useState("");
-    const [includeMinimumProductionFee, setIncludeMinimumProductionFee] = useState(true);
+    const [supplier, setSupplier] = useState(0);
+
+    const [includeLightRateValue, setIncludeLightRateValue] = useState(true);
     const [produceTip, setProduceTip] = useState(true);
     const [produceTime, setProduceTime] = useState(true);
-    const [supplierName, setSupplierName] = useState("");
     const [extraValueOrDiscount, setExtraValueOrDiscount] = useState("");
-    const [isExtraOrDiscount, setIsExtraOrDiscount] = useState(0)
+    const [extraOrDiscountDescription, setExtraOrDiscountDescription] = useState("");
+    const [isExtraOrDiscount, setIsExtraOrDiscount] = useState(0);
+    const [solarIrradiation, setSolarIrradiation] = useState("4.50");
 
     const [loading, setLoading] = useState(false);
     const [callback, setCallback] = useState(null);
@@ -42,45 +40,41 @@ export default function GenerateProposal({id,customerName}) {
     
     const generateProposal = async()=>{//a proposta tem validade de 3 dias. apos isso aparecer botão de gerar novamente
         setInvalid(null)
-        if(!inverterBrand || !moduleBrand || !materialCost || !modulePower_kWp || !structureBrand || !materialCost)
-            return setInvalid({input:"",message:"Campo obrigatório!"});
-
-        if(toNumber(modulePower_kWp) > 1){
-            return setInvalid({input:modulePower_kWp,message:"Valor muinto auto"});
+        if(hasProposalId){
+            return download(hasProposalId);
         }
-
-        let extraOrDiscount = toNumber(extraValueOrDiscount);
-        
-        if(isExtraOrDiscount === 2)//mudar valor para negativo
-            extraOrDiscount = extraOrDiscount - extraOrDiscount - extraOrDiscount;
-
-        let params = {
-            "includeLightRateValue": includeMinimumProductionFee,
-            "produceTip": produceTip,
-            "produceTime": produceTime,
-            "extraValueOrDiscount": extraOrDiscount,
-            "pvSupplier": {
-                "supplierName": supplierName,
-                "inverterBrand": inverterBrand,
-                "moduleBrand": moduleBrand,
-                "modulePower": toNumber(modulePower_kWp),
-                "structureBrand": structureBrand,
-                "materialCost": toNumber(materialCost)
-            },
-            "idPVForm": parseInt(id)
-        }
-
-        setLoading(true);
-        let res = await API.post("PVForm/get-quote",params).catch(e => e);
-        
-        setIsOpenGenerateProposal(false);
-        if(res && !res.error && res.data?.id !== undefined){
-            setHasProposalId(res.data?.id);
-            download(res.data?.id);
+        let solarInradiationNumber = toNumber(solarIrradiation);
+        if(solarInradiationNumber <= 0){
+            setInvalid({input:solarIrradiation,message:"Digite um valor valido"});
             return;
         }
 
+        let extraOrDiscount = toNumber(extraValueOrDiscount);
+        if(isExtraOrDiscount === 2)//mudar valor para negativo caso seja desconto
+            extraOrDiscount = extraOrDiscount - extraOrDiscount - extraOrDiscount;
+        
+        let params = {
+            "selectedSupplier": parseInt(supplier),
+            "includeLightRateValue": includeLightRateValue,
+            "produceTip": produceTip,
+            "produceTime": produceTime,
+            "solarIrradiation": toNumber(solarIrradiation),
+            "extraValueOrDiscount": extraOrDiscount,
+            "idPVForm": parseInt(id)
+        };
+
+        setLoading(true);
+        let res = await API.post("PVForm/get-quote",params).catch(e => e);
         setLoading(false);
+        
+        setIsOpenGenerateProposal(false);
+        let proposalId = res.data?.id;
+        if(res && !res.error && proposalId !== undefined){
+            setHasProposalId(proposalId);
+            download(proposalId);
+            return;
+        }
+
         return setCallback({
             type: 0,
             message:res?.error ? res.error : `Algo deu errado!`,
@@ -170,59 +164,48 @@ export default function GenerateProposal({id,customerName}) {
             <Modal isOpen={isOpenGenerateProposal} close={close} title="Parametros da proposta" >
                 <View style={styles.form}>
                     <View>
-                        <InputText
-                            label="Nome do fornecedor"
+                        <Select 
+                            label={"Fornecedor"}
+                            value={selectOptions.supplier[supplier]}
+                            values={selectOptions.supplier}
+                            setValue={setSupplier}
                             required={true}
-                            value={supplierName}
-                            setValue={setSupplierName}
-                            invalid={invalid?.input === supplierName ? invalid?.message : null}
-                        />
-
-                        <InputText
-                            label="Marca do Inversor"
-                            required={true}
-                            value={inverterBrand}
-                            setValue={setInverterBrand}
-                            invalid={invalid?.input === inverterBrand ? invalid?.message : null}
-                        />
-
-                        <InputText
-                            label="Marca do Módulo"
-                            required={true}
-                            value={moduleBrand}
-                            setValue={setModuleBrand}
-                            invalid={invalid?.input === moduleBrand ? invalid?.message : null}
-                        />
-
-                        <InputText
-                            label="Marca da Estrutura"
-                            required={true}
-                            value={structureBrand}
-                            setValue={setStructureBrand}
-                            invalid={invalid?.input === structureBrand ? invalid?.message : null}
+                            labelTop={true}
                         />
 
                         <InputMask
                             keyboardType="number-pad"
-                            mask="KWH"
-                            label="Potência dos Módulos (kWh)"
+                            label={"Irradiação Solar (4.44 Wh/m² a 5.48 Wh/m²)"}
+                            value={solarIrradiation.replace(/,/g,".")}
+                            setValue={setSolarIrradiation}
                             required={true}
-                            value={modulePower_kWp}
-                            setValue={setModulePower_kWp}
-                            invalid={invalid?.input === modulePower_kWp ? invalid?.message : null}
-                            precision={3}
+                            precision={2}
+                            invalid={invalid?.input === solarIrradiation ? invalid?.message : null}
                         />
 
-                        <InputMask
-                            keyboardType="number-pad"
-                            mask="BRL_CURRENCY"
-                            label="Custo do material"
-                            required={true}
-                            value={materialCost}
-                            setValue={setMaterialCost}
-                            invalid={invalid?.input === materialCost ? invalid?.message : null}
+                    </View>
+
+                    <View style={styles.checkbox_wrap}>
+                        <Checkbox
+                            label={"incluir taxa mínima?"}
+                            value={includeLightRateValue}
+                            setValue={setIncludeLightRateValue}
                         />
 
+                        {/* <Checkbox
+                            label={"Produzir ponta?"}
+                            value={produceTip}
+                            setValue={setProduceTip}
+                        /> */}
+
+                        <Checkbox
+                            label={"Desconto irrigante?"}
+                            value={produceTime}
+                            setValue={setProduceTime}
+                        />
+                    </View>
+
+                    <View style={styles.extra_wrap}>
                         {!isExtraOrDiscount?
                             <View style={styles.add_extra_or_discount}>
                                 <Text style={styles.add_extra_or_discount_h3}>Adicionar</Text>
@@ -252,28 +235,15 @@ export default function GenerateProposal({id,customerName}) {
                                 <TouchableOpacity onPress={()=>changenExtraOrDiscount(0)} style={styles.extra_or_discount_button}>
                                     <ITrash style={[styles.icon_trash]}/>
                                 </TouchableOpacity>
+
+                                <Textarea
+                                    label="Motivo do valor"
+                                    value={extraOrDiscountDescription}
+                                    setValue={setExtraOrDiscountDescription}
+                                    required={true}
+                                />
                             </View>
                         }
-                    </View>
-
-                    <View style={styles.checkbox_wrap}>
-                        <Checkbox
-                            label={"Incluir taxa minima de produção"}
-                            value={includeMinimumProductionFee}
-                            setValue={setIncludeMinimumProductionFee}
-                        />
-
-                        <Checkbox
-                            label={"produceTip"}
-                            value={produceTip}
-                            setValue={setProduceTip}
-                        />
-
-                        <Checkbox
-                            label={"produceTime"}
-                            value={produceTime}
-                            setValue={setProduceTime}
-                        />
                     </View>
 
                     <View style={styles.btn_wrap}>

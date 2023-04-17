@@ -16,7 +16,7 @@ export default function config({params = null} = callbackProps) {
     const {callback, setCallback} = useAuthContext();
     const config = callback? callback : params;
     return (
-        <Modal isOpen={!!config} close={config?.close? config.close : ()=>setCallback(null)} closeTop={true}>
+        <Modal isOpen={!!config} close={config?.close ? config.close : ()=>setCallback(null)} closeTop={config?.close ? true : false}>
             {config?
                 <View style={config?.type? [styles.modal_main,styles.sucess] : [styles.modal_main]}>
                     <Text style={config?.type? [styles.h4,styles.h4_sucess] : [styles.h4]}>{config?.type? "Sucesso!" : "Oops..."}</Text>

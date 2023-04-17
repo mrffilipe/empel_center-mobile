@@ -1,126 +1,200 @@
 import styles from "./styles";
 import Dragables from "../../components/Dragables";
 import React, {useState, useEffect} from "react";
-import {View, ScrollView} from "react-native";
+import {View, ScrollView, Alert} from "react-native";
+import Loading from "../../components/Loading";
+import Callback from "../../components/Modal/Callback";
+import enumData from "../../data/enum.json";
+import States from "../../data/selectOptions.json";
+import { formatDate, limitText} from "../../services/tools";
+import {useMainContext} from "../../contexts/mainContext";
+import API from "../../services/api";
+import InputText from "../../components/Form/InputText";
+import Select from "../../components/Form/Select";
 export default function Planning({navigation}) {
 
-    const [data, setData] = useState([]);
-    const d = [
-        {
-            id:1,
-            customer:"Felipe",
-            seller:"Bruno",
-            category:"Back-End",
-            date:"26/07/2022",
-            status:1,
-            reminder:[
-                {   
-                    id:1,
-                    name: "Jonatã",
-                    msg:"Enviar proposta"
-                }
-            ]
-        },
-        {
-            id:2,
-            customer:"Felipe",
-            seller:"Bruno",
-            category:"Front-End",
-            date:"26/07/2022",
-            status:2,
-            reminder:[]
-        },
-        {
-            id:3,
-            customer:"Bruno",
-            seller:"Felipe",
-            category:"Front-End",
-            date:"26/07/2022",
-            status:3,
-            reminder:[
-                {   
-                    id:1,
-                    name: "Bruno",
-                    msg:"Enviar proposta"
-                },
-                {
-                    id:2,
-                    name: "Bruno",
-                    msg:"Enviar proposta teste"
-                },
-            ]
-        },
-        {
-            id:4,
-            customer:"Felipe",
-            seller:"Bruno",
-            category:"Back-End",
-            date:"26/07/2022",
-            status:4,
-            reminder:[
-                {   
-                    id:1,
-                    name: "Felipe",
-                    msg:"Enviar proposta"
-                },
-            ]
-        }
-    ]
+    const {servicesActives, getServicesActives, services} = useMainContext();    
+    const getAll = "Todos";
 
-    const status = [
-        {
-            key:1,
-            name:"ORÇAMENTO",
-            color:"red",
-            amount:data.filter(obj => obj.status === 1).length,
-        },
-        {
-            key:2,
-            name:"PROPOSTA ENVIADA",
-            color:"dark_blue",
-            amount:data.filter(obj => obj.status === 2).length,
-        },
-        {
-            key:3,
-            name:"NEGOCIÇÃO",
-            color:"dark_blue",
-            amount:data.filter(obj => obj.status === 3).length,
-        },
-        {
-            key:4,
-            name:"Planejamento",
-            color:"orange",
-            amount:data.filter(obj => obj.status === 4).length,
-        },
-        {
-            key:5,
-            name:"Desenvolvendo",
-            color:"orange",
-            amount:data.filter(obj => obj.status === 5).length,
-        },
-        {
-            key:6,
-            name:"FINALIZADO",
-            color:"green",
-            amount:data.filter(obj => obj.status === 6).length,
-        },
-        {
-            key:7,
-            name:"Em produção",
-            color:"green",
-            amount:data.filter(obj => obj.status === 7).length,
+    const [data, setData] = useState([]);
+    const [isOpenAddPlanning, setIsOpenAddPlanning] = useState(false); 
+    const [status, setStatus] = useState([]);
+
+    const [search, setSearch] = useState("");
+    const [service, setService] = useState(0);
+    const deleteOnFront = (id)=>{
+        let arr = [...data];
+        arr = arr.filter(val => val.id !== id);
+        setData(arr);
+    }
+
+    const [loading, setLoading] = useState(false);
+    const [callback, setCallback] = useState(null);
+
+    const removeService = async(id)=>{
+        let service = servicesActives.filter(val => val.id === parseInt(id))[0];
+        if(!await confirmDelete(`Confirmar`,`Deletar Serviço ${service?.serviceOffered?.name} do cliente ${service?.customerName}?`))
+            return;
+        try{
+            setLoading(true);
+            let res = await API.deletar("ActiveService/"+id).catch(e => e);
+            
+
+            if(res.error || !res)
+                throw new Error(res.error? res.error : "Não foi possive deletar");
+
+            let arr = [...data];
+            arr = arr.filter(obj => obj.id !== id);
+
+            deleteOnFront(id);
+        }catch(e){
+            setCallback({
+                message:e.message,
+                actionName:"Ok!",
+                action:()=>setCallback(null),
+            });
+        
         }
-    ]
+        setLoading(false);
+
+    }
+
+    const confirmDelete = (title,message)=>{
+        return new Promise((resolve)=>{
+
+            Alert.alert(
+                title,
+                message,
+                [
+                    {
+                        text:"Não",
+                        onPress:()=> resolve(false),
+                        type:"default"
+                    },
+                    {
+                        text:"Sim",
+                        onPress:()=> resolve(true)
+                    },
+                ],
+                {
+                    cancelable: true,
+                    onDismiss:()=> resolve(false)
+                }
+            )
+        })
+    }
+
+    const changeStatus = async(obj)=>{
+        let newStatus = obj?.status;
+        let id = obj?.id;
+        let res = await API.put("ActiveService/change-status",{},
+            {   
+                headers:
+                    {
+                        id,
+                        newStatus
+                    }
+            }).catch(err => err);
+                
+        if(res.error || res !== 200){
+            getServicesActives(false);
+            return setCallback({
+                type: 0,
+                message:res?.error ? res.error : res === 204 ? "Não foi possível mudar status!" : `Algo deu errado!`,
+                action:()=>setCallback(null),
+                actionName:"Ok",
+                close:()=>setCallback(null),
+            })
+        }
+    }
+
+    const getAndformatData = ()=>{
+        let arr = [...servicesActives];
+        
+        arr = arr.map((val)=>{
+            let fullName = `${val?.customer?.firstName} ${val?.customer?.lastName}`;
+            return {
+                id:val.id,
+                seller:limitText(fullName,18),
+                category:limitText(val?.serviceOffered?.name,20),
+                date:formatDate(val?.updatedAt,true,false),
+                status:enumData.activeServiceStatus[val?.status],
+            }
+        })
+        
+        filterSearch(arr);
+    }
+
+    const servicesFormat = ()=>{
+        return [getAll,...services.map(val =>{
+            return val.name;
+        })]
+    }
+
+    const filterSearch = (dataMain)=>{ //pesquisar filtrar
+        
+        let dataFiltered = dataMain.filter(item => {
+            let res = true;
+
+            let serviceName = item?.category;
+            if(parseInt(service) && servicesFormat()[parseInt(service)] !== serviceName)
+                res = false;
+
+            if(search && !item.seller.toLowerCase().includes(search.toLowerCase()))
+                res = false;
+
+            return res;
+        });
+        
+        setData(dataFiltered);
+    }
 
     useEffect(()=>{
-        setData(d);
-    },[])
+        setStatus(States.activeServiceStatus.map((val)=>{//adcionar quantidade em cada status
+            val.amount = data.filter(obj => obj.status === val.key).length
+            return val;
+        }))
+    },[data]);
+
+    useEffect(()=>{
+        getServicesActives(servicesActives.length === 0);
+
+        return ()=>{
+            getServicesActives(false);
+        }
+    },[]);
+
+    useEffect(()=>{
+        getAndformatData();
+    },[search, service, servicesActives])
 
     return (
         <ScrollView>
+            {loading ? <Loading loading2={loading} animation="delete" /> : <></>}
+            <Callback params={callback} />
             <View style={styles.container}>
+                <View style={styles.input_group}>
+
+                    <View style={styles.input_single}>
+                        <Select
+                            value={servicesFormat()[service]}
+                            values={servicesFormat()}
+                            setValue={setService}
+                            label={"Serviço"}
+                            labelTop={true}
+                        />
+                    </View>
+
+                    <View style={[styles.input_single]}>
+                        <InputText
+                            label="Buscar"
+                            value={search}
+                            setValue={setSearch}
+                        />
+                    </View>
+                </View>
                 <View style={styles.plannings}>
-                    <Dragables data={data} setData={setData} status={status} navigate={navigation.navigate} />
+                    <Dragables data={data} setData={setData} status={status} notDragable={[]} budgets={false} handleDelete={removeService} changeStatus={changeStatus} />
                 </View>
             </View>
         </ScrollView>

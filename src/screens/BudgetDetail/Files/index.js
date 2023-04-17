@@ -150,7 +150,6 @@ export default function File({data = [], getBudget}) {
     }
 
     const deleteFile = async (idFile,filename = "")=>{
-        console.log(idFile)
         try{
             const confirmed = async()=>{
                 try{
@@ -182,14 +181,14 @@ export default function File({data = [], getBudget}) {
                 message,
                 [
                     {
-                        text:"Sim",
-                        onPress:()=> confirmed()
-                    },
-                    {
                         text:"Não",
                         onPress:()=> {},
                         type:"default"
-                    }
+                    },
+                    {
+                        text:"Sim",
+                        onPress:()=> confirmed()
+                    },
                 ],
                 {
                     cancelable: true,

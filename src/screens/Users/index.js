@@ -47,7 +47,7 @@ export default function Users({navigation}) {
         }else{
             getUsers()
         }
-    },[users])
+    },[]);
 
 
     return (

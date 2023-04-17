@@ -8,7 +8,7 @@ import VMasker from 'vanilla-masker';
 import {View, Text, ScrollView, Modal}  from "react-native";
 import Callback from "../../../components/Modal/Callback";
 import Loading from "../../../components/Loading";
-// import AddressForm from "../../../components/Form/Address";
+import AddressForm from "../../../components/Form/Address";
 import CustomerForm from "../../../components/Form/Customer";
 const props = {
     isOpen: Boolean,
@@ -53,12 +53,31 @@ export default function AddUser({isOpen,close} = props) {
         setOrigin("");
         close(false);
         setInvalid(null);
+        setPhones([
+            {
+                number:"",
+                isWhatsapp:true,
+            }
+        ]);
+
+        setPostalCode("");
+        setCitie("");
+        setState("GO");
+        setCountry("BR");
+        setNeighborhood("");
+        setStreet("");
+        setNumber("");
+        setConplement("");
+        setCoordinates({latitude: "", longitude: ""});
     }
 
     const handleSubmit = async()=>{
         
         if(!verifyClient())
             return setStep(0);
+
+        if(!verifyAddress())
+            return setStep(1);
 
         const {firstName, lastName} = splitName(fullName);
 
@@ -107,13 +126,15 @@ export default function AddUser({isOpen,close} = props) {
 
             setCallback({
                 message:"Cliente cadastrado!",
-                close:()=>setCallback(null),
-                action:()=>setCallback(null),
+                action:()=>{
+                    clear();
+                    setCallback(null);
+                },
                 type:1,
                 actionName:"Ok!"
             });
+            setStep(1);
             getCustomers();
-            clear();
         }catch(err){
             setCallback({
                 message:err.message,
@@ -144,7 +165,15 @@ export default function AddUser({isOpen,close} = props) {
         return true;
     }
 
-    
+    const verifyAddress = ()=>{
+        
+        if(postalCode === "" || citie === "" || state === "" || country === "" || neighborhood === "" || street === "" || number === "" || coordinates === ""){
+                setInvalid({input:"",message:"Campo obrigatório!"});
+                return false;
+        }
+
+        return true;
+    }
 
     return (
         <Modal
@@ -157,63 +186,72 @@ export default function AddUser({isOpen,close} = props) {
                 <Loading loading2={loading}/>
                 <View style={styles.modal_main}>
                     <ScrollView >
-                        <Text style={styles.title}>Cadastrar Cliente</Text>
+                        <View style={styles.modal_wrap}>
+                            <Text style={styles.title}>Cadastrar Cliente</Text>
 
-                        <View style={styles.form}>
-                            <View>
-                            <CustomerForm
-                                fullName={fullName}
-                                setFullName={setFullName}
-                                email={email}
-                                setEmail={setEmail}
-                                cpfCnpj={cpfCnpj}
-                                setCpfCnpj={setCpfCnpj}
-                                invalid={invalid}
-                                setInvalid={setInvalid}
-                                origin={origin}
-                                setOrigin={setOrigin}
-                                company={company}
-                                setCompany={setCompany}
-                                phones={phones}
-                                setPhones={setPhones}
-                            />
-
-                            {/* <AddressForm 
-                                postalCode={postalCode}
-                                setPostalCode={setPostalCode}
-                                citie={citie}
-                                setCitie={setCitie}
-                                state={state}
-                                setState={setState}
-                                country={country}
-                                setCountry={setCountry}
-                                neighborhood={neighborhood}
-                                setNeighborhood={setNeighborhood}
-                                street={street}
-                                setStreet={setStreet}
-                                number={number}
-                                setNumber={setNumber}
-                                conplement={conplement}
-                                setConplement={setConplement}
-                                coordinates={coordinates}
-                                setCoordinates={setCoordinates}
-                                coordinatesRequired={true}
-                            /> */}
-
-                        </View>
-
-                            <View style={styles.btn_wrap}>
-                                <ButtonSubmit styles={[styles.btn,styles.btn_close]} onPress={close} value={"Cancelar"} />
-
+                            <View style={styles.form}>
                                 {!step ?
-                                    <ButtonSubmit styles={[styles.btn]} onPress={()=> setStep(verifyClient() ? 1 : 0)} value={"Proximo"} />
-                                : 
-                                    <>
-                                        <ButtonSubmit styles={[styles.btn]} onPress={()=> setStep(0)} value={"Voltar"} />
-                                        <ButtonSubmit styles={[styles.btn,styles.btn_submit]} onPress={handleSubmit} value={"Salvar"} />
-                                    </>
+                                    <View>
+                                        <CustomerForm
+                                            fullName={fullName}
+                                            setFullName={setFullName}
+                                            email={email}
+                                            setEmail={setEmail}
+                                            cpfCnpj={cpfCnpj}
+                                            setCpfCnpj={setCpfCnpj}
+                                            invalid={invalid}
+                                            setInvalid={setInvalid}
+                                            origin={origin}
+                                            setOrigin={setOrigin}
+                                            company={company}
+                                            setCompany={setCompany}
+                                            phones={phones}
+                                            setPhones={setPhones}
+                                        />
+                                    </View>
+                                :
+                                    <View>
+                                        <AddressForm 
+                                            postalCode={postalCode}
+                                            setPostalCode={setPostalCode}
+                                            citie={citie}
+                                            setCitie={setCitie}
+                                            state={state}
+                                            setState={setState}
+                                            country={country}
+                                            setCountry={setCountry}
+                                            neighborhood={neighborhood}
+                                            setNeighborhood={setNeighborhood}
+                                            street={street}
+                                            setStreet={setStreet}
+                                            number={number}
+                                            setNumber={setNumber}
+                                            conplement={conplement}
+                                            setConplement={setConplement}
+                                            coordinates={coordinates}
+                                            setCoordinates={setCoordinates}
+                                            coordinatesRequired={true}
+                                            invalid={invalid}
+                                        />
+
+                                    </View>
                                 }
-                                
+
+                                <View style={styles.btn_wrap}>
+                                    
+                                    {!step ?
+                                        <>
+                                            <ButtonSubmit styles={[styles.btn,styles.btn_close]} onPress={close} value={"Cancelar"} />
+                                            <ButtonSubmit styles={[styles.btn]} onPress={()=> setStep(verifyClient() ? 1 : 0)} value={"Proximo"} />
+                                        </>
+                                    : 
+                                        <>
+                                            <ButtonSubmit styles={[styles.btn,styles.btn_after]} onPress={()=> setStep(0)} value={"Voltar"} />
+                                            <ButtonSubmit styles={[styles.btn,styles.btn_submit]} onPress={handleSubmit} value={"Salvar"} />
+                                        </>
+                                    }
+                                    
+                                </View>
                             </View>
                         </View>
                     </ScrollView>

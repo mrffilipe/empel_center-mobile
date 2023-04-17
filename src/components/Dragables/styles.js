@@ -55,9 +55,6 @@ export default StyleSheet.create({
         opacity:1,
         fontSize:fontSize.min
     }, 
-    blue_dark:{
-        color:colors.accent_dark,
-    },
     gray:{
         color:colors.black,
         opacity:.7
@@ -76,6 +73,12 @@ export default StyleSheet.create({
     },
     blue:{
         color:colors.accent
+    },
+    black:{
+        color:colors.black
+    },
+    blue_dark:{
+        color:colors.blue_dark
     },
     // blue_opacity:{
     //     color:colors.accent_dark,
@@ -190,6 +193,29 @@ export default StyleSheet.create({
         right:5,
         top:5,
         opacity:0.3
+    },
+    delete:{
+        width:50,
+        height:50,
+        backgroundColor:colors.red_opacity,
+        borderRadius:5,
+        margin:15,
+        alignItems:"center",
+        justifyContent:"center",
+    },
+    animation:{
+        minWidth:180,
+    },
+    icon_delete:{
+        width:33,
+        height:33,
+        color:colors.red
+    },
+    icon_delete_opacity:{
+        width:33,
+        height:33,
+        color:colors.red,
+        opacity:.2,
     }
 
 })

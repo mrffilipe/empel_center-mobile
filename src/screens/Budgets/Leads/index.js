@@ -6,24 +6,34 @@ import BtnPlus from "../../../components/Form/BtnPlus";
 // import IUser from "../../../assets/icons/user";
 import {limitText} from "../../../services/tools";
 import { useNavigation } from '@react-navigation/native';
+import {useMainContext} from "../../../contexts/mainContext";
 
-const props = {
-    data:Array,
-}
-export default function Drgables({data = []} = props) {
+export default function Drgables() {
     const navigation = useNavigation();
     const [isOpenAddLeads, setIsOpenAddLeads] = useState(false);
 
-    const leads = [
-        {
-            id:1,
-            name:"Felipe",
-            email:"bruno@gmail.com",
-            phone:99999999999,
-            origin:"Redes sociais",
-            date:"26/07/2022",
-        }
-    ]
+    const {customers} = useMainContext();
+    const [data, setData] = useState([]);
+
+    const filterCustomer = ()=>{
+        let arr = [...customers];
+
+        arr = arr.filter((val)=> val.amountOfActiveServices == 0);
+        arr = arr.map((val)=>{
+            return {
+                id:val?.id,
+                name:val?.fullName,
+                email:val?.email,
+                origin:val?.leadOrigin,
+                date:val?.created,
+            }
+        })
+        setData(arr);
+    }
+
+    useEffect(()=>{
+        filterCustomer();
+    },[customers]);
 
     return (
 
@@ -38,13 +48,13 @@ export default function Drgables({data = []} = props) {
                         <BtnPlus onPress={()=>setIsOpenAddLeads(true)}/>
                     </View>
                     
-                    <Text style={[styles.small,styles.small_count]}>Resultados ({leads.length})</Text> 
+                    <Text style={[styles.small,styles.small_count]}>Resultados ({data.length})</Text> 
                 </View>  
             
                 <View style={styles.drag_wrap}>
-                    {leads.map((value,index)=>{
+                    {data.map((value,index)=>{
                         return(
-                            <TouchableOpacity onPress={()=>navigation.navigate("Lead",{id:value.id})} key={index}>
+                            <TouchableOpacity onPress={()=>navigation.navigate("Cliente",{id:value.id})} key={index}>
                                 <View style={[styles.list_wrap, styles.list_wrap_draggable]}>
                     
                                     <View style={[styles.info,styles.info_draggable]} >

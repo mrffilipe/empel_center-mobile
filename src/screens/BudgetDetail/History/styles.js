@@ -14,25 +14,37 @@ export default StyleSheet.create({
         borderColor:"#fff",
         marginTop:30,
         paddingHorizontal:15,
-        marginBottom:5
+        marginBottom:5,
     },
     text:{
+        fontSize:fontSize.min,
+        color:colors.black,
+        paddingTop:3,
+    },
+    text_name:{
+        fontSize:fontSize.p,
+        color:colors.accent_dark,
+        fontWeight:"bold",
+    },
+    text_note:{
         fontSize:fontSize.p,
         color:colors.black,
+        fontWeight:"bold",
     },
     historys:{
         paddingLeft:50,
         position:"relative",
     },
-    history:{
-        
-    },
     text_wrap:{
-        paddingVertical:10
+        paddingVertical:15
+    },
+    text_wrap_header:{
+        flexDirection:"row",
+        alignItems:"center",
     },
     conected_line:{
         position: "absolute",
-        top: "50%",
+        top: "52%",
         left: -25,
         height: "100%",
         width: 20,

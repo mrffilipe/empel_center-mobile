@@ -10,6 +10,7 @@ import HeaderAddService from "./screens/ServicesOffered/HeaderAddService";
 import MenuIcons from './components/MenuIcons';
 import HeaderArchive from "./screens/ArchivesManage/HeaderArchive";
 import HeaderActivities from "./screens/ActivitiesManage/HeaderActivities";
+import HeaderActivitiesPlanning from "./screens/Planning/HeaderAddServiceActived";
 import HeaderUsers from "./screens/Users/HeaderAddUser";
 import HeaderSupllier from "./screens/Supplier/HeaderAddSupplier";
 import HeaderAddServiceActived from "./screens/ServicesActived/HeaderAddServiceActived";
@@ -34,7 +35,7 @@ import ArchivesManageScreen from "./screens/ArchivesManage";
 import ActivitiesManage from './screens/ActivitiesManage';
 import Activities from './screens/Activities';
 import NotificationsScreen from './screens/Notifications';
-// import PlanningScreen from "./screens/Planning";
+import PlanningScreen from "./screens/Planning";
 import {colors} from "./styles/defount.json";
 
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
@@ -157,6 +158,10 @@ const Routes = () => {
                     name="Cliente" 
                     component={CustomerScreen} />
 
+                <Drawer.Screen
+                    name="Perfil"
+                    component={UserScreen} />
+
                 {/* <Stack.Screen 
                     name="Lead" 
                     component={CustomerScreen} /> */}
@@ -185,16 +190,15 @@ const Routes = () => {
                             component={BudgetStack} 
                             options={{ headerTitle: (props) => <HeaderHome {...props} title={"Orçamentos"} /> }} />
 
+                        <Drawer.Screen 
+                            name="Planejamento" 
+                            component={PlanningScreen} 
+                            options={{ headerTitle: (props) => <HeaderActivitiesPlanning {...props} title="Planejamento" /> }} />
 
                         <Drawer.Screen 
                             name="Perfil" 
                             component={ProfileScreen} 
                             options={{ headerTitle: (props) => <HeaderHome {...props} title={"Perfil"} /> }} />
-
-                        {/* 
-                        <Drawer.Screen 
-                            name="Planejamento" 
-                            component={PlanningScreen} /> */}
 
                         {/* <Drawer.Screen 
                             name="Configurar" 

@@ -72,6 +72,25 @@ export function UnitGroupB({key,groups, setGroups, invalid, confirmDeleteGroup})
                     <ITrash style={styles.icon_trash}/>
                 </Pressable>
             </View>
+
+            <InputText
+                label="Nome/Referencia"
+                required={true}
+                value={groups[key]["name"]}
+                setValue={insertValue}
+                name="name"
+                invalid={invalid?.input === groups[key]["name"] ? invalid?.message : null}
+            />
+
+            <Select
+                label="Fornecimento de energia"
+                required={true}
+                value={selectOptions?.instalationType[groups[key]["tipoDeInstalacao"]]}
+                values={selectOptions?.instalationType}
+                setValue={insertValue}
+                name="tipoDeInstalacao"
+                invalid={invalid?.input === groups[key]["tipoDeInstalacao"] ? invalid?.message : null}
+            />
             
             <InputMask
                 keyboardType="number-pad"
@@ -80,6 +99,7 @@ export function UnitGroupB({key,groups, setGroups, invalid, confirmDeleteGroup})
                 value={groups[key]["mediaConsumo"]}
                 setValue={insertValue}
                 name="mediaConsumo"
+                required={true}
             />
 
             <InputText
@@ -89,6 +109,7 @@ export function UnitGroupB({key,groups, setGroups, invalid, confirmDeleteGroup})
                 value={groups[key]["precoPorKWH"]}
                 setValue={insertValue}
                 name="precoPorKWH"
+                required={true}
             />
 
         </View>
@@ -113,6 +134,25 @@ export function UnitGroupA({key,groups, setGroups, invalid, confirmDeleteGroup})
                 </Pressable>
             </View>
 
+            <InputText
+                label="Nome/Referencia"
+                required={true}
+                value={groups[key]["name"]}
+                setValue={insertValue}
+                name="name"
+                invalid={invalid?.input === groups[key]["name"] ? invalid?.message : null}
+            />
+
+            <Select
+                label="Fornecimento de energia"
+                required={true}
+                value={selectOptions?.instalationType[groups[key]["tipoDeInstalacao"]]}
+                values={selectOptions?.instalationType}
+                setValue={insertValue}
+                name="tipoDeInstalacao"
+                invalid={invalid?.input === groups[key]["tipoDeInstalacao"] ? invalid?.message : null}
+            />
+
             <InputMask
                 keyboardType="number-pad"
                 label="Ponta (kWh/mês)"
@@ -120,6 +160,7 @@ export function UnitGroupA({key,groups, setGroups, invalid, confirmDeleteGroup})
                 value={groups[key]["pontaKWH"]}
                 setValue={insertValue}
                 name="pontaKWH"
+                required={true}
             />
             
             <InputMask
@@ -130,6 +171,7 @@ export function UnitGroupA({key,groups, setGroups, invalid, confirmDeleteGroup})
                 setValue={insertValue}
                 name="pontaRS"
                 mask="BRL_CURRENCY"
+                required={true}
             />
 
             <InputMask
@@ -139,6 +181,7 @@ export function UnitGroupA({key,groups, setGroups, invalid, confirmDeleteGroup})
                 value={groups[key]["foraPontaKWH"]}
                 setValue={insertValue}
                 name="foraPontaKWH"
+                required={true}
             />
 
             <InputMask
@@ -149,6 +192,7 @@ export function UnitGroupA({key,groups, setGroups, invalid, confirmDeleteGroup})
                 setValue={insertValue}
                 name="foraPontaRS"
                 mask="BRL_CURRENCY"
+                required={true}
             />
 
             <InputMask
@@ -158,6 +202,7 @@ export function UnitGroupA({key,groups, setGroups, invalid, confirmDeleteGroup})
                 value={groups[key]["horaKWH"]}
                 setValue={insertValue}
                 name="horaKWH"
+                required={true}
             />
 
             <InputMask
@@ -168,6 +213,7 @@ export function UnitGroupA({key,groups, setGroups, invalid, confirmDeleteGroup})
                 setValue={insertValue}
                 name="horaRS"
                 mask="BRL_CURRENCY"
+                required={true}
             />
 
             <InputMask
@@ -177,6 +223,7 @@ export function UnitGroupA({key,groups, setGroups, invalid, confirmDeleteGroup})
                 value={groups[key]["demandaKWH"]}
                 setValue={insertValue}
                 name="demandaKWH"
+                required={true}
             />
 
             <InputMask
@@ -187,6 +234,7 @@ export function UnitGroupA({key,groups, setGroups, invalid, confirmDeleteGroup})
                 setValue={insertValue}
                 name="demandaRS"
                 mask="BRL_CURRENCY"
+                required={true}
             />
 
             <Checkbox

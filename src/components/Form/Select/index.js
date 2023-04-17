@@ -29,7 +29,7 @@ export default function Select({
 
     const setSelect = (val,key)=>{
         if(name !== undefined && name !== null)
-            setValue(val,name)
+            setValue(getValue? val :val?.id ? val.id : key,name);
         else
             setValue(getValue? val :val?.id ? val.id : key);
 

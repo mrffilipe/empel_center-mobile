@@ -21,7 +21,7 @@ export default function AddUser({
         setInvalid(null);
         verifyFildsClient({
             setInvalid, 
-            fullName, 
+            name:fullName, 
             cpfCnpj,
             phoneNumber:phones[0].number,
             email,

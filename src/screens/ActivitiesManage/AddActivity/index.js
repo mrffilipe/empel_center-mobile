@@ -58,11 +58,13 @@ export default function AddActivity({isOpen, close}) {
                 message:"Atividade cadastrada!",
                 type:1,
                 actionName:"Ok!",
-                action:()=>setCallback(null),
+                action:()=>{
+                    clearFilds();
+                    setCallback(null);
+                },
             })
 
             getActivities(false);
-            clearFilds(false);
         }catch(e){
             setCallback({
                 message:e.message,
@@ -74,7 +76,6 @@ export default function AddActivity({isOpen, close}) {
 
     const clearFilds = (closeTo = true)=>{
         setIdReceivingUser("");
-        // setActivityCode("");
         setNote("");
         setCompletionDate("");
 

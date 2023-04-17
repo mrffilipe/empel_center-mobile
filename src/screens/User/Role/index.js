@@ -7,6 +7,7 @@ import IPen from "../../../assets/icons/pen";
 import styles from "../styles";
 import {View, TouchableOpacity} from "react-native";
 import ButtonSubmit from "../../../components/Form/ButtonSubmit";
+import enumData from "../../../data/enum.json";
 export default function Role({roleValue}) {
     const [role, setRole] = useState(roleValue);
 
@@ -41,7 +42,7 @@ export default function Role({roleValue}) {
 
             <InputText
                 label={"Cargo"} 
-                value={optionsSelect?.typeAccess[role]} 
+                value={optionsSelect?.typeAccess[enumData.typeAccess[role]]} 
                 editable={false}
             />
             
@@ -52,7 +53,7 @@ export default function Role({roleValue}) {
                 <Select 
                     labelTop={true} 
                     label={"Cargo"} 
-                    value={optionsSelect?.typeAccess[role]} 
+                    value={optionsSelect?.typeAccess[enumData.typeAccess[role]]} 
                     setValue={changePermision} 
                     values={optionsSelect?.typeAccess} 
                 />

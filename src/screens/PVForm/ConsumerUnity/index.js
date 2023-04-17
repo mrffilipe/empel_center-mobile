@@ -7,6 +7,8 @@ export default function ConsumerUnity({groups,setGroups,UnitGroupA, UnitGroupB, 
     
     const groupModelA = {
         "groupA":true,
+        "name":"",
+        "tipoDeInstalacao":"",
         "isGenerator":false,
         "pontaKWH":"",
         "pontaRS":"",
@@ -21,6 +23,8 @@ export default function ConsumerUnity({groups,setGroups,UnitGroupA, UnitGroupB, 
     
     const groupModelB = {
         "groupB":true,
+        "name":"",
+        "tipoDeInstalacao":"",
         "isGenerator":false,
         "mediaConsumo":"",
         "precoPorKWH":""
@@ -48,7 +52,8 @@ export default function ConsumerUnity({groups,setGroups,UnitGroupA, UnitGroupB, 
         <View>
             <View style={styles.ucs}>
                 <Text style={styles.subtitle}>Unidades consumidoras</Text>
-                {groups.length === 0 ? <Text style={styles.small}>Adicione pelo menos uma UC</Text> : <></>}
+                <Text style={styles.small}>(Opcional)</Text>
+                {/* {groups.length === 0 ? <Text style={styles.small}>Adicione pelo menos uma UC</Text> : <></>} */}
                 {groups.map((group, key) =>{ 
                     
                     if(!group.isGenerator){
@@ -62,16 +67,16 @@ export default function ConsumerUnity({groups,setGroups,UnitGroupA, UnitGroupB, 
             </View>
 
             <View style={styles.addUcs}>
-                <Pressable 
+                {/* <Pressable 
                 android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}
                 style={styles.btn_group} 
                 onPress={addGroupA}>
                     <IPlus style={styles.icon}/>
                     <Text style={styles.btn_text}>Grupo A</Text>
-                </Pressable>
+                </Pressable> */}
                 <Pressable 
                 android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}
-                style={styles.btn_group} 
+                style={styles.btn_group}
                 onPress={addGroupB}>
                     <IPlus style={styles.icon}/>
                     <Text style={styles.btn_text}>Grupo B</Text>

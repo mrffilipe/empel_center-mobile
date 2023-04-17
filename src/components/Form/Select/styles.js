@@ -81,7 +81,8 @@ export default StyleSheet.create({
     },
     invalid_alert:{
         position:"absolute",
-        bottom:-20,
-        color:colors.red
+        top:"130%",
+        color:colors.red,
+        fontSize:13,
     }
 })

@@ -43,7 +43,8 @@ export default StyleSheet.create({
     invalid_alert:{
         // position:"absolute",
         // bottom:-20,
-        color:colors.red
+        color:colors.red,
+        fontSize:13,
     },
     limit_text:{
         color:colors.black,

@@ -1,12 +1,16 @@
 import InputText from "../../../components/Form/InputText";
 import InputMask from "../../../components/Form/InputMask";
 import Select from "../../../components/Form/Select";
-import styles from "./styles.module.css";
-import {BiMapPin} from "react-icons/bi";
+import styles from "./styles.js";
+import React, {useState} from "react";
+// import {BiMapPin} from "react-icons/bi";
 import api from "../../../services/api";
 import Cityes from "../../../data/cities.json";
 import countries from "../../../data/countries.json";
-
+import {View, TouchableOpacity, Text , PermissionsAndroid} from "react-native";
+import IMapMark from "../../../assets/icons/mapMark";
+import Geolocation from 'react-native-geolocation-service';
+import Loading from "../../../components/Loading";
 
 export default function AddUser({
     postalCode, setPostalCode,
@@ -18,31 +22,69 @@ export default function AddUser({
     number, setNumber,
     conplement, setConplement,
     coordinates, setCoordinates,
-    invalid,
     coordinatesRequired = false, 
+    invalid = null,
 }) {
+    const [loading, setLoading] = useState(false);
 
-    const getCoordenates = (e)=>{
-        e.preventDefault();
-        
-        navigator.geolocation.getCurrentPosition(getCoordenates, errorCoor, {maximumAge:60000, timeout:5000, enableHighAccuracy:true});
+    const getPosition = ()=>{
+        setLoading(true);
+        const result = requestLocationPermission();
+        result.then(res => {
+            if (res) {
+                Geolocation.getCurrentPosition(
+                position => {
+                    getCoordenates(position);
+                },
+                error => {
+                    // See error code charts below.
+                    console.log(error.code, error.message);
+                    // setLocation(false);
+                },
+                {enableHighAccuracy: true, timeout: 15000, maximumAge: 10000},
+                );
+            }
+        }).catch((err)=>{
+            setLoading(false);
+        });
 
         function getCoordenates(position){
-            console.log(position);
-            let lat = position.coords.latitude;
-            let long = position.coords.longitude;
+            
+            let lat = position.coords.latitude.toString();
+            let long = position.coords.longitude.toString();
             
             setCoordinates({
                 longitude: long,
                 latitude: lat,
-            })
-            
-        }
-
-        function errorCoor(){
-            alert("Não foi possível obter localização!");
+            });
+            setLoading(false);
         }
     }
+
+    // Function to get permission for location
+    const requestLocationPermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+                {
+                title: 'Geolocation Permission',
+                message: 'Can we access your location?',
+                buttonNeutral: 'Ask Me Later',
+                buttonNegative: 'Cancel',
+                buttonPositive: 'OK',
+                },
+            );
+
+        if (granted === 'granted') {
+            return true;
+        } else {
+            alert('Geolocalização não permitida pelo usuário!');
+            return false;
+        }
+        } catch (err) {
+            return false;
+        }
+    };
 
     const setAndSearchCep = async(cep)=>{
         setPostalCode(cep);
@@ -66,10 +108,10 @@ export default function AddUser({
 
     return (
 
-        <div className={styles.form_Address}>
-
-            <div className={styles.input_group}>
-                <div className={styles.flex1}>
+        <View style={styles.form_Address}>
+            <Loading loading2={loading}/>
+            <View style={styles.input_group}>
+                <View style={styles.flex1}>
                     <InputText
                         label="Rua"
                         value={street}
@@ -77,9 +119,10 @@ export default function AddUser({
                         required={true}
                         invalid={invalid?.input === street ? invalid?.message : null}
                     />
-                </div>
-                <div className={styles.select_wrap}>
+                </View>
+                <View style={styles.select_wrap}>
                     <InputMask
+                        keyboardType="number-pad"
                         label="Numero"
                         value={number}
                         setValue={setNumber}
@@ -87,19 +130,24 @@ export default function AddUser({
                         mask={"number"}
                         invalid={invalid?.input === number ? invalid?.message : null}
                     />
-                    <InputMask
-                        label="CEP"
-                        value={postalCode}
-                        setValue={setAndSearchCep}
-                        required={true}
-                        mask={"cep"}
-                        invalid={invalid?.input === postalCode ? invalid?.message : null}
-                    />
-                </div>
-            </div>
 
-            <div className={styles.input_group}>
-                <div className={styles.flex1}>
+                </View>
+            </View>
+
+            <View style={styles.input_group}>
+                <InputMask
+                    label="CEP"
+                    keyboardType="number-pad"
+                    value={postalCode}
+                    setValue={setAndSearchCep}
+                    required={true}
+                    mask={"ZIP_CODE"}
+                    invalid={invalid?.input === postalCode ? invalid?.message : null}
+                />
+            </View>
+
+            <View style={styles.input_group}>
+                <View style={styles.flex1}>
                     <InputText
                         label="Cidade"
                         value={citie}
@@ -108,8 +156,11 @@ export default function AddUser({
                         values={Cityes[country]? Cityes[country].estados.filter(val => val.sigla === state)[0]?.cidades:[]}
                         invalid={invalid?.input === citie ? invalid?.message : null}
                     />
-                </div>
-                <div className={styles.select_wrap}>
+                </View>
+            </View>
+
+            <View style={styles.input_group}>
+                <View style={styles.flex1}>
                     {Cityes[country]
                         ?
                         <Select
@@ -131,8 +182,11 @@ export default function AddUser({
                             invalid={invalid?.input === state ? invalid?.message : null}
                         />
                     }
+                </View>
 
-
+                <View style={styles.separator}/>
+                
+                <View style={styles.flex1}>
                     <Select
                         label="País"
                         value={country}
@@ -143,9 +197,8 @@ export default function AddUser({
                         getValue={true}
                         invalid={invalid?.input === country ? invalid?.message : null}
                     />
-
-                </div>
-            </div>
+                </View>
+            </View>
 
             <InputText
                 label="Bairro"
@@ -161,35 +214,39 @@ export default function AddUser({
                 setValue={setConplement}
             />
 
-            <h3>Cordenadas</h3>
-            <div className={styles.input_group}>
-                <div className={styles.flex1}>
-                    <InputText
+            <Text>Cordenadas</Text>
+            <View style={styles.input_group}>
+                <View style={styles.flex1}>
+                    <InputMask
                         label="Latitude"
-                        value={coordinates.latitude}
+                        keyboardType="number-pad"
+                        value={coordinates?.latitude}
                         setValue={(latitude)=>setCoordinates({
                             latitude:latitude,
-                            longitude:coordinates.longitude
+                            longitude:coordinates?.longitude
                         })}
                         required={coordinatesRequired}
+                        invalid={invalid?.input === coordinates?.latitude ? invalid?.message : null}
                     />
-                </div>
-                <div className={styles.flex1}>
-                    <InputText
+                </View>
+                <View style={styles.flex1}>
+                    <InputMask
+                        keyboardType="number-pad"
                         label="Longitude"
-                        value={coordinates.longitude}
+                        value={coordinates?.longitude}
                         setValue={(longitude)=>setCoordinates({
-                            latitude:coordinates.latitude,
+                            latitude:coordinates?.latitude,
                             longitude:longitude
                         })}
                         required={coordinatesRequired}
+                        invalid={invalid?.input === coordinates?.longitude ? invalid?.message : null}
                     />
-                </div>
-                <button onClick={getCoordenates} className={styles.btn_local}>
-                    Local Atual!
-                    <BiMapPin/>
-                </button>
-            </div>
-        </div>
+                </View>
+                <TouchableOpacity onPress={getPosition} style={styles.btn_local}>
+                    <Text style={styles.btn_text}>Local Atual!</Text>
+                    <IMapMark style={styles.icon}/>
+                </TouchableOpacity>
+            </View>
+        </View>
     )
 }

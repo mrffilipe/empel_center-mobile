@@ -52,7 +52,7 @@ export default StyleSheet.create({
     extra_or_discount_button:{
         position:"absolute",
         right: 0,
-        bottom: 3,
+        top: 20,
         color:colors.red,
         Zindex: 1,
         elevation:2,
@@ -93,5 +93,8 @@ export default StyleSheet.create({
         fontSize:fontSize.p,
         color: colors.white,
         fontWeight:"bold",
+    },
+    extra_wrap:{
+        position:"relative",
     }
 })

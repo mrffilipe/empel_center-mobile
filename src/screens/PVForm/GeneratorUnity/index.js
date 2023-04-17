@@ -9,15 +9,15 @@ import selectOptions from "../../../data/selectOptions.json";
 import BtnPlus from '../../../components/Form/BtnPlus';
 
 export default function GeneretorUnity({
-    generatorId,
-    setGeneratorId,
+    // generatorId,
+    // setGeneratorId,
     minRate,
     setMinRate,
     extra,
     setExtra,
-    address,
-    setAddress,
-    cities,
+    // address,
+    // setAddress,
+    // cities,
     addressType,
     setAddressType,
     groups,
@@ -29,7 +29,7 @@ export default function GeneretorUnity({
     installLocation,
     setInstallLocation,
     invalid,
-    setIsOpenAddCity,
+    // setIsOpenAddCity,
     UnitGroupA,
     UnitGroupB,
     confirmDeleteGroup,
@@ -40,6 +40,8 @@ export default function GeneretorUnity({
 
     const groupModelA = {
         "groupA":true,
+        "name":"",
+        "tipoDeInstalacao":"",
         "isGenerator":false,
         "pontaKWH":"",
         "pontaRS":"",
@@ -54,15 +56,17 @@ export default function GeneretorUnity({
     
     const groupModelB = {
         "groupB":true,
+        "name":"",
+        "tipoDeInstalacao":"",
         "isGenerator":false,
         "mediaConsumo":"",
         "precoPorKWH":""
     }
 
-    const citieSelectedName = ()=>{
-        let city = cities.filter(c => c.id === parseInt(address))[0];
-        return city ? city?.citie + " (" + city.state+ ")" : "";
-    }
+    // const citieSelectedName = ()=>{
+    //     let city = cities.filter(c => c.id === parseInt(address))[0];
+    //     return city ? city?.citie + " (" + city.state+ ")" : "";
+    // }
 
     const generatorUnityTypeA = ()=>{
         let arr = [...groups];
@@ -82,23 +86,21 @@ export default function GeneretorUnity({
         setGroups(arr);
     }
 
+    if(groups.length === 0){
+        generatorUnityTypeB();
+    }
+
     return(
         <View>
             <Text style={styles.subtitle}>Unidade geradora</Text>
 
             <InputText
-                label="ID da unidade geradora/Referencia"
-                value={generatorId}
-                setValue={setGeneratorId}
-                invalid={invalid?.input === generatorId ? invalid?.message : null}
-            />
-
-            <InputText
                 keyboardType="number-pad"
-                label="Taxa de luz mínima (kWh)"
+                label="Taxa de luz (R$)"
                 invalid={invalid?.input === minRate ? invalid?.message : null}
                 value={minRate}
                 setValue={setMinRate}
+                required={true}
             />
 
             <View>
@@ -108,15 +110,16 @@ export default function GeneretorUnity({
                     value={extra}
                     setValue={setExtra}
                     keyboardType="number-pad"
+                    required={true}
                 />
-                <View style={styles.info}>
+                {/* <View style={styles.info}>
                     <Text style={styles.small}>Mín. recomendado 5%</Text>
-                    {/* <Text style={styles.small}>Adicione <Text style={styles.span}>" , "</Text> para kWh</Text> */}
-                </View>
+                    <Text style={styles.small}>Adicione <Text style={styles.span}>" , "</Text> para kWh</Text>
+                </View> */}
                 
             </View>
 
-            <View>
+            {/* <View>
                 <Select
                     label="Endereço de instalação"
                     value={citieSelectedName()}
@@ -129,7 +132,7 @@ export default function GeneretorUnity({
                 <View style={styles.btn_add_city_wrap}>
                     <BtnPlus onPress={()=>setIsOpenAddCity(true)}/>
                 </View>
-            </View>
+            </View> */}
 
             <InputRadio
                 invalid={invalid?.input === addressType ? invalid?.message : null}
@@ -141,6 +144,7 @@ export default function GeneretorUnity({
             {selectOptions?.addressType[addressType] === selectOptions?.addressType[0]
                 ?
                 <InputMask
+                    required={true}
                     label="Transformador existente(kVA)"
                     value={transformer}
                     setValue={setTransformer}
@@ -151,6 +155,7 @@ export default function GeneretorUnity({
             }
 
             <InputMask
+                required={true}
                 mask="Number"
                 keyboardType="number-pad"
                 label="Distancia (Km)"
@@ -165,25 +170,28 @@ export default function GeneretorUnity({
                 value={selectOptions?.instalationLocation[installLocation]}
                 values={selectOptions?.instalationLocation}
                 setValue={setInstallLocation}
+                required={true}
+                labelTop={true}
             />
 
-            <Select
+            {/* <Select
                 label="Fornecimento de energia"
                 value={selectOptions?.instalationType[installationType]}
                 values={selectOptions?.instalationType}
                 setValue={setInstallationType}
+                required={true}
                 invalid={invalid?.input === installationType ? invalid?.message : null}
-            />
+            /> */}
 
             {groups.filter(val => val.isGenerator).length === 0?
                 <View style={styles.addUcs}>
-                    <Pressable 
+                    {/* <Pressable 
                     android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}
                     style={[styles.btn_group,styles.btn_unity]} 
                     onPress={generatorUnityTypeA}>
-                        {/* <IPlus style={styles.icon}/> */}
+                        <IPlus style={styles.icon}/>
                         <Text style={styles.btn_text}>Grupo A</Text>
-                    </Pressable>
+                    </Pressable> */}
                     <Pressable 
                     android_ripple={{ color: "rgba(240, 240, 240, 0.25)"}}
                     style={[styles.btn_group,styles.btn_unity]} 

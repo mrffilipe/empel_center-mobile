@@ -1,5 +1,4 @@
 import React, { useState, useContext, createContext, useEffect } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import API from "../services/api";
 import { useAuthContext } from "./authContext";
 import {formatDate, toBrNumberFormat} from "../services/tools";
@@ -41,12 +40,14 @@ const mainContextData = {
     getMyActivities:Function,
     servicesActives: Array,
     getServicesActives: Function,
+    taskSelected: Array, 
+    setTaskSelected:Function,
 };
 
 const MainContext = createContext(mainContextData);
 
 export const MainProvider = ({ children }) => {
-    const {signed, user} = useAuthContext();
+    const {signed, user, setUser} = useAuthContext();
 
     // const [cities, setCities] = useState([]);
     const [budgets, setBudgets] = useState([]);
@@ -63,6 +64,8 @@ export const MainProvider = ({ children }) => {
     const [archives, setArchives] = useState([]);
     const [activities, setActivities] = useState([]);
     const [myActivities, setMyActivities] = useState([]);
+
+    const [taskSelected, setTaskSelected] = useState(null);
 
     // const getCities = async(load = false)=>{
     //     try{
@@ -135,7 +138,6 @@ export const MainProvider = ({ children }) => {
 
 
     const getUsers = async (load = false) => {
-
         try{
             if(load)
                 setLoading(true);
@@ -161,13 +163,15 @@ export const MainProvider = ({ children }) => {
             })
 
             setUsers(arr);
+            addUserConsultant(consultants);
         }catch(error){
             return setCallback({
                 type: 0,
                 message:error.message,
                 action:()=>{
                     setCallback(null);
-                    getUsers()},
+                    getUsers();
+                },
                 actionName:"Tentar Novamente",
                 close:()=>setCallback(null)
             })
@@ -175,6 +179,24 @@ export const MainProvider = ({ children }) => {
             if(load)
                 setLoading(false);
         }
+    }
+
+    const addUserConsultant = (arr)=>{
+        
+        let consultant = null;
+        for(let val of arr){
+            if(val?.user?.id === user?.id){
+                consultant = val;
+            }
+        }
+        let data = {...user};
+        if(consultant){
+            data.idConsultant = consultant?.id;
+            data.commissionInPercentage = consultant?.commissionInPercentage;
+            data.active = consultant?.active;
+        }
+        setUser(data);
+        
     }
 
     const getCustomers = async(load = true) => {
@@ -194,6 +216,7 @@ export const MainProvider = ({ children }) => {
                 val.created = formatDate(val.createdAt,false, true);
                 return val;
             })
+
             setCustomers(formatedRes);
 
         }catch(e){
@@ -386,8 +409,9 @@ export const MainProvider = ({ children }) => {
                 val.updated = formatDate(val?.updatedAt, true, true);
                 val.customerId = val?.customer?.id;
                 val.serviceId = val?.serviceOffered?.id;
+                val.statusName = selectOptions.activeServiceStatus[enumData.activeServiceStatus[val?.status]]?.name;
                 return val;
-            })
+            });
 
             setServicesActives(res);
         }catch(e){
@@ -414,6 +438,7 @@ export const MainProvider = ({ children }) => {
         if(signed){
             getUsers();
             getServices();
+            getCustomers();
         }
     }, [signed]);
 
@@ -441,6 +466,8 @@ export const MainProvider = ({ children }) => {
             getCustomers,
             servicesActives,
             getServicesActives,
+            taskSelected, 
+            setTaskSelected
         }}>
             <Loading loading2={loading}/>
             <Callback params={callback}/>

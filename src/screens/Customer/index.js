@@ -5,6 +5,7 @@ import IWhatsapp from "../../assets/icons/whatsapp.js";
 import IEmailSend from "../../assets/icons/emailSend.js";
 import IBusinessBuild from "../../assets/icons/businessBuild.js";
 import IForm from "../../assets/icons/form.js";
+import IMap from "../../assets/icons/mapMark.js";
 
 import InputText from "form/InputText";
 import InputMask from "form/InputMask";
@@ -15,12 +16,14 @@ import Loading from "../../components/Loading";
 import Callback from "../../components/Modal/Callback";
 import API from "../../services/api";
 import { formatDate } from "../../services/tools";
+import enumData from "../../data/enum.json";
+import selectOptions from "../../data/selectOptions.json";
 
 export default function Customer({route,navigation}) {
     const {id} = route.params;
 
     const [data, setData] = useState({});
-    const [services, setServices] = useState([]);
+    // const [services, setServices] = useState([]);
     const [loading, setLoading] = useState(false);
     const [callback, setCallback] = useState(null);
 
@@ -30,8 +33,7 @@ export default function Customer({route,navigation}) {
         });
     }
 
-    const getDataServices = async(load = true) => {
-
+    const getData = async(load = true) => {
         try{
             if(load)
                 setLoading(true);
@@ -39,61 +41,86 @@ export default function Customer({route,navigation}) {
             let res = await API.get(`Customer/${id}`).catch(err => err);
             if(load)
                 setLoading(false);
-
+            
             if(res?.error)
                 throw new Error(res.error);
-                
-            res = res.map((val) =>{
-                val.customerName = val?.customer?.firstName ? val?.customer?.firstName + " " + val?.customer?.lastName : "";
-                val.service = val?.serviceOffered.name;
-                val.updatedAt = formatDate(val?.updatedAt, true, true);
-                val.customerId = val?.customer?.id;
-                val.serviceId = val?.serviceOffered?.id;
-                return val;
-            })
 
-            setServices(res);
+            res.fullName = res?.firstName+" "+res?.lastName;
+            res.phone = res?.telephones[0]?.number;
+            res.cityAndCountry = `${res?.address?.city} ${res?.address?.state}-${res?.address?.country}`;
+            res.streetAndNumber = res?.address?.street+" "+res?.address?.number;
+            setData(res);
 
         }catch(e){
             setCallback({
-                message:e.message,
+                message:"Não foi possivel obter dados!",
                 actionName:"Ok!",
                 action:()=>setCallback(null),
             });
         }
     }
 
-    useEffect(()=>{
-        setData({
-            fullName: "Bruno da Silva",
-            email:"bruno@gmail.com",
-            phone:99999999999,
-            cpfCnpj:99999999999999
+    const getMapsUrl = ()=>{
+        let coordenates = data?.address?.coordinates;
+        if(!coordenates) return "";
+
+        if(!coordenates?.latitude && !coordenates?.longitude){ 
+            let address = `${data?.streetAndNumber} ${data?.cityAndCountry}`;
+            address = address.replace(/ /g, '+');
+            return `http://maps.google.com/?q=${address}`;
+        }
+        return `http://maps.google.com/maps?q=${coordenates?.latitude},${coordenates?.longitude}`;
+    }
+
+    const formatAtivity = (res) =>{
+
+        res = res.map((val) =>{
+            val.customerName = val?.customer?.firstName ? val?.customer?.firstName + " " + val?.customer?.lastName : "";
+            val.service = val?.serviceOffered.name;
+            val.updated = formatDate(val?.updatedAt, true, true);
+            val.customerId = val?.customer?.id;
+            val.serviceId = val?.serviceOffered?.id;
+            val.status = selectOptions.activeServiceStatus[enumData.activeServiceStatus[val?.status]]?.name;
+            return val;
         });
-        getDataServices();
-    },[])
+
+        return res;
+    }
+
+    useEffect(()=>{
+        getData()
+    },[]);
 
     return (
         <ScrollView style={styles.users}>
             {loading ? <Loading loading2={loading} /> : <></>}
             <Callback params={callback} />
             <View style={styles.container}>
-
+                <View style={styles.info_wrap_text}>
+                    <Text style={styles.h2}>Sobre</Text>
+                </View>
                 <View style={styles.info_wrap}>
-
 
                         <View style={styles.info_single_wrap}>
                             <InputText
                                 label="Nome"
-                                editable={true}
+                                editable={false}
                                 value={data?.fullName}
                             />
                         </View>
 
                         <View style={styles.info_single_wrap}>
                             <InputText
+                                editable={false}
+                                label="Empresa"
+                                value={data.company}
+                            />
+                        </View>
+
+                        <View style={styles.info_single_wrap}>
+                            <InputText
                                 label="E-mail"
-                                editable={true}
+                                editable={false}
                                 value={data?.email}
                             />
                         </View>
@@ -101,20 +128,18 @@ export default function Customer({route,navigation}) {
                         <View style={styles.info_single_wrap}>
                             <InputMask
                                 label="Telefone"
-                                required={true}
                                 value={data?.phone ? VMasker.toPattern(data?.phone,"(99) 99999-9999") : ""}
                                 mask="phone"
-                                editable={true}
+                                editable={false}
                             />
                         </View>
 
                         <View style={styles.info_single_wrap}>
                             <InputMask
-                                label="CNPJ"
-                                required={true}
-                                value={data?.cpfCnpj ? VMasker.toPattern(data?.cpfCnpj,"99.999.999/9999-99") : ""}
+                                label={data?.document?.documentType === 0 ? "CPF":"CNPJ"}
+                                value={data?.document ? VMasker.toPattern(data?.document?.record ?? "",data?.document?.documentType === 0 ? "999.999.999-99" :"99.999.999/9999-99") : ""}
                                 mask="phone"
-                                editable={true}
+                                editable={false}
                             />
                         </View>
 
@@ -122,11 +147,50 @@ export default function Customer({route,navigation}) {
                         <View style={styles.info_single_wrap}>
                             <InputText
                                 label="Origem"
-                                editable={true}
-                                value={"Radio"}
+                                value={data?.leadOrigin ?? ""}
+                                editable={false}
                             />
                         </View>
 
+                
+                </View>
+
+                <View style={styles.info_wrap_text}>
+                    <Text style={styles.h2}>Endereço</Text>
+                </View>
+                <View style={styles.info_wrap}>
+
+                    <View style={styles.info_single_wrap}>
+                        <InputText
+                            label="Cidade"
+                            editable={false}
+                            value={data?.cityAndCountry ?? ""}
+                        />
+                    </View>
+
+                    <View style={styles.info_single_wrap}>
+                        <InputText
+                            editable={false}
+                            label="Rua"
+                            value={data?.streetAndNumber ?? ""}
+                        />
+                    </View>
+
+                    <View style={styles.info_single_wrap}>
+                        <InputText
+                            editable={false}
+                            label="Bairro"
+                            value={data?.address?.neighborhood ?? ""}
+                        />
+                    </View>
+
+                    <View style={styles.info_single_wrap}>
+                        <InputMask
+                            label="Complemento"
+                            value={data?.address?.complement ?? ""}
+                            editable={false}
+                        />
+                    </View>
                 
                 </View>
 
@@ -155,6 +219,13 @@ export default function Customer({route,navigation}) {
                             <Text style={styles.text}>E-mail</Text>
                         </TouchableOpacity>
 
+                        <TouchableOpacity onPress={()=>link({url:getMapsUrl()})} style={styles.btn}>
+                            <View>
+                                <IMap style={[styles.actions_icon]}/> 
+                            </View>
+                            <Text style={styles.text}>Localizar</Text>
+                        </TouchableOpacity>
+
                         <TouchableOpacity onPress={()=>link({url:`https://servicos.receita.fazenda.gov.br/servicos/cnpjreva/Cnpjreva_Solicitacao.asp?cnpj=${data?.cpfCnpj}`})} style={styles.btn}>
                             <View>
                                 <IBusinessBuild style={[styles.actions_icon]}/> 
@@ -164,10 +235,7 @@ export default function Customer({route,navigation}) {
 
                         <TouchableOpacity 
                         onPress={()=>navigation.navigate("Formulário fotovoltaico",{
-                            name:data.fullName,
-                            email:data.email,
-                            phone:data.phone,
-                            cpfCnpj:data.cpfCnpj
+                            data,
                         })} 
                         style={styles.btn}>
 
@@ -182,7 +250,7 @@ export default function Customer({route,navigation}) {
                 <View style={styles.actions_wrap}>
                     <Text style={styles.h2}>Serviços ativos</Text>
 
-                    <TableServices data={services} setData={setServices} getData={getDataServices} onCustome={true} setLoading={setLoading} setCallback={setCallback} />
+                    <TableServices data={formatAtivity(data?.activeService ?? [])} getData={getData} onCustome={true} setLoading={setLoading} setCallback={setCallback} />
                 </View>
             </View>
         </ScrollView>
